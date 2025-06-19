@@ -572,7 +572,7 @@ init_levelvars()
 	}
 #/
 	set_zombie_var( "zombie_score_kill", 				50 );
-	set_zombie_var( "zombie_score_damage", 				5 );
+	set_zombie_var( "zombie_score_damage", 				10 );
 	set_zombie_var( "zombie_score_bonus_melee", 		80 );
 	set_zombie_var( "zombie_score_bonus_head", 			50 );
 	set_zombie_var( "zombie_score_bonus_neck", 			20 );
@@ -583,7 +583,13 @@ init_levelvars()
 	set_zombie_var( "penalty_died_percent", 			0, 		100 );
 	set_zombie_var( "penalty_downed_percent", 			5, 		100 );	
 
-	set_zombie_var( "zombie_flame_dmg_point_delay",		500 );	
+	set_zombie_var( "zombie_flame_dmg_point_delay",		500 );
+
+	//Override points amount
+	level.zombie_vars["zombie_score_kill"] = 20;
+	level.zombie_vars["zombie_score_bonus_melee"] = 30;
+	level.zombie_vars["zombie_score_bonus_head"] = 20;
+	
 
 	if ( IsSplitScreen() )
 	{
