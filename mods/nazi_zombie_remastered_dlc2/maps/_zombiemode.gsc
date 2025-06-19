@@ -1816,8 +1816,8 @@ round_spawning()
 		wait( level.zombie_vars["zombie_spawn_delay"] ); 
 		wait_network_frame();
 	}
-
-	if( level.round_number > 3 ||  level.zombie_move_speed > 31) // sprint if they should, allows zombie_speed to make sprinters early
+	//level.round_number > 3 // now we check if the speed is appropriate
+	if( level.zombie_move_speed > 31) // sprint if they should, allows zombie_speed to make sprinters early
 	{
 		zombies = getaiarray( "axis" );
 		while( zombies.size > 0 )
