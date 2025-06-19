@@ -553,6 +553,7 @@ init_levelvars()
 	set_zombie_var( "zombie_intermission_time", 		15 );
 
 	// Spawning
+	set_zombie_var( "zombie_spawn_delay_start", 		3 );
 	set_zombie_var( "zombie_spawn_delay", 				3 );
 
 	// AI 
@@ -563,7 +564,7 @@ init_levelvars()
 	set_zombie_var( "zombie_ai_per_player", 			6 );
 
 	// Scoring
-	set_zombie_var( "zombie_score_start", 				500 );
+	set_zombie_var( "zombie_score_start", 				200 );
 /#
 	if( GetDvarInt( "zombie_cheat" ) >= 1 )
 	{
@@ -622,6 +623,26 @@ init_dvars()
 	}
 
 	SetDvar( "revive_trigger_radius", "60" ); 
+
+	if(getdvar("easy_health") == "")//will only add a small amount of health per round and recalculate as if always doing that
+	{
+		SetDvar( "easy_health", "0" );
+	}
+	
+	if(getdvarint("zombie_max_concurrent") == "" || getdvarint("zombie_max_concurrent") < 1)//override max amount of enemies at once (not round max)
+	{
+		SetDvar( "zombie_max_concurrent", 0 );
+	}
+
+	if(getdvarint("zombie_speed") == "" || getdvarint("zombie_speed") < 1)//sets direct speed. normally 8 * round
+	{
+		SetDvar( "zombie_speed", 0 );
+	}
+
+	if(getdvarint("round_rate") == "" || getdvarint("round_rate") < 1)//sets spawn rate/time to this round's natural rate
+	{
+		SetDvar( "round_rate", 0 );
+	}
 
 }
 
@@ -1739,8 +1760,13 @@ round_spawning()
 		max = int( max * 0.8 );
 	}
 
+	concurrent_enemies = 31;//default concurrent enemies
+	if(getdvarint("zombie_max_concurrent") > 1)
+	{
+		concurrent_enemies = GetDVarInt("zombie_max_concurrent");//override amount that can be in play at once
+	}
 
-	level.zombie_total = max;
+	level.zombie_total = max;//set how many spawn per round here
 	mixed_spawns = 0;	// Number of mixed spawns this round.  Currently means number of dogs in a mixed round
 
 	// DEBUG HACK:	
@@ -1755,7 +1781,7 @@ round_spawning()
 			continue;
 		}
 
-        if(get_enemy_count() > 31)
+        if(get_enemy_count() > concurrent_enemies)
 		{
 			wait(0.05);
             continue;
@@ -1785,7 +1811,7 @@ round_spawning()
 		wait_network_frame();
 	}
 
-	if( level.round_number > 3 )
+	if( level.round_number > 3 ||  level.zombie_move_speed > 31) // sprint if they should, allows zombie_speed to make sprinters early
 	{
 		zombies = getaiarray( "axis" );
 		while( zombies.size > 0 )
@@ -2224,18 +2250,43 @@ round_think()
 
 		wait( level.zombie_vars["zombie_between_round_time"] ); 
 
-		// here's the difficulty increase over time area
-		timer = level.zombie_vars["zombie_spawn_delay"];
+		// here's the difficulty increase over time area ORIGINAL
+		/* timer = level.zombie_vars["zombie_spawn_delay"];
 
 		if( timer < 0.08 )
 		{
 			timer = 0.08; 
 		}	
 
-		level.zombie_vars["zombie_spawn_delay"] = timer * 0.95;
+		level.zombie_vars["zombie_spawn_delay"] = timer * 0.95; */
+
+		count_limit = getdvarint("round_rate");
+		if(count_limit < 1 || count_limit > 20)
+		{
+			count_limit = level.round_number;
+		}
+		
+		timer = 0;
+		count_current = 0;
+		while(count_current < count_limit)
+		{
+			timer = level.zombie_vars["zombie_spawn_delay"];
+			if( timer < 0.08 )
+			{
+				timer = 0.08;
+				count_current = count_limit;//end loop
+			}
+			level.zombie_vars["zombie_spawn_delay"] = timer * 0.95;
+			count_current += 1;
+		}
 
 		// Increase the zombie move speed
 		level.zombie_move_speed = level.round_number * 8;
+
+		if(getdvarint("zombie_speed") > 0) //Set direct zombie move speed
+		{
+			level.zombie_move_speed = getdvarint("zombie_speed");
+		}
 
 		level.round_number++;
 
@@ -2276,17 +2327,27 @@ award_grenades_for_survivors()
 
 ai_calculate_health()
 {
-	// After round 10, get exponentially harder
-	if( level.round_number >= 10 )
+	level.zombie_health = level.zombie_vars["zombie_health_start"];
+	if(getdvarint("easy_health") == 1)//Scale health slowly
 	{
-		level.zombie_health += Int( level.zombie_health * level.zombie_vars["zombie_health_increase_percent"] ); 
+		level.zombie_health = Int( level.zombie_health + ( level.round_number * 15 ) ); 
+		return;
+	}
+
+	level.zombie_health = Int( level.zombie_health + ( level.round_number * level.zombie_vars["zombie_health_increase"] ) );
+	return;
+
+	// After round 10, get exponentially harder
+	/* if( level.round_number >= 10 )
+	{
+		//level.zombie_health += Int( level.zombie_health * level.zombie_vars["zombie_health_increase_percent"] );
 		return;
 	}
 
 	if( level.round_number > 1 )
 	{
 		level.zombie_health = Int( level.zombie_health + level.zombie_vars["zombie_health_increase"] ); 
-	}
+	} */
 
 }
 
