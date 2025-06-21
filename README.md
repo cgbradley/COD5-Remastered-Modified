@@ -1,3 +1,9 @@
+# New DVARS
+easy_health
+zombie_max_concurrent
+zombie_speed
+round_rate
+
 # Call of Duty: World at War Zombies - Remastered Mod
 This mod fixes bugs, improves consistency, adds quality of life tweaks, and makes other improvements to each of the four zombie maps. To install & play, download the release and follow the [installation instructions](https://youtu.be/YbOq6Nb9xug). This repository contains the source files of the project. If you would like to make changes to my mod, see the instructions below.
 
