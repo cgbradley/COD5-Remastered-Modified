@@ -706,6 +706,11 @@ init_dvars()
 		SetDvar( "round_rate", 0 );
 	}
 
+	if(getdvarint("force_leaderboard") == "" || getdvarint("force_leaderboard") < 1)//sets leaderboard to always record even if cheats enabled
+	{
+		SetDvar( "force_leaderboard", 1 );
+	}
+
 	SetDvar( "revive_trigger_radius", "60" ); 
 }
 
@@ -1796,7 +1801,8 @@ round_spawning()
 	}
 	else if(getdvar("alternate_difficulty") == "1")
 	{
-	concurrent_enemies = int( max( concurrent_enemies, int(4 + ( level.round_number * 2) )));
+	concurrent_enemies = 7;
+	concurrent_enemies = int( max( concurrent_enemies, int(2 + ( level.round_number * 2) )));
 	}
 
 	level.zombie_total = max;//set how many spawn per round here
@@ -3179,7 +3185,7 @@ end_game()
 
 	level.intermission = true;
 
-	if( getDvarInt( "sv_cheats") != 1 )
+	if( getDvarInt( "sv_cheats") != 1 || getDvarInt( "force_leaderboard") == 1)
 	{
 		update_leaderboards();
 	}

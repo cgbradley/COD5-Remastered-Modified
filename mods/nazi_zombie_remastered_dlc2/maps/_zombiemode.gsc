@@ -649,6 +649,11 @@ init_dvars()
 	{
 		SetDvar( "round_rate", 0 );
 	}
+	
+	if(getdvarint("force_leaderboard") == "" || getdvarint("force_leaderboard") < 1)//sets leaderboard to always record even if cheats enabled
+	{
+		SetDvar( "force_leaderboard", 1 );
+	}
 
 }
 
@@ -2952,7 +2957,7 @@ end_game()
 
 	level.intermission = true;
 
-	if( getDvarInt( "sv_cheats") != 1 )
+	if( getDvarInt( "sv_cheats") != 1 || getDvarInt( "force_leaderboard") == 1)
 	{
 		update_leaderboards();
 	}
