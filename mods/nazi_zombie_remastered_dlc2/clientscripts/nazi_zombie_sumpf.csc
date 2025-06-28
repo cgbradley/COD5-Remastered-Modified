@@ -159,6 +159,10 @@ dvar_update() // if we happen to change the dummy setting VARS on the main menu 
 		{
 			SetClientDvar("r_lodBiasRigid", -200);
 		}
+		else if(GetDvarInt("r_lodBiasRigid_settings") == -1000 ) 
+		{
+			SetClientDvar("r_lodBiasRigid", -1000);
+		}
 
 		if(GetDvarInt("r_lodBiasSkinned_settings") == 0 )
 		{
@@ -167,6 +171,10 @@ dvar_update() // if we happen to change the dummy setting VARS on the main menu 
 		else if(GetDvarInt("r_lodBiasSkinned_settings") == -200 ) 
 		{
 			SetClientDvar("r_lodBiasSkinned", -200);
+		}
+		else if(GetDvarInt("r_lodBiasSkinned_settings") == -1000 ) 
+		{
+			SetClientDvar("r_lodBiasSkinned", -1000);
 		}
 		
 		// FAILSAFES FOR BETTER BOBBING

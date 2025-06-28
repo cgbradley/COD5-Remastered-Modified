@@ -78,7 +78,7 @@ REFERENCE           CHAR_FOUR_DESC_ASY
 LANG_ENGLISH        "Missing in action. \n...\nNAME REDACTED\n \n310574    P \nTYPE-A- \nT10/41 \nUSMC \n...\nPart of 4-man Marine fire team assigned with aiding the rescue and extraction of a captured OSS operative. \n"
 
 REFERENCE           LEVEL_ZOMBIE_ASYLUM
-LANG_ENGLISH        "Verrückt"
+LANG_ENGLISH        "Verrï¿½ckt"
 
 REFERENCE           CHAR_DIALOGUE
 LANG_ENGLISH        "Character Dialogue"
@@ -111,7 +111,7 @@ REFERENCE           LEVEL_ZOMBIE_THEATER
 LANG_ENGLISH        "Kino der Toten"
 
 REFERENCE           LEVEL_DESC_ZOM_THEATER
-LANG_ENGLISH        "Theater of the damned. An abandoned cinema swarming with crawler zombies and hordes of the undead. New twists and clues await your discovery to uncover the final plan. It’s showtime!"
+LANG_ENGLISH        "Theater of the damned. An abandoned cinema swarming with crawler zombies and hordes of the undead. New twists and clues await your discovery to uncover the final plan. Itï¿½s showtime!"
 
 REFERENCE           THEATER_TITLE
 LANG_ENGLISH        "NAZI ZOMBIES - KINO DER TOTEN"
@@ -123,7 +123,7 @@ REFERENCE           SHI_NO_TITLE
 LANG_ENGLISH        "NAZI ZOMBIES - SHI NO NUMA"
 
 REFERENCE           VERRUCKT_TITLE
-LANG_ENGLISH        "NAZI ZOMBIES - VERRÜCKT"
+LANG_ENGLISH        "NAZI ZOMBIES - VERRï¿½CKT"
 
 REFERENCE           NACHT_TITLE
 LANG_ENGLISH        "NAZI ZOMBIES - NACHT DER UNTOTEN"
@@ -212,8 +212,8 @@ LANG_ENGLISH        "LOD Range (Rigid)"
 REFERENCE           LOD_SKINNED
 LANG_ENGLISH        "LOD Range (Skinned)"
 
-REFERENCE           DEFAULT
-LANG_ENGLISH        "Default"
+REFERENCE           LOW
+LANG_ENGLISH        "Low"
 
 REFERENCE           CONTROLLER_SUPPORT
 LANG_ENGLISH        "Controller Mode"

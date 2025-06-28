@@ -242,12 +242,12 @@
 		CHOICE_DVARFLOATLIST_VIS( 30, "@MENU_SPECULAR_MAP_RESOLUTION", ui_r_picmip_spec, { "@MENU_LOW" 3 "@MENU_NORMAL" 2 "@MENU_HIGH" 1 "@MENU_EXTRA" 0 }, setLocalVarBool ui_showApply 1, when( dvarint( ui_r_picmip_manual ) ) )
 
 		//when on menu, we are just changing the dummy var because our client script will set the actual 2 dvars
-		CHOICE_DVARFLOATLIST_VIS( 25, "@REMASTERED_LOD_RIGID", r_lodBiasRigid_settings, { "@REMASTERED_HIGH" -200 "@REMASTERED_DEFAULT" 0 }, ; , when( !dvarint(cl_ingame) ) ) // Increases LOD bias for detailed models
-		CHOICE_DVARFLOATLIST_VIS( 26, "@REMASTERED_LOD_SKINNED", r_lodBiasSkinned_settings, { "@REMASTERED_HIGH" -200 "@REMASTERED_DEFAULT" 0 }, ; , when( !dvarint(cl_ingame) ) ) // Increases LOD bias for detailed models
+		CHOICE_DVARFLOATLIST_VIS( 25, "@REMASTERED_LOD_RIGID", r_lodBiasRigid_settings, { "@REMASTERED_HIGH" -1000 "@REMASTERED_MEDIUM" -200 "@REMASTERED_LOW" 0 }, ; , when( !dvarint(cl_ingame) ) ) // Increases LOD bias for detailed models
+		CHOICE_DVARFLOATLIST_VIS( 26, "@REMASTERED_LOD_SKINNED", r_lodBiasSkinned_settings, { "@REMASTERED_HIGH" -1000 "@REMASTERED_MEDIUM" -200 "@REMASTERED_LOW" 0 }, ; , when( !dvarint(cl_ingame) ) ) // Increases LOD bias for detailed models
 
 		//however, when we are in game we will edit the actual settings
-		CHOICE_DVARFLOATLIST_VIS( 25, "@REMASTERED_LOD_RIGID", r_lodBiasRigid, { "@REMASTERED_HIGH" -200 "@REMASTERED_DEFAULT" 0 }, exec "setfromdvar r_lodBiasRigid_settings r_lodBiasRigid" , when( dvarint(cl_ingame) ) ) 
-		CHOICE_DVARFLOATLIST_VIS( 26, "@REMASTERED_LOD_SKINNED", r_lodBiasSkinned, { "@REMASTERED_HIGH" -200 "@REMASTERED_DEFAULT" 0 }, exec "setfromdvar r_lodBiasSkinned_settings r_lodBiasSkinned" , when( dvarint(cl_ingame) ) ) 
+		CHOICE_DVARFLOATLIST_VIS( 25, "@REMASTERED_LOD_RIGID", r_lodBiasRigid, { "@REMASTERED_HIGH" -1000 "@REMASTERED_MEDIUM" -200 "@REMASTERED_LOW" 0 }, exec "setfromdvar r_lodBiasRigid_settings r_lodBiasRigid" , when( dvarint(cl_ingame) ) ) 
+		CHOICE_DVARFLOATLIST_VIS( 26, "@REMASTERED_LOD_SKINNED", r_lodBiasSkinned, { "@REMASTERED_HIGH" -1000 "@REMASTERED_MEDIUM" -200 "@REMASTERED_LOW" 0 }, exec "setfromdvar r_lodBiasSkinned_settings r_lodBiasSkinned" , when( dvarint(cl_ingame) ) ) 
 
 		//CHOICE_DDVARALTTEXT_VIS( 24, "@REMASTERED_LOD", "@REMASTERED_DETAIL", when( INGAME && dvarString( "lod_bias_enable") == "0" ) )
 		//CHOICE_DDVARALTTEXT_VIS( 24, "@REMASTERED_LOD", "@REMASTERED_LOW_DETAIL", when( INGAME && dvarString( "lod_bias_enable") == "1" ) )
