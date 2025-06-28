@@ -44,6 +44,7 @@
 		onClose
 		{
 			exec "setfromdvar cg_fov_settings cg_fov";
+			exec "setfromdvar gpad_button_deadzone_settings gpad_button_deadzone";
 			setLocalVarBool ui_hideBack 0;
 	        setLocalVarBool hint_gametype 0;
 	        setLocalVarBool hint_laststand 0;
@@ -53,6 +54,7 @@
 		onESC
 		{ 
 			exec "setfromdvar cg_fov_settings cg_fov";
+			exec "setfromdvar gpad_button_deadzone_settings gpad_button_deadzone";
 			close self;
 		}
 
@@ -124,7 +126,10 @@
 
 // for when controller mode disabled
 		CHOICE_DDVARALTTEXT_VIS( 32, "@MENU_AIM_ASSIST", "@MENU_NO",  when ( !dvarint(cg_drawDpadHUD) ) )		
-		
+
+// for when controller mode enabled		
+		CHOICE_DVARSLIDER_VIS( 33, "@REMASTERED_CONTROLLER_DEADZONE", gpad_button_deadzone, 0.13, 0.01, 0.2, ;, when ( dvarint(cg_drawDpadHUD) ) )
+
 		itemDef 
 		{
 			name			hint_gametype

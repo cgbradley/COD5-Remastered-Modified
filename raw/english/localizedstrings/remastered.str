@@ -218,6 +218,9 @@ LANG_ENGLISH        "LOD Range (Skinned)"
 REFERENCE           CONTROLLER_SUPPORT
 LANG_ENGLISH        "Controller Mode"
 
+REFERENCE           CONTROLLER_DEADZONE
+LANG_ENGLISH        "Controller Deadzone"
+
 REFERENCE           CONTROLLER_V1
 LANG_ENGLISH        "Enable to bind gamepad controls and use console style HUD."
 
