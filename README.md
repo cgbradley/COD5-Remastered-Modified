@@ -1,9 +1,3 @@
-# New DVARS
-easy_health
-zombie_max_concurrent
-zombie_speed
-round_rate
-
 # Call of Duty: World at War Zombies - Remastered Mod
 This mod fixes bugs, improves consistency, adds quality of life tweaks, and makes other improvements to each of the four zombie maps. To install & play, download the release and follow the [installation instructions](https://youtu.be/YbOq6Nb9xug). This repository contains the source files of the project. If you would like to make changes to my mod, see the instructions below.
 
@@ -164,8 +158,8 @@ nazi_zombie_remastered_dlc3 (Der Riese)
 | Cinematic Mode | `r_filmUseTweaks_settings` | `0` No | `1` Yes | More saturated color grading. |
 | **TEXTURE SETTINGS** |  |  |  |  |
 | Max Anisotropy | `r_textFilterAnisoMax` | `4` Low | `16` Normal | Increases max possible texture filtering quality. |
-| LOD Range (Rigid) | `r_lodBiasRigid_settings` | `0` Default | `-200` High | `-1000` Max | Increases range of visible detail on rigid models. |
-| LOD Range (Skinned) | `r_lodBiasSkinned_settings` | `0` Default | `-200` High | `-1000` Max | Increases range of visible detail on skinned models. |
+| LOD Range (Rigid) | `r_lodBiasRigid_settings` | `0` Default | `-200` High | Increases range of visible detail on rigid models. |
+| LOD Range (Skinned) | `r_lodBiasSkinned_settings` | `0` Default | `-200` High | Increases range of visible detail on skinned models. |
 | **SOUND** |  |  |  |  |
 | Character Dialogue | `character_dialog` | `0` Yes | `1` No | Enable or disables character dialogue. Locked in-game in co-op as dialogue is not clientside. |
 | **GAME OPTIONS** |  |  |  |  |
