@@ -158,6 +158,27 @@ main(init_zombie_spawner_name)
 			break;	
 	}
 
+	/*iprintln("Here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+	iprintln("Here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+	iprintln("Here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+	iprintln("Here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+	iprintln("Here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+	if( IsDefined( level.zombie_weapons ) )
+	{
+		struct = level.zombie_weapons["zombie_gewehr43"];
+		struct.cost = 400;
+		//struct.hint = &"ZOMBIE_WEAPON_GEWEHR43_400";
+		level.zombie_weapons["zombie_gewehr43"] = struct;
+	}
+
+	struct = level.zombie_weapons["kar98k"];
+	struct.cost = 300;
+	level.zombie_weapons["kar98k"] = struct;
+
+	struct = level.zombie_weapons["zombie_kar98k"];
+	struct.cost = 500;
+	level.zombie_weapons["zombie_kar98k"] = struct;*/
+
 	SetDvar( "dynEnt_spawnedLimit", level.dynEnt_spawnedLimit );
 /*	if(getDvarInt("classic_perks") == 1) //enable old jug
 	{
@@ -655,22 +676,32 @@ init_dvars()
 		SetDvar( "magic_box_explore_only", "1" );
 	}
 
+	if(getdvar("alternate_difficulty") == "")
+	{
+		SetDvar( "alternate_difficulty", "0" );
+	}
+
 	if(getdvar("easy_health") == "")//will only add a small amount of health per round and recalculate as if always doing that
 	{
 		SetDvar( "easy_health", "0" );
 	}
-	
-	if(getdvarint("zombie_max_concurrent") == "" || getdvarint("zombie_max_concurrent") < 1)//override max amount of enemies at once (not round max)
+
+	if(getdvar("easy_health_scale") == "" || getdvarint("easy_health_scale") < 1)//how much to add each round for easy health
+	{
+		SetDvar( "easy_health_scale", 0 );
+	}
+
+	if(getdvar("zombie_max_concurrent") == "" || getdvarint("zombie_max_concurrent") < 1)//override max amount of enemies at once (not round max)
 	{
 		SetDvar( "zombie_max_concurrent", 0 );
 	}
 
-	if(getdvarint("zombie_speed") == "" || getdvarint("zombie_speed") < 1)//sets direct speed. normally 8 * round
+	if(getdvar("zombie_speed") == "" || getdvarint("zombie_speed") < 1)//sets direct speed. normally 8 * round
 	{
 		SetDvar( "zombie_speed", 0 );
 	}
 
-	if(getdvarint("round_rate") == "" || getdvarint("round_rate") < 1)//sets spawn rate/time to this round's natural rate
+	if(getdvar("round_rate") == "" || getdvarint("round_rate") < 1)//sets spawn rate/time to this round's natural rate
 	{
 		SetDvar( "round_rate", 0 );
 	}
@@ -1763,6 +1794,10 @@ round_spawning()
 	{
 		concurrent_enemies = GetDVarInt("zombie_max_concurrent");//override amount that can be in play at once
 	}
+	else if(getdvar("alternate_difficulty") == "1")
+	{
+	concurrent_enemies = int( max( concurrent_enemies, int(4 + ( level.round_number * 2) )));
+	}
 
 	level.zombie_total = max;//set how many spawn per round here
 	mixed_spawns = 0;	// Number of mixed spawns this round.  Currently means number of dogs in a mixed round
@@ -2432,6 +2467,10 @@ round_think()
 		{
 			level.zombie_move_speed = getdvarint("zombie_speed");
 		}
+		else if(getdvar("alternate_difficulty") == "1")
+		{
+			level.zombie_move_speed = int(4 + (level.round_number * 4));
+		}
 
 		level.round_number++;
 
@@ -2475,7 +2514,12 @@ ai_calculate_health()
 	level.zombie_health = level.zombie_vars["zombie_health_start"];
 	if(getdvarint("easy_health") == 1)//Scale health slowly
 	{
-		level.zombie_health = Int( level.zombie_health + ( level.round_number * 15 ) ); 
+		health_scale = 15;
+		if(getdvarint("easy_health_scale") > 0)
+		{
+			health_scale = getdvarint("easy_health_scale");
+		}
+		level.zombie_health = Int( level.zombie_health + ( level.round_number * health_scale ) ); 
 		return;
 	}
 

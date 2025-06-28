@@ -121,7 +121,7 @@ main()
 			break;	
 	}
 
-	SetDvar( "dynEnt_spawnedLimit", level.dynEnt_spawnedLimit );
+	SetDvar( "dynEnt_spawnedLimit", level.dynEnt_spawnedLimit );//setsaveddvar because of console error
 /*	if(getDvarInt("classic_perks") == 1) //enable old jug
 	{
 		level thread check_for_old_jug();
