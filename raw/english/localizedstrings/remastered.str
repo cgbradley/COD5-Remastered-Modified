@@ -189,18 +189,21 @@ REFERENCE           NORMAL
 LANG_ENGLISH        "Normal"
 
 REFERENCE           LOW
+LANG_ENGLISH        "Low"
+
+REFERENCE           SENSE_LOW
 LANG_ENGLISH        "1 (Low)"
 
-REFERENCE           MED
+REFERENCE           SENSE_MED
 LANG_ENGLISH        "2 (Medium)"
 
-REFERENCE           HI
+REFERENCE           SENSE_HI
 LANG_ENGLISH        "4 (High)"
 
-REFERENCE           V_HI
+REFERENCE           SENSE_V_HI
 LANG_ENGLISH        "7 (Very High)"
 
-REFERENCE           INSANE
+REFERENCE           SENSE_INSANE
 LANG_ENGLISH        "10 (Insane)"
 
 REFERENCE           SUPER_SPRINTERS
@@ -211,9 +214,6 @@ LANG_ENGLISH        "LOD Range (Rigid)"
 
 REFERENCE           LOD_SKINNED
 LANG_ENGLISH        "LOD Range (Skinned)"
-
-REFERENCE           LOW
-LANG_ENGLISH        "Low"
 
 REFERENCE           CONTROLLER_SUPPORT
 LANG_ENGLISH        "Controller Mode"
