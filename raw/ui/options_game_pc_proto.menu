@@ -44,6 +44,7 @@
 		onClose
 		{
 			exec "setfromdvar cg_fov_settings cg_fov";
+			exec "setfromdvar gpad_button_deadzone_settings gpad_button_deadzone";
 			setLocalVarBool ui_hideBack 0;
 	        setLocalVarBool hint_gametype 0;
 	        setLocalVarBool hint_laststand 0;
@@ -54,6 +55,7 @@
 		onESC
 		{ 
 			exec "setfromdvar cg_fov_settings cg_fov";
+			exec "setfromdvar gpad_button_deadzone_settings gpad_button_deadzone";
 			close self;
 		}
 
@@ -135,6 +137,9 @@
 // to do
 // need to make it so loading into the map with aim assist set to 1 will force it enabled by default
 // make sure u cant glitch it out and accidently break it by spamming these settings
+
+// for when controller mode enabled		
+		CHOICE_DVARSLIDER_VIS( 34, "@REMASTERED_CONTROLLER_DEADZONE", gpad_button_deadzone, 0.13, 0.01, 0.2, ;, when ( dvarint(cg_drawDpadHUD) ) )
 
 
 		itemDef 

@@ -166,6 +166,10 @@ dvar_update() // if we happen to change the dummy setting VARS on the main menu 
 		{
 			SetClientDvar("r_lodBiasRigid", -200);
 		}
+		else if(GetDvarInt("r_lodBiasRigid_settings") == -1000 ) 
+		{
+			SetClientDvar("r_lodBiasRigid", -1000);
+		}
 
 		if(GetDvarInt("r_lodBiasSkinned_settings") == 0 )
 		{
@@ -174,6 +178,24 @@ dvar_update() // if we happen to change the dummy setting VARS on the main menu 
 		else if(GetDvarInt("r_lodBiasSkinned_settings") == -200 ) 
 		{
 			SetClientDvar("r_lodBiasSkinned", -200);
+		}
+		else if(GetDvarInt("r_lodBiasSkinned_settings") == -1000 ) 
+		{
+			SetClientDvar("r_lodBiasSkinned", -1000);
+		}
+
+		real_deadzone = GetDvarFloat("gpad_button_deadzone_settings");
+		if(real_deadzone < 0)
+		{
+			SetClientDvar("gpad_button_deadzone", 0);
+		}
+		else if(real_deadzone > 0.99)
+		{
+			SetClientDvar("gpad_button_deadzone", 0.99);
+		}
+		else
+		{
+			SetClientDvar("gpad_button_deadzone", real_deadzone);
 		}
 
 		// FAILSAFES FOR BETTER BOBBING
