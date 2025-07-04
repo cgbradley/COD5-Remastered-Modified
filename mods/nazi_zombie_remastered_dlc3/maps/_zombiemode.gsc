@@ -635,9 +635,12 @@ init_levelvars()
 	set_zombie_var( "zombie_flame_dmg_point_delay",		500 );	
 
 	//Override points amount
-	level.zombie_vars["zombie_score_kill"] = 20;
-	level.zombie_vars["zombie_score_bonus_melee"] = 30;
-	level.zombie_vars["zombie_score_bonus_head"] = 20;
+	//level.zombie_vars["zombie_score_kill"] = 20;
+	//level.zombie_vars["zombie_score_bonus_melee"] = 30;
+	//level.zombie_vars["zombie_score_bonus_head"] = 20;
+	level.zombie_vars["zombie_score_kill"] = 50.300;
+	level.zombie_vars["zombie_score_bonus_melee"] = 80.500;
+	level.zombie_vars["zombie_score_bonus_head"] = 50.300;
 
 	if ( IsSplitScreen() )
 	{
@@ -706,7 +709,7 @@ init_dvars()
 		SetDvar( "round_rate", 0 );
 	}
 
-	if(getdvarint("force_leaderboard") == "" || getdvarint("force_leaderboard") < 1)//sets leaderboard to always record even if cheats enabled
+	if(getdvar("force_leaderboard") == "" || getdvarint("force_leaderboard") < 0 || getdvarint("force_leaderboard") > 1)//sets leaderboard to always record even if cheats enabled
 	{
 		SetDvar( "force_leaderboard", 1 );
 	}

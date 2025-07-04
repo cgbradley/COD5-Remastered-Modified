@@ -20,12 +20,27 @@ player_add_points( event, mod, hit_location ,is_dog)
 	}
 	
 	points = 0;
-
+	alteredpoints = 0;
+	//string_data = "";
 	switch( event )
 	{
 		case "death":
 			points = level.zombie_vars["zombie_score_kill"]; 
-			points += player_add_points_kill_bonus( mod, hit_location );
+			alteredpoints = Int(points) - ((points - Int(points))*100); //get altered amount for kill
+
+			bonuspoints = player_add_points_kill_bonus( mod, hit_location );
+
+			//string_data = "p: "+ string(points) + " | bp: " + string(bonuspoints) + " | ap" + string(alteredpoints);
+
+			points = Int(points) + Int(bonuspoints);
+
+			bonuspoints = Int(bonuspoints) - ((bonuspoints - Int(bonuspoints))*100);//get altered form of bonus points
+
+			//string_data = string_data + " | abp: " + string(bonuspoints);
+
+			alteredpoints = Int(alteredpoints + bonuspoints);
+			
+
 			if(IsDefined(self.kill_tracker))
 			{
 				self.kill_tracker++;
@@ -45,16 +60,19 @@ player_add_points( event, mod, hit_location ,is_dog)
 			if( level.zombie_vars["zombie_powerup_insta_kill_on"] == 1 && mod == "MOD_UNKNOWN" )
 			{
 				points = points * 2;
+				alteredpoints = alteredpoints * 2;
 			}
 
 			break; 
 	
 		case "damage":
 			points = level.zombie_vars["zombie_score_damage"]; 
+			alteredpoints = points;
 			break; 
 	
 		case "damage_ads":
 			points = Int( level.zombie_vars["zombie_score_damage"] * 1.25 ); 
+			alteredpoints = points;
 			break;
 	
 		default:
@@ -63,10 +81,15 @@ player_add_points( event, mod, hit_location ,is_dog)
 	}
 
 	points = round_up_to_ten( points ) * level.zombie_vars["zombie_point_scalar"];
+	alteredpoints = round_up_to_ten( alteredpoints ) * level.zombie_vars["zombie_point_scalar"];
 	
 
-	self.score += points; 
+	self.score += alteredpoints; 
 	self.score_total += points;
+
+	//string_data = string_data + " || P" + string(points) + " | A" + string(alteredpoints) + " | ";
+	//iprintln(string_data + string(self.score) + " I " + string(self.score_total));
+
 	//stat tracking
 	self.stats["score"] = self.score_total;
 
