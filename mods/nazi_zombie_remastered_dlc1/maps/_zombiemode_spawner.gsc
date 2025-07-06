@@ -418,7 +418,7 @@ zombie_assure_node()
 		{
 			self zombie_history( "zombie_assure_node -> assigned assured node = " + self.entrance_nodes[i].origin );
 
-			println( "^1Zombie @ " + self.origin + " did not move for 1 second. Going to next closest node @ " + self.entrance_nodes[i].origin );
+			//println( "^1Zombie @ " + self.origin + " did not move for 1 second. Going to next closest node @ " + self.entrance_nodes[i].origin );
 			level thread draw_line_ent_to_pos( self, self.entrance_nodes[i].origin, "goal" );
 			self.first_node = self.entrance_nodes[i];
 			self SetGoalPos( self.entrance_nodes[i].origin );
@@ -442,7 +442,7 @@ zombie_assure_node()
 			{
 				self zombie_history( "zombie_assure_node -> assigned assured node = " + self.entrance_nodes[i].origin );
 
-				println( "^1Zombie @ " + self.origin + " did not move for 1 second. Going to next closest node @ " + self.entrance_nodes[i].origin );
+				//println( "^1Zombie @ " + self.origin + " did not move for 1 second. Going to next closest node @ " + self.entrance_nodes[i].origin );
 				level thread draw_line_ent_to_pos( self, self.entrance_nodes[i].origin, "goal" );
 				self.first_node = self.entrance_nodes[i];
 				self SetGoalPos( self.entrance_nodes[i].origin );
@@ -457,7 +457,7 @@ zombie_assure_node()
 	self zombie_history( "zombie_assure_node -> failed to find a good entrance point" );
 	
 	//assertmsg( "^1Zombie @ " + self.origin + " did not find a good entrance point... Please fix pathing or Entity setup" );
-	wait(20);
+	wait(90);
 	//iprintln( "^1Zombie @ " + self.origin + " did not find a good entrance point... Please fix pathing or Entity setup" );
 	self DoDamage( self.health + 10, self.origin );
 }
@@ -1820,7 +1820,7 @@ play_death_vo(hit_location, player,mod,zombie)
 
 	sound = undefined;
 	//just return and don't play a sound if the chance is not there
-	if(chance < randomint(100) )
+	if(chance < randomint(130) )
 	{
 		return;
 	}
