@@ -24,9 +24,9 @@ main()
 	level.pulls_since_last_tesla_gun = 0;
 	level.player_drops_tesla_gun = false;
 
-	level.dogs_enabled = true;		//PI ESM - added for dog support
+	level.dogs_enabled = false;		//PI ESM - added for dog support
 //	level.crawlers_enabled = true;		//MM - added for crawler support
-	level.mixed_rounds_enabled = true;	// MM added support for mixed crawlers and dogs
+	level.mixed_rounds_enabled = false;	// MM added support for mixed crawlers and dogs
 	level.burning_zombies = [];		//JV max number of zombies that can be on fire
 	level.traps = [];				//Contains all traps currently in this map
 	level.zombie_rise_spawners = [];	// Zombie riser control
