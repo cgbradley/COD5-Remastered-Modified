@@ -2105,7 +2105,7 @@ play_death_vo(hit_location, player, mod, zombie)
 	
 	sound = undefined;
 	//just return and don't play a sound if the chance is not there
-	if(chance < randomint(130) )
+	if(chance < randomint(100) )
 	{
 		return;
 	}
@@ -2134,25 +2134,29 @@ play_death_vo(hit_location, player, mod, zombie)
 		//chrisp - far headshot sounds
 		if(distance(player.origin,zombie.origin) > 450)
 		{
-			//sound = "plr_" + index + "_vox_kill_headdist" + "_" + randomintrange(0, 11);
-			plr = "plr_" + index + "_";
-			player play_headshot_dialog (plr);
+			rand = randomintrange(0, 100);
+			if(rand < 60) //originally not here
+			{
+				//sound = "plr_" + index + "_vox_kill_headdist" + "_" + randomintrange(0, 11);
+				plr = "plr_" + index + "_";
+				player play_headshot_dialog (plr);
 
-			if(index == 0 && players.size != 1 ) // DEMPSEY gets a headshot, NIKOLAI (Hero), RICHTOFEN (Rival)
-			{	
-				designate_rival_hero(player,1,3);
-			}
-			if(index == 1 && players.size != 1 ) // NIKOLAI gets a headshot, RICHTOFEN (Hero), TAKEO (Rival)
-			{		
-				designate_rival_hero(player,3,2);
-			}		
-			if(index == 2 && players.size != 1 ) // TAKEO gets a headshot, DEMPSEY (Hero), NIKOLAI (Rival)
-			{
-				designate_rival_hero(player,0,1);
-			}
-			if(index == 3 && players.size != 1 ) // RICHTOFEN gets a headshot, TAKEO (Hero), DEMPSEY (Rival)
-			{
-				designate_rival_hero(player,2,0);	
+				if(index == 0 && players.size != 1 ) // DEMPSEY gets a headshot, NIKOLAI (Hero), RICHTOFEN (Rival)
+				{	
+					designate_rival_hero(player,1,3);
+				}
+				if(index == 1 && players.size != 1 ) // NIKOLAI gets a headshot, RICHTOFEN (Hero), TAKEO (Rival)
+				{		
+					designate_rival_hero(player,3,2);
+				}		
+				if(index == 2 && players.size != 1 ) // TAKEO gets a headshot, DEMPSEY (Hero), NIKOLAI (Rival)
+				{
+					designate_rival_hero(player,0,1);
+				}
+				if(index == 3 && players.size != 1 ) // RICHTOFEN gets a headshot, TAKEO (Hero), DEMPSEY (Rival)
+				{
+					designate_rival_hero(player,2,0);	
+				}
 			}
 			return;
 		}	
@@ -2170,7 +2174,7 @@ play_death_vo(hit_location, player, mod, zombie)
 		if(distance(player.origin,zombie.origin) > 348 && level.zombie_vars["zombie_insta_kill"] == 0)
 		{
 			rand = randomintrange(0, 100);
-			if(rand < 28)
+			if(rand < 10) //originally 28
 			{
 				plr = "plr_" + index + "_";
 				player play_raygun_dialog(plr);
@@ -2189,8 +2193,12 @@ play_death_vo(hit_location, player, mod, zombie)
 	{
 		//TUEY play flamethrower death sounds
 		//	iprintlnbold(mod);
-		plr = "plr_" + index + "_";
-		player play_flamethrower_dialog (plr);
+		rand = randomintrange(0, 100);
+		if(rand < 40) //originally not here
+		{
+			plr = "plr_" + index + "_";
+			player play_flamethrower_dialog (plr);
+		}
 		return;
 	}	
 	
@@ -2205,16 +2213,16 @@ play_death_vo(hit_location, player, mod, zombie)
 		}
 	}
 	
-	//Bowie knife: Plays 25% chance vox, or else exert on knife kill
+	//Bowie knife: Plays low% chance vox, or else exert on knife kill
 	if( player HasPerk( "specialty_altmelee" ) && mod == "MOD_MELEE" && level.zombie_vars["zombie_insta_kill"] == 0 )
 	{
 		rand = randomintrange(0, 100);
-		if(rand < 25)
+		if(rand < 6) //originally 25
 		{
 			plr = "plr_" + index + "_";
 			player create_and_play_dialog ( plr, "vox_kill_bowie", 0.25 );
 		}
-		else if(rand < 40) // small odds we still can do close kill dialog
+		else if(rand < 10) //originally 40 // small odds we still can do close kill dialog
 		{
 			plr = "plr_" + index + "_";
 			player play_closekill_dialog (plr);				
@@ -2232,9 +2240,13 @@ play_death_vo(hit_location, player, mod, zombie)
 	{
 		if( (mod == "MOD_MELEE" || mod == "MOD_BAYONET" /*|| mod == "MOD_UNKNOWN"*/ || player IsMeleeing() ) && distance(player.origin,zombie.origin) < 64)
 		{
-			plr = "plr_" + index + "_";
-			player play_insta_melee_dialog(plr);
-			//sound = "plr_" + index + "_vox_melee_insta" + "_" + randomintrange(0, 5); 
+			rand = randomintrange(0, 100);
+			if(rand < 20) //originally not here
+			{
+				plr = "plr_" + index + "_";
+				player play_insta_melee_dialog(plr);
+				//sound = "plr_" + index + "_vox_melee_insta" + "_" + randomintrange(0, 5); 
+			}
 			return;
 		}
 	}
@@ -2242,33 +2254,41 @@ play_death_vo(hit_location, player, mod, zombie)
 	//Explosive Kills
 	if((mod == "MOD_GRENADE_SPLASH" || mod == "MOD_GRENADE") && level.zombie_vars["zombie_insta_kill"] == 0 )
 	{
+
 		//Plays explosion dialog
-		if( zombie.damageweapon	== "zombie_cymbal_monkey" )
+		rand = randomintrange(0, 100);
+		if(rand < 30) //originally not here
 		{
-			plr = "plr_" + index + "_";
-			player create_and_play_dialog( plr, "vox_kill_monkey", 0.25 );
-			return;
+			if( zombie.damageweapon	== "zombie_cymbal_monkey" )
+			{
+				plr = "plr_" + index + "_";
+				player create_and_play_dialog( plr, "vox_kill_monkey", 0.25 );
+			}
+			else
+			{
+				plr = "plr_" + index + "_";
+				player play_explosion_dialog(plr);
+			}
 		}
-		else
-		{
-			plr = "plr_" + index + "_";
-			player play_explosion_dialog(plr);
-			return;
-		}
+		return;
 	}
 	
 	if( mod == "MOD_PROJECTILE")
 	{	
 		//Plays explosion dialog
-		plr = "plr_" + index + "_";
-		player play_explosion_dialog(plr);
+		rand = randomintrange(0, 100);
+		if(rand < 30) //originally not here
+		{
+			plr = "plr_" + index + "_";
+			player play_explosion_dialog(plr);
+		}
 		return;
 	}
 	
 	if(IsDefined(zombie) && distance(player.origin,zombie.origin) < 64 && level.zombie_vars["zombie_insta_kill"] == 0 && mod != "MOD_BURNED" )
 	{
 		rand = randomintrange(0, 100);
-		if(rand < 40)
+		if(rand < 20) //originally 40
 		{
 			plr = "plr_" + index + "_";
 			player play_closekill_dialog (plr);				
