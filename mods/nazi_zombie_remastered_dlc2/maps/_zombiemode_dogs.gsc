@@ -488,9 +488,16 @@ dog_round_tracker()
 
 		if ( level.round_number == level.next_dog_round )
 		{
+			if ( GetDvar( "dogs_enabled" ) != "0")
+			{
 			sav_func = level.round_spawn_func;
 			dog_round_start();
 			level.round_spawn_func = ::dog_round_spawning;
+			}
+			else
+			{
+				printLn( "Dog round skipped" );
+			}
 
 			level.next_dog_round = level.round_number + randomintrange( 4, 6 );
 			/#
@@ -513,7 +520,7 @@ dog_round_start()
 	flag_set( "dog_round" );
 	flag_set( "dog_clips" );
 	play_sound_2D( "dark_sting" );
-	play_sound_2D( "sumpf_howl" );
+	//play_sound_2D( "sumpf_howl" );
 	if(!IsDefined (level.doground_nomusic))
 	{
 		level.doground_nomusic = 0;

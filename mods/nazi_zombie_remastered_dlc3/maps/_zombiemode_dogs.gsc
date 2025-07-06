@@ -497,10 +497,16 @@ dog_round_tracker()
 
 		if ( level.round_number == level.next_dog_round )
 		{
+			if ( GetDvar( "dogs_enabled" ) != "0")
+			{
 			sav_func = level.round_spawn_func;
 			dog_round_start();
 			level.round_spawn_func = ::dog_round_spawning;
-
+			}
+			else
+			{
+				printLn( "Dog round skipped" );
+			}
 			level.next_dog_round = level.round_number + randomintrange( 4, 6 );
 			/#
 				get_players()[0] iprintln( "Next dog round: " + level.next_dog_round );

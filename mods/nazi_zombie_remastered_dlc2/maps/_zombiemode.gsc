@@ -630,6 +630,11 @@ init_dvars()
 
 	SetDvar( "revive_trigger_radius", "60" ); 
 
+	if ( GetDvar( "dogs_enabled" ) == "" || ( GetDvar( "dogs_enabled" ) != "1" && GetDvar( "dogs_enabled" ) == "0") )
+	{
+		SetDvar( "dogs_enabled", "0" );
+	}
+
 	if(getdvar("easy_health") == "")//will only add a small amount of health per round and recalculate as if always doing that
 	{
 		SetDvar( "easy_health", "0" );

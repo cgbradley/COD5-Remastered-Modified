@@ -33,7 +33,7 @@ main()
 	maps\nazi_zombie_sumpf_fx::main();
 	
 	// enable for dog rounds
-	level.dogs_enabled = false;
+	level.dogs_enabled = true;
 
 	// enable for zombie risers within active player zones
 	level.zombie_rise_spawners = [];

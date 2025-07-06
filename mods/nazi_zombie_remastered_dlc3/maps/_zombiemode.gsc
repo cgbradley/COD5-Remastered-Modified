@@ -679,6 +679,11 @@ init_dvars()
 		SetDvar( "magic_box_explore_only", "1" );
 	}
 
+	if ( GetDvar( "dogs_enabled" ) == "" || ( GetDvar( "dogs_enabled" ) != "1" && GetDvar( "dogs_enabled" ) == "0") )
+	{
+		SetDvar( "dogs_enabled", "0" );
+	}
+
 	if(getdvar("alternate_difficulty") == "")
 	{
 		SetDvar( "alternate_difficulty", "0" );
