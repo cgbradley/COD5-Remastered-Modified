@@ -30,13 +30,13 @@ player_add_points( event, mod, hit_location ,is_dog)
 
 			bonuspoints = player_add_points_kill_bonus( mod, hit_location );
 
-			//string_data = "p: "+ string(points) + " | bp: " + string(bonuspoints) + " | ap" + string(alteredpoints);
+			string_data = "p: "+ string(points) + " | bp: " + string(bonuspoints) + " | ap" + string(alteredpoints);
 
 			points = Int(points) + Int(bonuspoints);
 
 			bonuspoints = Int(bonuspoints) - ((bonuspoints - Int(bonuspoints))*100);//get altered form of bonus points
 
-			//string_data = string_data + " | abp: " + string(bonuspoints);
+			string_data = string_data + " | abp: " + string(bonuspoints);
 
 			alteredpoints = Int(alteredpoints + bonuspoints);
 			
@@ -87,8 +87,9 @@ player_add_points( event, mod, hit_location ,is_dog)
 	self.score += alteredpoints; 
 	self.score_total += points;
 
-	//string_data = string_data + " || P" + string(points) + " | A" + string(alteredpoints) + " | ";
-	//iprintln(string_data + string(self.score) + " I " + string(self.score_total));
+	string_data = string_data + " || P" + string(points) + " | A" + string(alteredpoints) + " | ";
+	println(string_data);// + " ||| " + string(self.score) + " , " + string(self.score_total));
+	iprintln(string(self.score) + " total: " + string(self.score_total));
 
 	//stat tracking
 	self.stats["score"] = self.score_total;

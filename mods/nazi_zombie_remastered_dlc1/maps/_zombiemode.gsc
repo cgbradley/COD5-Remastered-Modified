@@ -974,7 +974,7 @@ onPlayerConnect()
 		player thread getAimAssistDvar();
 
 		player.score = level.zombie_vars["zombie_score_start"]; 
-		player.score_total = player.score; 
+		player.score_total = 500;//always give vanilla amount
 		player.old_score = player.score; 
 
 		player.is_zombie = false; 
