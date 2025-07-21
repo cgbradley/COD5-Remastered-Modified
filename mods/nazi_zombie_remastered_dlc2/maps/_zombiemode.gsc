@@ -640,22 +640,22 @@ init_dvars()
 		SetDvar( "easy_health", "0" );
 	}
 	
-	if(getdvarint("zombie_max_concurrent") == "" || getdvarint("zombie_max_concurrent") < 1)//override max amount of enemies at once (not round max)
+	if(getdvar("zombie_max_concurrent") == "" || getdvarint("zombie_max_concurrent") < 1)//override max amount of enemies at once (not round max)
 	{
 		SetDvar( "zombie_max_concurrent", 0 );
 	}
 
-	if(getdvarint("zombie_speed") == "" || getdvarint("zombie_speed") < 1)//sets direct speed. normally 8 * round
+	if(getdvar("zombie_speed") == "" || getdvarint("zombie_speed") < 1)//sets direct speed. normally 8 * round
 	{
 		SetDvar( "zombie_speed", 0 );
 	}
 
-	if(getdvarint("round_rate") == "" || getdvarint("round_rate") < 1)//sets spawn rate/time to this round's natural rate
+	if(getdvar("round_rate") == "" || getdvarint("round_rate") < 1)//sets spawn rate/time to this round's natural rate
 	{
 		SetDvar( "round_rate", 0 );
 	}
 	
-	if(getdvarint("force_leaderboard") == "" || getdvarint("force_leaderboard") < 1)//sets leaderboard to always record even if cheats enabled
+	if(getdvar("force_leaderboard") == "" || getdvarint("force_leaderboard") < 1)//sets leaderboard to always record even if cheats enabled
 	{
 		SetDvar( "force_leaderboard", 1 );
 	}

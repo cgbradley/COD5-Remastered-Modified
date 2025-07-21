@@ -177,6 +177,14 @@ xanim,viewmodel_anim_richtofen_diary_write_finish
 xmodel,kwai_thickrope
 xmodel,anim_nazi_flag_burnt_rope
 fx,env/water/fx_water_splash_tide_small
+fx,env/water/fx_water_rain_distortion
+// for _weather
+fx,env/weather/fx_rain_sys_heavy
+fx,env/weather/fx_rain_sys_med
+fx,env/weather/fx_rain_sys_lght
+fx,system_elements/fx_null
+// for lightning, might need to pull in the fx_lightning_flash as a new file
+fx,maps/ber2/fx_ber2_lightning_flash
 fx,destructibles/fx_dest_reichtstag_bench
 xmodel,weapon_jap_katana_long_alt
 material,mtl_weapon_jap_katana
