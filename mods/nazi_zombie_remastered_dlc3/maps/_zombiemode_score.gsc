@@ -19,6 +19,13 @@ player_add_points( event, mod, hit_location ,is_dog)
 		return;
 	}
 	
+	if(!isdefined (self.score_alt))
+	{
+		self.score_alt = 500;//alternate fake total we do ourselves in this function
+		self.score_diff_alt = 0;//diff we keep track of to track difference between our total and real total
+		self.score_quiet_points = 0;//points we didnt print
+	}
+
 	points = 0;
 	alteredpoints = 0;
 	//string_data = "";
@@ -83,14 +90,39 @@ player_add_points( event, mod, hit_location ,is_dog)
 	points = round_up_to_ten( points ) * level.zombie_vars["zombie_point_scalar"];
 	alteredpoints = round_up_to_ten( alteredpoints ) * level.zombie_vars["zombie_point_scalar"];
 	
+	prescore_diff = self.score_total - self.score_alt;//current diff before adding points
 
 	self.score += alteredpoints; 
 	self.score_total += points;
+	self.score_alt += points;
 
 	//string_data = string_data + " || P" + string(points) + " | A" + string(alteredpoints) + " | ";
 	//println(string_data);// + " ||| " + string(self.score) + " , " + string(self.score_total));
-	//println(string(self.score) + " total: " + string(self.score_total));
 
+	//Compare now, if scores dont equal despite compensating any previous difference between them
+	if((self.score_diff_alt + self.score_alt) != self.score_total){
+		stored_diff = self.score_diff_alt;//diff we assumed hadnt changed
+		self.score_diff_alt = self.score_total - self.score_alt;//new diff
+		if(stored_diff != prescore_diff){
+			//somewhere else the score total changed! somewhere before this function call
+			iprintln(string(points) + "p|  alt" + string(self.score_alt) + "/ t[" + string(self.score_total) + "] |  missing:" + string(prescore_diff-stored_diff));
+		}
+		else{
+			//in this code, we had equivalents then added the same point values to both totals but got a different result
+			stored_diff = self.score_diff_alt - stored_diff;//how much did the diff change
+			iprintln(string(points) + "p|  alt" + string(self.score_alt) + "/ t[" + string(self.score_total) + "] | diffdx" + string(stored_diff));
+		}
+		
+	}
+	else if(points > 10)
+	{
+		iprintln(string(points));
+		//iprintln(string(self.score_alt) + " " + string(self.score_alt) + " " + string(self.score_total));
+	}
+	else {
+		self.score_quiet_points += points;
+	}
+	
 	//stat tracking
 	self.stats["score"] = self.score_total;
 

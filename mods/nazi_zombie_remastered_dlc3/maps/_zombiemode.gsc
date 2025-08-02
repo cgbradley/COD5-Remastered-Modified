@@ -716,7 +716,7 @@ init_dvars()
 
 	if(getdvar("force_leaderboard") == "" || getdvarint("force_leaderboard") < 0 || getdvarint("force_leaderboard") > 1)//sets leaderboard to always record even if cheats enabled
 	{
-		SetDvar( "force_leaderboard", 1 );
+		SetDvar( "force_leaderboard", 0 );
 	}
 
 	SetDvar( "revive_trigger_radius", "60" ); 
@@ -2425,7 +2425,8 @@ round_think()
 
 		players = get_players();
 		array_thread( players, maps\_zombiemode_blockers_new::rebuild_barrier_reward_reset );
-
+		iprintln("--Total--:" + string(players[0].score_total));//Notify total score
+		SetDvar( "score_round", players[0].score_total );
 		level thread award_grenades_for_survivors();
 
 		bbPrint( "zombie_rounds: round %d player_count %d", level.round_number, players.size );
@@ -3193,6 +3194,10 @@ end_game()
 
 	level.intermission = true;
 
+	players = get_players();
+	iprintln("--Final Total--:" + string(players[0].score_total));//Notify total score
+	SetDvar( "score_final", players[0].score_total );
+
 	if( getDvarInt( "sv_cheats") != 1 || getDvarInt( "force_leaderboard") == 1)
 	{
 		update_leaderboards();
@@ -3282,7 +3287,9 @@ end_game()
 	level notify( "stop_intermission" );
 	array_thread( get_players(), ::player_exit_level );
 	wait( 1.5 );
-
+	iprintln("--Alt Total:" + string(players[0].score_alt) + " | Quiet Points --:" + string(players[0].score_quiet_points));//Notify total score
+	SetDvar( "score_altfinal", players[0].score_alt );
+	SetDvar( "score_quietpoints", players[0].score_quiet_points );
 	if( is_coop() )
 	{
 	//	setmusicstate( "SILENT" );

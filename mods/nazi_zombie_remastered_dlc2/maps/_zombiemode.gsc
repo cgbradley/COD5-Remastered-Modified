@@ -586,9 +586,12 @@ init_levelvars()
 	set_zombie_var( "zombie_flame_dmg_point_delay",		500 );
 
 	//Override points amount
-	level.zombie_vars["zombie_score_kill"] = 20;
-	level.zombie_vars["zombie_score_bonus_melee"] = 30;
-	level.zombie_vars["zombie_score_bonus_head"] = 20;
+	//level.zombie_vars["zombie_score_kill"] = 20;
+	//level.zombie_vars["zombie_score_bonus_melee"] = 30;
+	//level.zombie_vars["zombie_score_bonus_head"] = 20;
+	level.zombie_vars["zombie_score_kill"] = 50.300;
+	level.zombie_vars["zombie_score_bonus_melee"] = 80.500;
+	level.zombie_vars["zombie_score_bonus_head"] = 50.300;
 	
 
 	if ( IsSplitScreen() )
@@ -640,6 +643,11 @@ init_dvars()
 		SetDvar( "easy_health", "0" );
 	}
 	
+	if(getdvar("easy_health_scale") == "" || getdvarint("easy_health_scale") < 1)//how much to add each round for easy health
+	{
+		SetDvar( "easy_health_scale", 0 );
+	}
+
 	if(getdvar("zombie_max_concurrent") == "" || getdvarint("zombie_max_concurrent") < 1)//override max amount of enemies at once (not round max)
 	{
 		SetDvar( "zombie_max_concurrent", 0 );
@@ -655,9 +663,9 @@ init_dvars()
 		SetDvar( "round_rate", 0 );
 	}
 	
-	if(getdvar("force_leaderboard") == "" || getdvarint("force_leaderboard") < 1)//sets leaderboard to always record even if cheats enabled
+	if(getdvar("force_leaderboard") == "" || getdvarint("force_leaderboard") < 0 || getdvarint("force_leaderboard") > 1)//sets leaderboard to always record even if cheats enabled
 	{
-		SetDvar( "force_leaderboard", 1 );
+		SetDvar( "force_leaderboard", 0 );
 	}
 
 }
@@ -1781,6 +1789,11 @@ round_spawning()
 	{
 		concurrent_enemies = GetDVarInt("zombie_max_concurrent");//override amount that can be in play at once
 	}
+	else if(getdvar("alternate_difficulty") == "1")
+	{
+	concurrent_enemies = 7;
+	concurrent_enemies = int( max( concurrent_enemies, int(2 + ( level.round_number * 2) )));
+	}
 
 	level.zombie_total = max;//set how many spawn per round here
 	mixed_spawns = 0;	// Number of mixed spawns this round.  Currently means number of dogs in a mixed round
@@ -2303,6 +2316,10 @@ round_think()
 		{
 			level.zombie_move_speed = getdvarint("zombie_speed");
 		}
+		else if(getdvar("alternate_difficulty") == "1")
+		{
+			level.zombie_move_speed = int(4 + (level.round_number * 4));
+		}
 
 		level.round_number++;
 
@@ -2346,7 +2363,12 @@ ai_calculate_health()
 	level.zombie_health = level.zombie_vars["zombie_health_start"];
 	if(getdvarint("easy_health") == 1)//Scale health slowly
 	{
-		level.zombie_health = Int( level.zombie_health + ( level.round_number * 15 ) ); 
+		health_scale = 15;
+		if(getdvarint("easy_health_scale") > 0)
+		{
+			health_scale = getdvarint("easy_health_scale");
+		}
+		level.zombie_health = Int( level.zombie_health + ( level.round_number * health_scale ) ); 
 		return;
 	}
 
