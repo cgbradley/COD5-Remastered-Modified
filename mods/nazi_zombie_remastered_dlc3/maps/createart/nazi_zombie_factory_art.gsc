@@ -59,6 +59,11 @@ fog_settings()
 	blue		 				= 1;
 	trans_time			= 0;
 	
+	//Override
+	//start_dist 			= 400;
+	//halfway_dist 		= 1000;
+
+
 	if( IsSplitScreen() )
 	{
 

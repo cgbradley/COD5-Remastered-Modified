@@ -162,6 +162,22 @@ main()
 	{
 		level.eggs = 0;
 	}
+
+	//APPERANCE CHANGE
+	//SetSavedDvar( "r_lightTweakSunlight", 0.5);//0.4 min, default 1
+	//SetDvar( "r_lightTweakSunlight", 0.5);//0.4 min, default 1
+	//SetSavedDvar( "r_lightTweakSunlight", 0.5);//0.4 min, default 1
+	SetSavedDvar( "r_filmTweakBrightness", "0.09");
+	SetSavedDvar( "r_filmTweakContrast", "1.25");
+	SetSavedDvar( "r_filmTweakDarkTint", "0.73 0.74 0.71");
+	SetSavedDvar( "r_filmTweakDesaturation", "0.25");
+	SetSavedDvar( "r_filmTweakInvert", "0");
+	SetSavedDvar( "r_filmTweakLightTint", "0.80 0.71 0.70");
+	SetSavedDvar( "r_filmTweakEnable", 1);//use overrides if tweaks enabled
+	//Overrides
+	SetSavedDvar( "r_filmTweakLightTint", "0.75 0.66 0.65");
+	//SetSavedDvar( "r_filmTweakDarkTint", "0.63 0.64 0.61");
+
 }
 
 /*revive_retreat_point()
@@ -668,6 +684,65 @@ init_dvars()
 		SetDvar( "force_leaderboard", 0 );
 	}
 
+	/*
+	start_dist 			= 404.39;
+	halfway_dist 		= 1543.52;
+	halfway_height 	= 460.33;//380 is dog fog
+	base_height 		= -244.014;//200 is dog fog
+	*/
+
+	if(getdvar("fog_set") == "" || getdvarint("fog_set") == 0)//getdvarint("fog_set") < 0 || getdvarint("fog_set") > 1)
+	{
+		SetDvar( "fog_set", 4 );//Default modded fog preset
+	}
+	if(getdvar("fog_start_dist") == "" || getdvar("fog_halfway_dist") == "")
+	{
+		//Default vanilla fog:
+		SetDvar( "fog_start_dist", 404.39 );
+		SetDvar( "fog_halfway_dist", 1543.52 );
+		SetDvar( "fog_halfway_height", 460.33 );
+		SetDvar( "fog_base_height", -244.014 );
+	}
+	level thread fog_monitor();
+}
+
+// Pulls the fog in
+fog_monitor()
+{
+	self endon( "disconnect" ); 
+	level endon( "intermission" );
+
+	while( 1 )
+	{
+		if(getdvarint("fog_set") > 0) {
+			//SetVolFog( 404.39, 1543.52, 460.33, -244.014, 0.65, 0.84, 0.79, 1 );
+			if(getdvarint("fog_set") == 2) {//default
+				SetDvar( "fog_start_dist", 404.39 );
+				SetDvar( "fog_halfway_dist", 1543.52 );
+
+				SetDvar( "fog_halfway_height", 460.33 );
+				SetDvar( "fog_base_height", -244.014 );
+			} else if(getdvarint("fog_set") == 3) {
+				SetDvar( "fog_start_dist", 404.39 );
+				SetDvar( "fog_halfway_dist", 900 );
+
+				SetDvar( "fog_halfway_height", 900 );
+				SetDvar( "fog_base_height", 200 );
+			}
+			else if(getdvarint("fog_set") == 4) {
+				SetDvar( "fog_start_dist", 404.39 );
+				SetDvar( "fog_halfway_dist", 700 ); //or 900, important to check
+				//1100 500 or 900 200 
+				SetDvar( "fog_halfway_height", 1100 );
+				SetDvar( "fog_base_height", 500 );
+			}
+			//make sure to use film tweaks and set sunlight to 0.5!
+			
+			SetVolFog( getdvarint("fog_start_dist"), getdvarint("fog_halfway_dist"), getdvarint("fog_halfway_height"), getdvarint("fog_base_height"), 0.65, 0.84, 0.79, 1 );
+			SetDvar( "fog_set", 0 );
+		}
+		wait( 3 );
+	}
 }
 
 initZombieLeaderboardData()
@@ -2263,6 +2338,8 @@ round_think()
 
 		players = get_players();
 		array_thread( players, maps\_zombiemode_blockers::rebuild_barrier_reward_reset );
+		iprintln("Total:" + string(players[0].score_total));//Notify total score
+		SetDvar( "score_round", players[0].score_total );
 
 		level thread award_grenades_for_survivors();
 
