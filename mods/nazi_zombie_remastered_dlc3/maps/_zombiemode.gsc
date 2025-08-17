@@ -1172,6 +1172,10 @@ onPlayerConnect()
 		player.score_total = 500;//always give vanilla amount 
 		player.old_score = player.score; 
 
+		player.score_alt = 500;//alternate fake total we do ourselves in this function
+		player.score_diff_alt = 0;//diff we keep track of to track difference between our total and real total
+		player.score_quiet_points = 0;//points we didnt print
+
 		player.is_zombie = false; 
 		player.initialized = false;
 		player.zombification_time = 0;
@@ -2427,6 +2431,16 @@ round_think()
 		array_thread( players, maps\_zombiemode_blockers_new::rebuild_barrier_reward_reset );
 		iprintln("--Total--:" + string(players[0].score_total));//Notify total score
 		SetDvar( "score_round", players[0].score_total );
+		if (level.round_number > 0)
+		{
+			SetDvar( "score_roundalt", players[0].score_alt );
+			if (getdvar( "score_quietpoints" ) != "")
+			{
+				quietdiff = players[0].score_quiet_points - getdvarint( "score_quietpoints" );
+				SetDvar( "score_roundquietpoints", quietdiff);
+			}
+			SetDvar( "score_quietpoints", players[0].score_quiet_points );
+		}
 		level thread award_grenades_for_survivors();
 
 		bbPrint( "zombie_rounds: round %d player_count %d", level.round_number, players.size );
@@ -3288,7 +3302,7 @@ end_game()
 	array_thread( get_players(), ::player_exit_level );
 	wait( 1.5 );
 	iprintln("--Alt Total:" + string(players[0].score_alt) + " | Quiet Points --:" + string(players[0].score_quiet_points));//Notify total score
-	SetDvar( "score_altfinal", players[0].score_alt );
+	SetDvar( "score_finalalt", players[0].score_alt );
 	SetDvar( "score_quietpoints", players[0].score_quiet_points );
 	if( is_coop() )
 	{

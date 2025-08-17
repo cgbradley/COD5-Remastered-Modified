@@ -114,7 +114,7 @@ player_add_points( event, mod, hit_location ,is_dog)
 		}
 		
 	}
-	else if(points > 10)
+	else if(points > 20)
 	{
 		iprintln(string(points));
 		//iprintln(string(self.score_alt) + " " + string(self.score_alt) + " " + string(self.score_total));

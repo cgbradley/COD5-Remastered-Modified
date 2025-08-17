@@ -174,9 +174,10 @@ main()
 	SetSavedDvar( "r_filmTweakInvert", "0");
 	SetSavedDvar( "r_filmTweakLightTint", "0.80 0.71 0.70");
 	SetSavedDvar( "r_filmTweakEnable", 1);//use overrides if tweaks enabled
+	
 	//Overrides
-	SetSavedDvar( "r_filmTweakLightTint", "0.75 0.66 0.65");
-	//SetSavedDvar( "r_filmTweakDarkTint", "0.63 0.64 0.61");
+	SetSavedDvar( "r_filmTweakLightTint", "0.75 0.66 0.65");//r_filmTweakLightTint 0.75 0.66 0.65
+	//SetSavedDvar( "r_filmTweakDarkTint", "0.63 0.64 0.61");//r_filmTweakDarkTint 0.63 0.64 0.61
 
 }
 
@@ -683,6 +684,20 @@ init_dvars()
 	{
 		SetDvar( "force_leaderboard", 0 );
 	}
+	
+	if(getdvarint("alternate_difficulty") == -1)//difficulty_preset instead?
+	{
+		SetDvar( "alternate_difficulty", 0 );//optional
+		SetDvar( "easy_health", "1" );
+		SetDvar( "easy_health_scale", 25);
+		SetDvar( "zombie_speed", 4 );
+		SetDvar( "round_rate", 3 );
+	}
+	else if(getdvarint("alternate_difficulty") != 1)
+	{
+		SetDvar( "alternate_difficulty", 0 );
+	}
+	//if(getdvar("alternate_difficulty") == "" || (abs(getdvarint("alternate_difficulty")) != 1) )
 
 	/*
 	start_dist 			= 404.39;
@@ -702,6 +717,7 @@ init_dvars()
 		SetDvar( "fog_halfway_dist", 1543.52 );
 		SetDvar( "fog_halfway_height", 460.33 );
 		SetDvar( "fog_base_height", -244.014 );
+		SetDvar( "fog_brightness", 1 );
 	}
 	level thread fog_monitor();
 }
@@ -737,11 +753,20 @@ fog_monitor()
 				SetDvar( "fog_base_height", 500 );
 			}
 			//make sure to use film tweaks and set sunlight to 0.5!
-			
-			SetVolFog( getdvarint("fog_start_dist"), getdvarint("fog_halfway_dist"), getdvarint("fog_halfway_height"), getdvarint("fog_base_height"), 0.65, 0.84, 0.79, 1 );
+			brightn = GetDvarFloat("fog_brightness");
+			if(brightn < 0.01 || brightn > 0.99)
+			{
+				SetVolFog( getdvarint("fog_start_dist"), getdvarint("fog_halfway_dist"), getdvarint("fog_halfway_height"), getdvarint("fog_base_height"), 
+				0.65, 0.84, 0.79, 1 );
+			}
+			else
+			{
+				SetVolFog( getdvarint("fog_start_dist"), getdvarint("fog_halfway_dist"), getdvarint("fog_halfway_height"), getdvarint("fog_base_height"), 
+					0.65*brightn, 0.84*brightn, 0.79*brightn, 1 );
+			}
 			SetDvar( "fog_set", 0 );
 		}
-		wait( 3 );
+		wait( 5 );
 	}
 }
 
