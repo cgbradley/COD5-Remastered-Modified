@@ -186,9 +186,10 @@ main()
 	sleight = getEnt("radio_three_origin", "targetname");
 	level.revive_point = spawn("script_origin", sleight.origin + ( 50, 0, 0 ) );
 }*/
-
-
-
+for (i = 0; i < level.chests.size; i++)
+	{
+		level.chests[i] notify( "cost_update" );
+	}
 /*------------------------------------
 chrisp - adding vo to track players ammo
 ------------------------------------*/
@@ -582,12 +583,12 @@ init_levelvars()
 
 	// Scoring
 	set_zombie_var( "zombie_score_start", 				200 );
-/#
+
 	if( GetDvarInt( "zombie_cheat" ) >= 1 )
 	{
 		set_zombie_var( "zombie_score_start", 			100000 );
 	}
-#/
+
 	set_zombie_var( "zombie_score_kill", 				50 );
 	set_zombie_var( "zombie_score_damage", 				10 );
 	set_zombie_var( "zombie_score_bonus_melee", 		80 );
@@ -609,7 +610,8 @@ init_levelvars()
 	level.zombie_vars["zombie_score_kill"] = 50.300;
 	level.zombie_vars["zombie_score_bonus_melee"] = 80.500;
 	level.zombie_vars["zombie_score_bonus_head"] = 50.300;
-	
+
+	level.zombie_vars["zombie_treasure_chest_cost"] = 950; //Default is undefined
 
 	if ( IsSplitScreen() )
 	{
@@ -646,6 +648,16 @@ init_dvars()
 	if(getdvar("magic_box_explore_only") == "")
 	{
 		SetDvar( "magic_box_explore_only", "1" );
+	}
+
+	/*if(getdvar("magic_box_difficulty") == "")
+	{
+		SetDvar( "magic_box_difficulty", "0" );
+	}*/
+
+	if(getdvar("magic_box_expensive") == "")
+	{
+		SetDvar( "magic_box_expensive", "0" );
 	}
 
 	SetDvar( "revive_trigger_radius", "60" ); 
