@@ -308,6 +308,7 @@ treasure_chest_init()
 
 		for (i = 0; i < level.chests.size; i++)
 		{
+			level.chests[i] thread treasure_chest_wait_get_hint(); // if using custom box price, update here
 			if (!IsDefined(level.chests[i].script_noteworthy) || (level.chests[i].script_noteworthy != "start_chest"))
 			{
 				level.chests[i] hide_chest();	
@@ -417,19 +418,35 @@ show_magic_box()
 	playsoundatposition( "couch_slam", pieces[0].origin );
 }
 
-treasure_chest_think()
-{	
-	cost = 950;
+box_get_cost()
+{
 	if( IsDefined( level.zombie_treasure_chest_cost ) )
 	{
-		cost = level.zombie_treasure_chest_cost;
+		return level.zombie_treasure_chest_cost; //assume this is a random number every time you restart level
 	}
 	else
 	{
-		cost = self.zombie_cost;
+		return 950;
 	}
+}
 
-	self SetHintString( &"REMASTERED_ZOMBIE_RANDOM_WEAPON_950" ); 
+treasure_chest_set_hint(cost)
+{
+	self SetHintString(&"REMASTERED_ZOMBIE_RANDOM_WEAPON", "&&1", cost);
+}
+
+treasure_chest_wait_get_hint()
+{
+	self waittill("cost_update");
+	//iprintln("hint wait update MANUAL!!");
+	cost = box_get_cost();
+	treasure_chest_set_hint(cost);
+}
+
+treasure_chest_think()
+{	
+	cost = box_get_cost();
+	treasure_chest_set_hint(cost);
 	self setCursorHint( "HINT_NOICON" );
 
 	// waittill someuses uses this
@@ -449,6 +466,8 @@ treasure_chest_think()
 			wait( 0.1 );
 			continue;
 		}
+		cost = box_get_cost();
+		treasure_chest_set_hint(cost);
 
 		// make sure the user is a player, and that they can afford it
 		if( is_player_valid( user ) && user.score >= cost )
