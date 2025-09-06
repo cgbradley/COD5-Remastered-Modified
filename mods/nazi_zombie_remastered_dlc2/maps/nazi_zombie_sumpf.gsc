@@ -16,10 +16,27 @@
 #include maps\nazi_zombie_sumpf_blockers;
 #include maps\nazi_zombie_sumpf_trap_perk_electric;
 #include maps\_hud_util;
+#include maps\_weather;
 
 main()
 {
 	level.remaster_mod = true;
+
+	level._effect["lightning_strike"] = LoadFX( "maps/ber2/fx_ber2_lightning_flash" );
+	level._effect["rain_heavy_cloudtype"]   = LoadFX( "weather/rain_heavy_cloudtype" );
+	level._effect["rain_10"]   = LoadFX( "env/weather/fx_rain_sys_heavy" );
+	level._effect["rain_9"]      = LoadFX( "env/weather/fx_rain_sys_heavy" );
+	level._effect["rain_8"]      = LoadFX( "env/weather/fx_rain_sys_heavy" );
+	level._effect["rain_7"]      = LoadFX( "env/weather/fx_rain_sys_heavy" );
+	level._effect["rain_6"]      = LoadFX( "env/weather/fx_rain_sys_med" );
+	level._effect["rain_5"]      = LoadFX( "env/weather/fx_rain_sys_med" );
+	level._effect["rain_4"]      = LoadFX( "env/weather/fx_rain_sys_med" );
+	level._effect["rain_3"]      = LoadFX( "env/weather/fx_rain_sys_med" );
+	level._effect["rain_2"]      = LoadFX( "env/weather/fx_rain_sys_lght" );
+	level._effect["rain_1"]      = LoadFX( "env/weather/fx_rain_sys_lght" );
+	level._effect["rain_0"]      = LoadFX( "env/weather/fx_rain_sys_lght" );
+
+	thread weather_control();
 
 	// make sure we randomize things in the map once
 	level.randomize_perks = false;
@@ -3223,4 +3240,67 @@ item_hud_remove()
 	level waittill_any( "end_game", "rope_placed" );
 	self.item_hud destroy_hud();
 	self.item_hud = undefined;
+}
+
+weather_control()
+{
+   rainInit( "hard" ); // get rain going
+   level thread rainEffectChange( 9, 0.1 );  // tweak initial rain strength
+   thread playerWeather(); // make the actual rain effect generate around the players
+
+      addLightningExploder( 10000 );
+      addLightningExploder( 10001 );
+      addLightningExploder( 10002 );
+      addLightningExploder( 10003 );
+      addLightningExploder( 10004 );
+      addLightningExploder( 10005 );
+   
+   level.nextLightning = GetTime() + 1;
+   thread lightning( ::lightning_normal, ::lightning_flash );
+}
+lightning_normal()
+{
+   wait( 0.05 );
+   ResetSunLight();
+   setVolFog(250, 750, 400, -128, 0.44, 0.52, 0.44, 0); 
+}
+lightning_flash()
+{
+   SetSunLight( 4, 4, 4.5 );
+   setVolFog(250, 550, 400, -128, 0.6, 0.6, 0.7, 0);
+         
+   SetSunLight( 1, 1, 1.5 );
+   setVolFog(250, 550, 400, -128, 0.45, 0.45, 0.5, 0);
+
+   wait( 0.0014 );             
+                
+   SetSunLight( 3, 3, 3.5 );
+   setVolFog(250, 550, 400, -128, 0.55, 0.55, 0.6, 0);                   
+   
+   SetSunLight( 2, 2, 2.5 );
+   setVolFog(250, 550, 400, -128, 0.65, 0.65, 0.7, 0);                                 
+                            
+   SetSunLight( 1.5, 1.5, 2 );
+   setVolFog(250, 550, 400, -128, 0.7, 0.7, 0.75, 0);                     
+   
+   wait( 0.0010 );
+   
+   SetSunLight( 1, 1, 1.5 );
+   setVolFog(250, 550, 400, -128, 0.55, 0.55, 0.6, 0);               
+                               
+   SetSunLight( 5, 5, 5.5 );
+   setVolFog(250, 550, 400, -128, 0.5, 0.5, 0.55, 0);                   
+   
+   wait( 0.0011 );
+   
+   SetSunLight( 4, 4, 4.5 );
+   setVolFog(250, 550, 400, -128, 0.55, 0.55, 0.6, 0);             
+           
+   SetSunLight( 1, 1, 1.5 );
+   setVolFog(250, 550, 400, -128, 0.55, 0.55, 0.6, 0);                       
+   
+   wait( 0.0015 );
+   
+   SetSunLight( 2.5, 2.5, 3 );
+   setVolFog(250, 550, 400, -128, 0.65, 0.65, 0.7, 0);           
 }

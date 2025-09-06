@@ -79,6 +79,8 @@ sound,achievement_sound,,all_mp
 sound,dlc2_share
 // test
 sound,nazi_zombie_sumpf
+include,rain
+sound,dlc_weather
 // test
 xmodel,viewmodel_jap_type99_bipod_lmg
 xmodel,weapon_jap_type99_bipod_lmg
