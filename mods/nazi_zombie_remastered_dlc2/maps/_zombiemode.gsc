@@ -179,6 +179,93 @@ main()
 	SetSavedDvar( "r_filmTweakLightTint", "0.75 0.66 0.65");//r_filmTweakLightTint 0.75 0.66 0.65
 	//SetSavedDvar( "r_filmTweakDarkTint", "0.63 0.64 0.61");//r_filmTweakDarkTint 0.63 0.64 0.61
 
+	if (getdvar("zmode") != "")
+	{
+		mode_float_value = getdvarfloat("zmode");
+		main_mode = Int(mode_float_value);
+		sub_mode = abs(mode_float_value - main_mode);
+		iprintln("zmode "+ string(mode_float_value));
+		if (mode_float_value > 0)
+		{
+			
+			if (main_mode == 1) //Alternate difficulty
+			{
+				setdvar("magic_box_expensive", 1);
+				setdvar("easy_health", 0);
+				setdvar("easy_health_scale", 0);
+				setdvar("round_rate", 0);
+				setdvar("zombie_max_concurrent", 0);
+				setdvar("zombie_speed", 0);
+				setdvar("alternate_difficulty", 1);
+
+			}
+			else if (main_mode == 2) //Simple mode
+			{
+				setdvar("magic_box_expensive", 1);
+				setdvar("easy_health", 1);
+				setdvar("easy_health_scale", 20);
+				setdvar("round_rate", 2);
+				setdvar("zombie_max_concurrent", 0);
+				setdvar("zombie_speed", 0);
+				setdvar("alternate_difficulty", 0);
+			}
+			else //Empty passthrough
+			{
+				//setdvar("magic_box_expensive", 1);
+				//setdvar("easy_health", 1);
+				//setdvar("easy_health_scale", 20);
+			}
+			if (sub_mode >= 0.5) //Empty passthrough
+			{
+				//do not overwrite visual settings
+			}
+			else
+			{
+				if (getdvarfloat("fog_brightness") > 0.9 || getdvarfloat("fog_brightness") < 0.6)
+				{
+					SetDvar( "fog_brightness", 0.9 );
+				}
+			
+			}
+			setdvar("fog_set", 6);//Reset fog to current dvars, pretty sure it clears on restart so this is necessary
+		}
+		else if(mode_float_value == 0)
+		{
+			setdvar("magic_box_expensive", 0);
+			setdvar("easy_health", 0);
+			setdvar("easy_health_scale", 0);
+			setdvar("round_rate", 0);
+			setdvar("zombie_max_concurrent", 0);
+			setdvar("zombie_speed", 0);
+			setdvar("alternate_difficulty", 0);
+		}
+	}
+	else
+	{
+		setdvar("zmode", 0);
+	}
+	iprintln("Reduce sunlight");
+	if (getdvar("magic_box_expensive") != "" && getdvarint("magic_box_expensive") == 1)
+	{
+		level.zombie_treasure_chest_cost = 1500;
+	}
+	else
+	{
+		level.zombie_treasure_chest_cost = 950;//restore default
+	}
+	//set_hint_string( "default_treasure_chest_950", &"REMASTERED_ZOMBIE_RANDOM_WEAPON_950" + "[Cost: 950]" );
+	/*ref = "default_treasure_chest_950";
+	if( IsDefined( level.zombie_hints[ref] ) )
+	{
+		iprintln(level.zombie_hints[ref]);
+		level.zombie_hints[ref] = "[Cost: 950]"; 
+		iprintln(level.zombie_hints[ref]);
+		
+	}*/
+	for (i = 0; i < level.chests.size; i++)
+	{
+		level.chests[i] notify( "cost_update" );
+	}
 }
 
 /*revive_retreat_point()
@@ -186,10 +273,6 @@ main()
 	sleight = getEnt("radio_three_origin", "targetname");
 	level.revive_point = spawn("script_origin", sleight.origin + ( 50, 0, 0 ) );
 }*/
-for (i = 0; i < level.chests.size; i++)
-	{
-		level.chests[i] notify( "cost_update" );
-	}
 /*------------------------------------
 chrisp - adding vo to track players ammo
 ------------------------------------*/
@@ -758,7 +841,7 @@ fog_monitor()
 				SetDvar( "fog_base_height", 200 );
 			}
 			else if(getdvarint("fog_set") == 4) {
-				SetDvar( "fog_start_dist", 404.39 );
+				SetDvar( "fog_start_dist", 304.39 );
 				SetDvar( "fog_halfway_dist", 700 ); //or 900, important to check
 				//1100 500 or 900 200 
 				SetDvar( "fog_halfway_height", 1100 );

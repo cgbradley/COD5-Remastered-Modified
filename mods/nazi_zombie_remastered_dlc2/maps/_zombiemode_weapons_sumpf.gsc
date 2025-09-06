@@ -373,7 +373,7 @@ get_chest_pieces()
 
 play_crazi_sound()
 {
-	self playlocalsound("laugh_child");
+	//self playlocalsound("laugh_child");
 }
 
 show_magic_box()
