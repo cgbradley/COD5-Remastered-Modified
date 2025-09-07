@@ -794,6 +794,11 @@ init_dvars()
 	}
 	//if(getdvar("alternate_difficulty") == "" || (abs(getdvarint("alternate_difficulty")) != 1) )
 
+	if (getdvar("enable_weather") != "")
+	{
+		setdvar("enable_weather", 0);
+	}
+	
 	/*
 	start_dist 			= 404.39;
 	halfway_dist 		= 1543.52;
