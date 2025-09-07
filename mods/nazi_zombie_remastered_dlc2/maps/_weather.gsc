@@ -10,9 +10,10 @@ rainHard(transition, targetlvl)
 	{
 		targetlvl = 9;
 	}
-	iprintln ("Rain becomes Hard over " + transition + " seconds");
+	if(getdvar("developer") == "1")
+	  	iprintln ("Rain becomes Hard over " + transition + " seconds");
 	SetVolFog( getdvarint("fog_start_dist")-2, getdvarint("fog_halfway_dist"), getdvarint("fog_halfway_height"), getdvarint("fog_base_height"), 
-			0.44, 0.52, 0.44, transition );
+			0.42, 0.52, 0.44, transition );
 	level notify ("rain_change", "hard", transition);
 	level thread rainEffectChange(targetlvl, transition);
 	wait (transition*0.5);
@@ -29,9 +30,10 @@ rainMedium(transition, targetlvl)
 	{
 		targetlvl = 6;
 	}
-	iprintln ("Rain becomes Medium over " + transition + " seconds");
+	if(getdvar("developer") == "1")
+	  	iprintln ("Rain becomes Medium over " + transition + " seconds");
 	SetVolFog( getdvarint("fog_start_dist")-15, getdvarint("fog_halfway_dist"), getdvarint("fog_halfway_height"), getdvarint("fog_base_height"), 
-			0.44, 0.52, 0.44, transition );
+			0.42, 0.52, 0.44, transition );
 	level notify ("rain_change", "medium", transition);
 	level thread rainEffectChange(targetlvl, transition);
 	wait (transition*0.5);
@@ -47,9 +49,10 @@ rainLight(transition, targetlvl)
 	{
 		targetlvl = 2;
 	}
-	iprintln ("Rain becomes Light over " + transition + " seconds");
+	if(getdvar("developer") == "1")
+	  	iprintln ("Rain becomes Light over " + transition + " seconds");
 	SetVolFog( getdvarint("fog_start_dist")-1, getdvarint("fog_halfway_dist"), getdvarint("fog_halfway_height"), getdvarint("fog_base_height"), 
-			0.48, 0.57, 0.48, transition );
+			0.42, 0.52, 0.44, transition );//0.48, 0.57, 0.48, transition );
 	level notify ("rain_change", "light", transition);
 	level thread rainEffectChange(targetlvl, transition);
 	wait (transition*0.5);
@@ -61,7 +64,8 @@ rainLight(transition, targetlvl)
 
 rainNone(transition)
 {
-	iprintln ("Rain fades out over " + transition + " seconds");
+	if(getdvar("developer") == "1")
+	  	iprintln ("Rain fades out over " + transition + " seconds");
 	level notify ("rain_change", "none", transition);
 	level thread rainEffectChange(0, transition);
 	wait (transition*0.5);
@@ -109,7 +113,7 @@ rainInit(lvl)
 
 rainlevelRandom()
 {
-	lvl = randomintrange(-3, 10);
+	lvl = randomintrange(-2, 10);
 	iprintln("Random rain level! " + lvl);
 	transition_duration = randomfloatrange(4, 8);
 	if (lvl < 1)
@@ -178,7 +182,7 @@ rainEffectChange(change, transition)
 		assert (level.rainLevel == change);
 		//setdvar("fog_set", 6);//Refresh fog //wont run when start at 0
 	}
-	if (level.rainLevel < change)//Getting rainy
+	else if (level.rainLevel < change)//Getting rainy
 	{
 		dif = change - level.rainLevel;
 		transition /= dif;
@@ -192,7 +196,11 @@ rainEffectChange(change, transition)
 		//setdvar("fog_set", 6);//Refresh fog
 	}
 	iprintln("Finished transition");
-	setdvar("fog_set", 6);//Refresh fog
+	//setdvar("fog_set", 6);//Refresh fog
+	if (level.rainLevel < 1)
+	{
+		setdvar("fog_set", 6);//Refresh fog
+	}
 	wait(randomintrange(10, 12));
 	
 	rainlevelRandom();

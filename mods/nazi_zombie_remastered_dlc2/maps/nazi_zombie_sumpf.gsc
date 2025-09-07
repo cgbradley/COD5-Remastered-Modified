@@ -55,6 +55,19 @@ main()
 	level._effect["rain_2"]      = LoadFX( "env/weather/fx_rain_lght" );
 	level._effect["rain_1"]      = LoadFX( "env/weather/fx_rain_lght" );
 	level._effect["rain_0"]      = LoadFX( "env/weather/fx_rain_sys_lght" );*/
+
+	//Testing single type
+	level._effect["rain_10"]     = LoadFX( "env/weather/fx_rain_sys_medc" );
+	level._effect["rain_9"]      = LoadFX( "env/weather/fx_rain_sys_medc" );
+	level._effect["rain_8"]      = LoadFX( "env/weather/fx_rain_sys_medc" );
+	level._effect["rain_7"]      = LoadFX( "env/weather/fx_rain_sys_medc" );
+	level._effect["rain_6"]      = LoadFX( "env/weather/fx_rain_sys_medc" );
+	level._effect["rain_5"]      = LoadFX( "env/weather/fx_rain_sys_medc" );
+	level._effect["rain_4"]      = LoadFX( "env/weather/fx_rain_sys_medc" );
+	level._effect["rain_3"]      = LoadFX( "env/weather/fx_rain_sys_medc" );
+	level._effect["rain_2"]      = LoadFX( "env/weather/fx_rain_sys_medc" );
+	level._effect["rain_1"]      = LoadFX( "env/weather/fx_rain_sys_medc" );
+	level._effect["rain_0"]      = LoadFX( "env/weather/fx_rain_sys_medc" );
 	thread weather_control();
 	}
 
