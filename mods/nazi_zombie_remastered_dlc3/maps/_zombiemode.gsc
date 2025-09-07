@@ -214,6 +214,86 @@ main(init_zombie_spawner_name)
 	{
 		level.eggs = 0;
 	}
+
+	if (getdvar("zmode") != "")
+	{
+		mode_float_value = getdvarfloat("zmode");
+		main_mode = Int(mode_float_value);
+		sub_mode = abs(mode_float_value - main_mode);
+		iprintln("zmode "+ string(mode_float_value));
+		if (mode_float_value > 0)
+		{
+			
+			if (main_mode == 1) //Alternate difficulty
+			{
+				setdvar("magic_box_expensive", 1);
+				setdvar("easy_health", 0);
+				setdvar("easy_health_scale", 0);
+				setdvar("round_rate", 0);
+				setdvar("zombie_max_concurrent", 0);
+				setdvar("zombie_speed", 0);
+				setdvar("alternate_difficulty", 1);
+
+			}
+			else if (main_mode == 2) //Simple mode
+			{
+				setdvar("magic_box_expensive", 1);
+				setdvar("easy_health", 1);
+				setdvar("easy_health_scale", 20);
+				setdvar("round_rate", 2);
+				setdvar("zombie_max_concurrent", 0);
+				setdvar("zombie_speed", 0);
+				setdvar("alternate_difficulty", 0);
+			}
+			else //Empty passthrough
+			{
+				//setdvar("magic_box_expensive", 1);
+				//setdvar("easy_health", 1);
+				//setdvar("easy_health_scale", 20);
+			}
+			if (sub_mode >= 0.5) //Empty passthrough
+			{
+				//do not overwrite visual settings
+			}
+			else
+			{
+				if (getdvarfloat("fog_brightness") > 0.9 || getdvarfloat("fog_brightness") < 0.6)
+				{
+					SetDvar( "fog_brightness", 0.9 );
+				}
+			
+			}
+			setdvar("fog_set", 6);//Reset fog to current dvars, pretty sure it clears on restart so this is necessary
+		}
+		else if(mode_float_value == 0)
+		{
+			setdvar("magic_box_expensive", 0);
+			setdvar("easy_health", 0);
+			setdvar("easy_health_scale", 0);
+			setdvar("round_rate", 0);
+			setdvar("zombie_max_concurrent", 0);
+			setdvar("zombie_speed", 0);
+			setdvar("alternate_difficulty", 0);
+		}
+	}
+	else
+	{
+		setdvar("zmode", 0);
+	}
+	iprintln("Reduce sunlight");
+	if (getdvar("magic_box_expensive") != "" && getdvarint("magic_box_expensive") == 1)
+	{
+		level.zombie_treasure_chest_cost = 1500;
+	}
+	else
+	{
+		level.zombie_treasure_chest_cost = 950;//restore default
+	}
+	
+	for (i = 0; i < level.chests.size; i++)
+	{
+		level.chests[i] notify( "cost_update" );
+	}
 }
 
 zombiemode_melee_miss()
