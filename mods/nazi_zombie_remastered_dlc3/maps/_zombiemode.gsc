@@ -324,16 +324,19 @@ main(init_zombie_spawner_name)
 		if(getdvarint("magic_box_random_start") == 1)
 		{
 			level.random_pandora_box_start = true;
-			iprintln("Random box start");
+			if(getdvar("developer") == "1")
+				iprintln("Random box start");
 		}
 	}
 	else
 	{
 		//Unknown or base and below difficulty
 		level.random_pandora_box_start = false;
-		iprintln("pandora regular box start " +string(level.random_pandora_box_start));
+		if(getdvar("developer") == "1")
+			iprintln("pandora regular box start " +string(level.random_pandora_box_start));
 	}
-	iprintln("Flipping customize flag");
+	if(getdvar("developer") == "1")
+		iprintln("Flipping customize flag");
 	flag_set("customize");
 	// -=- Box hint string update -=-
 	for (i = 0; i < level.chests.size; i++)

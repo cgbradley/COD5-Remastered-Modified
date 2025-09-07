@@ -305,9 +305,26 @@ treasure_chest_init()
 		{
 			level.chest_accessed = 0;
 		}
-
-		if(level.script == "nazi_zombie_sumpf")
+		/* BRANCH: both of these affect the box beam possibly in general but definitely
+		   at the first box location. top is from der riese and shows at start but it
+		   is too bright and it glows into the initial floor of SNN. also scales wrong
+		*/
+		if(level.script != "nazi_zombie_sumpf")
 		{
+			// Anchor target will grab the weapon spawn point inside the box, so the fx will be centered on it too
+			anchor = GetEnt(level.chests[level.chest_index].target, "targetname");
+			anchorTarget = GetEnt(anchor.target, "targetname");
+
+			level.pandora_light = Spawn( "script_model", anchorTarget.origin );
+			level.pandora_light.angles = anchorTarget.angles + (-90, 0, 0);
+			//temp_fx_origin rotateto((-90, (box_origin.angles[1] * -1), 0), 0.05);
+			level.pandora_light SetModel( "tag_origin" );
+			playfxontag(level._effect["lght_marker"], level.pandora_light, "tag_origin");
+			// THIS ONE WILL show initial and subsequent glow but isnt right and its ugly
+		}
+		else
+		{
+			//Original way (use this for now)
 			level.pandora_light = Spawn( "script_model", (-4200, 0, 0));
 			level.pandora_light.angles = (-90, 0, 0);
 			//temp_fx_origin rotateto((-90, (box_origin.angles[1] * -1), 0), 0.05);
@@ -439,9 +456,22 @@ show_magic_box()
 	}
 	else
 	{		
-		level.pandora_light moveto(anchorTarget.origin, 0.05);
-		wait(1);	
-		playfxontag(level._effect["lght_marker_flare"], level.pandora_light, "tag_origin");
+		
+		//Original, with original shows beacon after first move, but a bit bright and odd
+		if(getdvar("magic_box_difficulty") == "0")
+		{
+			level.pandora_light moveto(anchorTarget.origin, 0.05);
+			wait(1);	
+			playfxontag(level._effect["lght_marker_flare"], level.pandora_light, "tag_origin");*/
+		}
+		else
+		{
+			level.pandora_light.angles = (90, anchorTarget.angles[1] + 180, 0);
+			level.pandora_light moveto(anchorTarget.origin, 0.05);
+			wait(1);	
+			playfx( level._effect["lght_marker_flare"],level.pandora_light.origin );
+			//playfxontag(level._effect["lght_marker_flare"], level.pandora_light, "tag_origin");
+		}
 	}
 	// PI_CHANGE_END
 	
@@ -782,7 +812,7 @@ treasure_chest_move(lid)
 	}
 
 	playsoundatposition ("whoosh", soundpoint.origin );
-//playsoundatposition ("ann_vox_magicbox", soundpoint.origin );
+	//playsoundatposition ("ann_vox_magicbox", soundpoint.origin );
 
 	
 	anchor moveto(anchor.origin + (0,0,50),5);
