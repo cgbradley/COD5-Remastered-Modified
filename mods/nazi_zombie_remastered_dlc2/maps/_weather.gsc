@@ -252,7 +252,7 @@ player_weather_loop()
 		{
 			// SRS 5/30/2008: removed forward vector specification
 			//PlayFX( level._effect["rain_drops"], self.origin + (0,0,650), self.origin + (0,0,680) );
-			PlayFX( level._effect["rain_drops"], self.origin + (0,0,450) );
+			PlayFX( level._effect["rain_drops"], self.origin + (0,0,650) );
 			
 			//PlayFX( level._effect["rain_small_dark_cloud"], self.origin + (0,0,650) );
 			//PlayFX( level._effect["rain_medium_dark_cloud"], self.origin + (0,0,650) );

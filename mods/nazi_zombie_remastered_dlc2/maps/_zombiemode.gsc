@@ -849,7 +849,7 @@ fog_monitor()
 			}
 			//make sure to use film tweaks and set sunlight to 0.5!
 			brightn = GetDvarFloat("fog_brightness");
-			if(level.rainLevel > 0)
+			if(isDefined(level.rainLevel) && level.rainLevel > 0)
 			{
 				/*iprintln("rain is on -- fog mon NEVER RUNS");
 				SetVolFog( getdvarint("fog_start_dist")-100, getdvarint("fog_halfway_dist"), getdvarint("fog_halfway_height"), getdvarint("fog_base_height"), 

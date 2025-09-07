@@ -25,6 +25,8 @@ main()
 	level._effect["lightning_strike"] = LoadFX( "maps/ber2/fx_ber2_lightning_flash" );
 	//level._effect["rain_heavy_cloudtype"]   = LoadFX( "weather/rain_heavy_cloudtype" );//doesnt do anything
 
+	if (getdvar("enable_weather") != "")
+	{
 	// / *
 	level._effect["rain_10"]   = LoadFX( "env/weather/fx_rain_sys_heavy" );
 	level._effect["rain_9"]      = LoadFX( "env/weather/fx_rain_sys_heavy" );
@@ -54,7 +56,8 @@ main()
 	level._effect["rain_1"]      = LoadFX( "env/weather/fx_rain_lght" );
 	level._effect["rain_0"]      = LoadFX( "env/weather/fx_rain_sys_lght" );*/
 	thread weather_control();
-
+	}
+	
 	// make sure we randomize things in the map once
 	level.randomize_perks = false;
 	
