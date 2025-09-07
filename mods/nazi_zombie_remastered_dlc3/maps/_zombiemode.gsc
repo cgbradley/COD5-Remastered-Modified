@@ -319,7 +319,7 @@ main(init_zombie_spawner_name)
 		level.chest_min_move_usage = 4;
 	}
 
-	if(getdvar("magic_box_random_start") != "" && getdvarint("magic_box_difficulty") > 0)
+	if(getdvar("magic_box_random_start") != "" && getdvarint("magic_box_random_start") > 0)
 	{
 		if(getdvarint("magic_box_random_start") == 1)
 		{

@@ -1076,7 +1076,7 @@ treasure_chest_move(lid)
 	}
 
 	playsoundatposition ("whoosh", soundpoint.origin );
-	playsoundatposition ("ann_vox_magicbox", soundpoint.origin );
+//	playsoundatposition ("ann_vox_magicbox", soundpoint.origin );
 
 
 	anchor moveto(anchor.origin + (0,0,50),5);
