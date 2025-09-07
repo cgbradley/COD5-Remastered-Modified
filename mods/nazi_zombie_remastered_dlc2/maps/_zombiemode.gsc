@@ -761,7 +761,10 @@ init_dvars()
 		SetDvar( "magic_box_expensive", 0 );
 	}
 
-	SetDvar( "revive_trigger_radius", "60" ); 
+	if(getdvar("magic_box_random_start") == "")
+	{
+		SetDvar( "magic_box_random_start", 0 );
+	}
 
 	if ( GetDvar( "dogs_enabled" ) == "" || ( GetDvar( "dogs_enabled" ) != "1" && GetDvar( "dogs_enabled" ) == "0") )
 	{
@@ -838,6 +841,8 @@ init_dvars()
 		SetDvar( "fog_brightness", 1 );
 	}
 	level thread fog_monitor();
+
+	SetDvar( "revive_trigger_radius", "60" );
 }
 
 // Pulls the fog in
