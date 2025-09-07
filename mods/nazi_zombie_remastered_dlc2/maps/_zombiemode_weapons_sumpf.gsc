@@ -1349,7 +1349,7 @@ treasure_chest_weapon_spawn( chest, player )
 					//Unknown or base difficulty
 				}
 			}
-			player maps\_zombiemode_score::add_to_player_score( round_up_to_ten(box_refund) );
+			player maps\_zombiemode_score::add_to_player_score( round_up_to_ten(Int(box_refund)) );//Round to ten only takes int
 
 			//allow power weapon to be accessed.
 			level.box_moved = true;
