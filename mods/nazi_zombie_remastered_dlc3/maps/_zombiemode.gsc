@@ -228,6 +228,7 @@ main(init_zombie_spawner_name)
 			{
 				setdvar( "magic_box_difficulty", 2 ); //Harder
 				setdvar("magic_box_expensive", 1);
+				setdvar( "magic_box_random_start", 1 );
 				setdvar("easy_health", 0);
 				setdvar("easy_health_scale", 0);
 				setdvar("round_rate", 0);
@@ -240,6 +241,7 @@ main(init_zombie_spawner_name)
 			{
 				setdvar( "magic_box_difficulty", 1 ); //Easier
 				setdvar("magic_box_expensive", 1);
+				setdvar( "magic_box_random_start", 1 );
 				setdvar("easy_health", 1);
 				setdvar("easy_health_scale", 20);
 				setdvar("round_rate", 2);
@@ -271,6 +273,7 @@ main(init_zombie_spawner_name)
 		{
 			setdvar( "magic_box_difficulty", 0 );
 			setdvar("magic_box_expensive", 0);
+			setdvar( "magic_box_random_start", 0 );
 			setdvar("easy_health", 0);
 			setdvar("easy_health_scale", 0);
 			setdvar("round_rate", 0);
@@ -315,6 +318,23 @@ main(init_zombie_spawner_name)
 		//Unknown or base and below difficulty
 		level.chest_min_move_usage = 4;
 	}
+
+	if(getdvar("magic_box_random_start") != "" && getdvarint("magic_box_difficulty") > 0)
+	{
+		if(getdvarint("magic_box_random_start") == 1)
+		{
+			level.random_pandora_box_start = true;
+			iprintln("Random box start");
+		}
+	}
+	else
+	{
+		//Unknown or base and below difficulty
+		level.random_pandora_box_start = false;
+		iprintln("pandora regular box start " +string(level.random_pandora_box_start));
+	}
+	iprintln("Flipping customize flag");
+	flag_set("customize");
 	// -=- Box hint string update -=-
 	for (i = 0; i < level.chests.size; i++)
 	{
@@ -780,14 +800,24 @@ init_dvars()
 		SetDvar( "magic_chest_movable", "1" );
 	}
 
+	if(getdvar("magic_box_explore_only") == "")
+	{
+		SetDvar( "magic_box_explore_only", 1 );
+	}
+	
 	if(getdvar("magic_box_difficulty") == "")
 	{
 		SetDvar( "magic_box_difficulty", 0 );
 	}
 
-	if(getdvar("magic_box_explore_only") == "")
+	if(getdvar("magic_box_expensive") == "")
 	{
-		SetDvar( "magic_box_explore_only", 1 );
+		SetDvar( "magic_box_expensive", 0 );
+	}
+
+	if(getdvar("magic_box_random_start") == "")
+	{
+		SetDvar( "magic_box_random_start", 0 );
 	}
 
 	if ( GetDvar( "dogs_enabled" ) == "" || ( GetDvar( "dogs_enabled" ) != "1" && GetDvar( "dogs_enabled" ) == "0") )
@@ -886,9 +916,11 @@ initZombieLeaderboardData()
 
 init_flags()
 {
+	iprintln("~~~Initializing flags~~~!");
 	flag_init("spawn_point_override");
 	flag_init("electricity_on");
 	flag_init("crawler_round");
+	flag_init("customize");
 }
 
 

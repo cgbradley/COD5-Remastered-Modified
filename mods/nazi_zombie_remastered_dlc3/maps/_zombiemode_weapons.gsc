@@ -8,7 +8,7 @@ init()
 	init_weapon_upgrade();
 	init_pay_turret();
 	//init_weapon_cabinet();
-	treasure_chest_init();
+	level thread treasure_chest_init();
 	level.box_moved = false;
 }
 
@@ -511,7 +511,11 @@ treasure_chest_init()
 	
 	
 	level.chests = GetEntArray( "treasure_chest_use", "targetname" );
-
+	
+	iprintln("Waiting for customize flag");
+	flag_wait("customize");
+	flag_clear("customize");
+	iprintln("DONE Waiting for customize flag");
 	if (level.chests.size > 1)
 	{
 
@@ -521,7 +525,7 @@ treasure_chest_init()
 		{
 			level.chests = array_randomize(level.chests);
 
-			if( isdefined( level.random_pandora_box_start ) )
+			if( isdefined( level.random_pandora_box_start ) && level.random_pandora_box_start == true )
 				break;
     
 			if ( !IsDefined( level.chests[0].script_noteworthy ) || ( level.chests[0].script_noteworthy != "start_chest" ) )
@@ -536,12 +540,12 @@ treasure_chest_init()
 		while(level.chest_index < level.chests.size)
 		{
 				
-			if( isdefined( level.random_pandora_box_start ) )
+			if( isdefined( level.random_pandora_box_start ) && level.random_pandora_box_start == true )
 				break;
 
             if(level.chests[level.chest_index].script_noteworthy == "start_chest")
             {
-                 break;
+                break;
             }
             
             level.chest_index++;     
