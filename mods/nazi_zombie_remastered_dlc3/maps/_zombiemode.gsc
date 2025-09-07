@@ -284,7 +284,12 @@ main(init_zombie_spawner_name)
 		setdvar("zmode", 0);
 	}
 	iprintln("Reduce sunlight");
-	//! Can set box difficulty vars here instead of using the dvar to determine behavior 
+
+	// -                     -
+	// =-- TWEAK MYSTERY BOX --=
+	// -                     -
+		// Can set box difficulty vars here instead of using the dvar to determine behavior 
+	// -=- Box price -=-
 	if (getdvar("magic_box_expensive") != "" && getdvarint("magic_box_expensive") == 1)
 	{
 		level.zombie_treasure_chest_cost = 1500;
@@ -293,7 +298,24 @@ main(init_zombie_spawner_name)
 	{
 		level.zombie_treasure_chest_cost = 950;//restore default
 	}
-
+	// -=- Box general -=-
+	if(getdvar("magic_box_difficulty") != "" && getdvarint("magic_box_difficulty") > 0) 
+	{
+		if(getdvarint("magic_box_difficulty") == 1) 
+		{
+			level.chest_min_move_usage = 3;
+		}
+		else if(getdvarint("magic_box_difficulty") >= 2) 
+		{
+			level.chest_min_move_usage = 2;
+		}
+	}
+	else
+	{
+		//Unknown or base and below difficulty
+		level.chest_min_move_usage = 4;
+	}
+	// -=- Box hint string update -=-
 	for (i = 0; i < level.chests.size; i++)
 	{
 		level.chests[i] notify( "cost_update" );
