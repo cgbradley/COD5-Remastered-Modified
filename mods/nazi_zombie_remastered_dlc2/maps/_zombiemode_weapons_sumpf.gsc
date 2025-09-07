@@ -462,7 +462,7 @@ show_magic_box()
 		{
 			level.pandora_light moveto(anchorTarget.origin, 0.05);
 			wait(1);	
-			playfxontag(level._effect["lght_marker_flare"], level.pandora_light, "tag_origin");*/
+			playfxontag(level._effect["lght_marker_flare"], level.pandora_light, "tag_origin");
 		}
 		else
 		{
