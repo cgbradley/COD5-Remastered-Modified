@@ -7,7 +7,7 @@ init()
 	init_weapons();
 	init_weapon_upgrade();
 	//init_weapon_cabinet();
-	treasure_chest_init();
+	level thread treasure_chest_init();
 	level.box_moved = false;
 
 	level thread init_bayonet_wallbuy(); // new
@@ -261,6 +261,9 @@ treasure_chest_init()
 	
 	level.chests = GetEntArray( "treasure_chest_use", "targetname" );
 
+	flag_wait("customize");
+	flag_clear("customize");
+
 	if (level.chests.size > 1)
 	{
 
@@ -269,7 +272,10 @@ treasure_chest_init()
 		while ( 1 )
 		{
 			level.chests = array_randomize(level.chests);
-               
+
+			if( isdefined( level.random_pandora_box_start ) && level.random_pandora_box_start == true )
+				break;
+
 			if ( !IsDefined( level.chests[0].script_noteworthy ) || ( level.chests[0].script_noteworthy != "start_chest" ) )
 			{
 				break;
@@ -281,19 +287,23 @@ treasure_chest_init()
 
 		while(level.chest_index < level.chests.size)
 		{
+			if( isdefined( level.random_pandora_box_start ) && level.random_pandora_box_start == true )
+				 break;
             if(level.chests[level.chest_index].script_noteworthy == "start_chest")
             {
                  break;
             }
             
             level.chest_index++;     
-      }
-
+      	}
+		if(getdvar("developer") == "1")
+	  		iprintln("Box start " +string(level.chest_index) + " size " +string(level.chests.size));
+		level.chests[level.chest_index] thread treasure_chest_wait_get_hint(); // if using custom box price, update here
 		//init time chest accessed amount.
 		
 		if(level.script != "nazi_zombie_prototype")
 		{
-		level.chest_accessed = 0;
+			level.chest_accessed = 0;
 		}
 
 		if(level.script == "nazi_zombie_sumpf")
@@ -305,37 +315,69 @@ treasure_chest_init()
 			playfxontag(level._effect["lght_marker"], level.pandora_light, "tag_origin");
 			
 		}
+		//determine magic box starting location at random or normal
+		init_starting_chest_location();
 
-		for (i = 0; i < level.chests.size; i++)
+	}
+
+	array_thread( level.chests, ::treasure_chest_think );
+
+}
+
+init_starting_chest_location()
+{
+
+	for( i = 0; i < level.chests.size; i++ )
+	{
+
+		if( isdefined( level.random_pandora_box_start ) && level.random_pandora_box_start == true )
 		{
-			level.chests[i] thread treasure_chest_wait_get_hint(); // if using custom box price, update here
-			if (!IsDefined(level.chests[i].script_noteworthy) || (level.chests[i].script_noteworthy != "start_chest"))
+			if( i != 0 )
 			{
 				level.chests[i] hide_chest();	
 			}
 			else
 			{
 				level.chest_index = i;
-				//PI CHANGE - altered to allow for more than one piece of rubble
-				rubble = getentarray(level.chests[i].script_noteworthy + "_rubble", "script_noteworthy");
-				if ( IsDefined( rubble ) )
-				{
-					for (x = 0; x < rubble.size; x++)
-					{
-						rubble[x] hide();
-					}
-					//END PI CHANGE
-				}
-				else
-				{
-					println( "^3Warning: No rubble found for magic box" );
-				}
+				unhide_magic_box( i );
+			}
+
+		}
+		else
+		{
+			if ( !IsDefined(level.chests[i].script_noteworthy ) || ( level.chests[i].script_noteworthy != "start_chest" ) )
+			{
+				level.chests[i] hide_chest();	
+			}
+			else
+			{
+				level.chest_index = i;
+				unhide_magic_box( i );
 			}
 		}
 	}
+	if(getdvar("developer") == "1")
+		iprintln("Box moved "+string(level.chest_index)+" " +string(level.chests[level.chest_index].script_noteworthy));
 
-	array_thread( level.chests, ::treasure_chest_think );
+}
 
+unhide_magic_box( index )
+{
+	
+	//PI CHANGE - altered to allow for more than one piece of rubble
+	rubble = getentarray( level.chests[index].script_noteworthy + "_rubble", "script_noteworthy" );
+	if ( IsDefined( rubble ) )
+	{
+		for ( x = 0; x < rubble.size; x++ )
+		{
+			rubble[x] hide();
+		}
+		//END PI CHANGE
+	}
+	else
+	{
+		println( "^3Warning: No rubble found for magic box" );
+	}
 }
 
 set_treasure_chest_cost( cost )
@@ -740,7 +782,7 @@ treasure_chest_move(lid)
 	}
 
 	playsoundatposition ("whoosh", soundpoint.origin );
-	playsoundatposition ("ann_vox_magicbox", soundpoint.origin );
+//playsoundatposition ("ann_vox_magicbox", soundpoint.origin );
 
 	
 	anchor moveto(anchor.origin + (0,0,50),5);
@@ -879,20 +921,7 @@ treasure_chest_move(lid)
 	//turn off magic box light.
 	level notify("magic_box_light_switch");
 	//PI CHANGE - altered to allow for more than one object of rubble per box
-	rubble = getentarray(level.chests[level.chest_index].script_noteworthy + "_rubble", "script_noteworthy");
-
-	if ( IsDefined( rubble ) )
-	{
-		for (i = 0; i < rubble.size; i++)
-		{
-			rubble[i] hide();
-		}
-	}
-	//END PI CHANGE
-	else
-	{
-		println( "^3Warning: No rubble found for magic box" );
-	}
+	unhide_magic_box( level.chest_index );
 	
 
 }

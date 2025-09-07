@@ -226,9 +226,9 @@ main(init_zombie_spawner_name)
 			
 			if (main_mode == 1) //Alternate difficulty
 			{
-				setdvar( "magic_box_difficulty", 2 ); //Harder
+				setdvar( "magic_box_difficulty", 2); //Harder
 				setdvar("magic_box_expensive", 1);
-				setdvar( "magic_box_random_start", 1 );
+				setdvar( "magic_box_random_start", 1);
 				setdvar("easy_health", 0);
 				setdvar("easy_health_scale", 0);
 				setdvar("round_rate", 0);
@@ -239,9 +239,9 @@ main(init_zombie_spawner_name)
 			}
 			else if (main_mode == 2) //Simple mode
 			{
-				setdvar( "magic_box_difficulty", 1 ); //Easier
+				setdvar( "magic_box_difficulty", 1); //Easier
 				setdvar("magic_box_expensive", 1);
-				setdvar( "magic_box_random_start", 1 );
+				setdvar( "magic_box_random_start", 1);
 				setdvar("easy_health", 1);
 				setdvar("easy_health_scale", 20);
 				setdvar("round_rate", 2);
@@ -271,9 +271,9 @@ main(init_zombie_spawner_name)
 		}
 		else if(mode_float_value == 0)
 		{
-			setdvar( "magic_box_difficulty", 0 );
+			setdvar( "magic_box_difficulty", 0);
 			setdvar("magic_box_expensive", 0);
-			setdvar( "magic_box_random_start", 0 );
+			setdvar( "magic_box_random_start", 0);
 			setdvar("easy_health", 0);
 			setdvar("easy_health_scale", 0);
 			setdvar("round_rate", 0);
@@ -318,7 +318,7 @@ main(init_zombie_spawner_name)
 		//Unknown or base and below difficulty
 		level.chest_min_move_usage = 4;
 	}
-
+	//Random box start
 	if(getdvar("magic_box_random_start") != "" && getdvarint("magic_box_random_start") > 0)
 	{
 		if(getdvarint("magic_box_random_start") == 1)

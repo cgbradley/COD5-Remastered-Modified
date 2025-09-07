@@ -549,7 +549,9 @@ treasure_chest_init()
             }
             
             level.chest_index++;     
-      }
+      	}
+		if(getdvar("developer") == "1")
+	  		iprintln("Box start " +string(level.chest_index) + " size " +string(level.chests.size));
 		level.chests[level.chest_index] thread treasure_chest_wait_get_hint(); // if using custom box price, update here
 		//init time chest accessed amount.
 		
@@ -623,7 +625,8 @@ init_starting_chest_location()
 			}
 		}
 	}
-
+	if(getdvar("developer") == "1")
+		iprintln("Box moved "+string(level.chest_index)+" " +string(level.chests[level.chest_index].script_noteworthy));
 
 }
 
@@ -681,7 +684,7 @@ get_chest_pieces()
 
 play_crazi_sound()
 {
-	self playlocalsound("laugh_child");
+	//self playlocalsound("laugh_child");
 }
 
 show_magic_box()
@@ -1076,7 +1079,7 @@ treasure_chest_move(lid)
 	}
 
 	playsoundatposition ("whoosh", soundpoint.origin );
-//	playsoundatposition ("ann_vox_magicbox", soundpoint.origin );
+	//playsoundatposition ("ann_vox_magicbox", soundpoint.origin );
 
 
 	anchor moveto(anchor.origin + (0,0,50),5);
