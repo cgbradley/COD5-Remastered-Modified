@@ -23,19 +23,36 @@ main()
 	level.remaster_mod = true;
 
 	level._effect["lightning_strike"] = LoadFX( "maps/ber2/fx_ber2_lightning_flash" );
-	level._effect["rain_heavy_cloudtype"]   = LoadFX( "weather/rain_heavy_cloudtype" );
+	//level._effect["rain_heavy_cloudtype"]   = LoadFX( "weather/rain_heavy_cloudtype" );//doesnt do anything
+
+	// / *
 	level._effect["rain_10"]   = LoadFX( "env/weather/fx_rain_sys_heavy" );
 	level._effect["rain_9"]      = LoadFX( "env/weather/fx_rain_sys_heavy" );
 	level._effect["rain_8"]      = LoadFX( "env/weather/fx_rain_sys_heavy" );
 	level._effect["rain_7"]      = LoadFX( "env/weather/fx_rain_sys_heavy" );
-	level._effect["rain_6"]      = LoadFX( "env/weather/fx_rain_sys_med" );
-	level._effect["rain_5"]      = LoadFX( "env/weather/fx_rain_sys_med" );
+	level._effect["rain_6"]      = LoadFX( "env/weather/fx_rain_sys_med2" );
+	level._effect["rain_5"]      = LoadFX( "env/weather/fx_rain_sys_med2" );
 	level._effect["rain_4"]      = LoadFX( "env/weather/fx_rain_sys_med" );
 	level._effect["rain_3"]      = LoadFX( "env/weather/fx_rain_sys_med" );
 	level._effect["rain_2"]      = LoadFX( "env/weather/fx_rain_sys_lght" );
 	level._effect["rain_1"]      = LoadFX( "env/weather/fx_rain_sys_lght" );
-	level._effect["rain_0"]      = LoadFX( "env/weather/fx_rain_sys_lght" );
+	level._effect["rain_0"]      = LoadFX( "env/weather/fx_rain_sys_lght" );// * /
 
+	/*level._effect["rain_heavy_cloudtype"]   = LoadFX( "weather/rain_heavy_cloudtype" );
+	level._effect["rain_small_dark_cloud"]   = LoadFX( "env/weather/fx_cloud3d_cmls_5k_runner" );
+	level._effect["rain_medium_dark_cloud"]   = LoadFX( "env/weather/fx_cloud3d_cmls_10k_runner" );
+	level._effect["rain_large_dark_cloud"]   = LoadFX( "env/weather/fx_cloud3d_cmls_50k_runner" );*/
+	/*level._effect["rain_10"]     = LoadFX( "env/weather/fx_rain_hvy" );
+	level._effect["rain_9"]      = LoadFX( "env/weather/fx_rain_hvy" );
+	level._effect["rain_8"]      = LoadFX( "env/weather/fx_rain_hvy" );
+	level._effect["rain_7"]      = LoadFX( "env/weather/fx_rain_hvy" );
+	level._effect["rain_6"]      = LoadFX( "env/weather/fx_rain_med" );
+	level._effect["rain_5"]      = LoadFX( "env/weather/fx_rain_med" );
+	level._effect["rain_4"]      = LoadFX( "env/weather/fx_rain_med" );
+	level._effect["rain_3"]      = LoadFX( "env/weather/fx_rain_med" );
+	level._effect["rain_2"]      = LoadFX( "env/weather/fx_rain_lght" );
+	level._effect["rain_1"]      = LoadFX( "env/weather/fx_rain_lght" );
+	level._effect["rain_0"]      = LoadFX( "env/weather/fx_rain_sys_lght" );*/
 	thread weather_control();
 
 	// make sure we randomize things in the map once
@@ -3244,8 +3261,11 @@ item_hud_remove()
 
 weather_control()
 {
-   rainInit( "hard" ); // get rain going
-   level thread rainEffectChange( 9, 0.1 );  // tweak initial rain strength
+	level.rainLevel = 0;
+	wait(2);
+	level thread rainInit( "none" ); // get rain going
+   //rainInit( "hard" ); // get rain going
+   //level thread rainEffectChange( 9, 0.1 );  // tweak initial rain strength
    thread playerWeather(); // make the actual rain effect generate around the players
 
       addLightningExploder( 10000 );
@@ -3256,16 +3276,18 @@ weather_control()
       addLightningExploder( 10005 );
    
    level.nextLightning = GetTime() + 1;
-   thread lightning( ::lightning_normal, ::lightning_flash );
+   //thread lightning( ::lightning_normal, ::lightning_flash );
 }
 lightning_normal()
 {
    wait( 0.05 );
-   ResetSunLight();
-   setVolFog(250, 750, 400, -128, 0.44, 0.52, 0.44, 0); 
+   //ResetSunLight();
+   //setVolFog(250, 750, 400, -128, 0.44, 0.52, 0.44, 0); 
+   //maps\_zombiemode::fogfunctionhere();
 }
 lightning_flash()
 {
+	//iprintln(getdvar("fog_brightness"));//works
    SetSunLight( 4, 4, 4.5 );
    setVolFog(250, 550, 400, -128, 0.6, 0.6, 0.7, 0);
          

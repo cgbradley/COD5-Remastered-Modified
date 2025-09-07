@@ -183,7 +183,14 @@ fx,env/water/fx_water_rain_distortion
 // for _weather
 fx,env/weather/fx_rain_sys_heavy
 fx,env/weather/fx_rain_sys_med
+fx,env/weather/fx_rain_sys_med2
 fx,env/weather/fx_rain_sys_lght
+fx,env/weather/fx_rain_hvy
+fx,env/weather/fx_rain_med
+fx,env/weather/fx_rain_lght
+fx,env/weather/fx_cloud3d_cmls_5k_runner
+fx,env/weather/fx_cloud3d_cmls_10k_runner
+fx,env/weather/fx_cloud3d_cmls_50k_runner
 fx,system_elements/fx_null
 // for lightning, might need to pull in the fx_lightning_flash as a new file
 fx,maps/ber2/fx_ber2_lightning_flash
