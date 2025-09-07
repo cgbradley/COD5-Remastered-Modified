@@ -226,6 +226,7 @@ main(init_zombie_spawner_name)
 			
 			if (main_mode == 1) //Alternate difficulty
 			{
+				setdvar( "magic_box_difficulty", 2 ); //Harder
 				setdvar("magic_box_expensive", 1);
 				setdvar("easy_health", 0);
 				setdvar("easy_health_scale", 0);
@@ -237,6 +238,7 @@ main(init_zombie_spawner_name)
 			}
 			else if (main_mode == 2) //Simple mode
 			{
+				setdvar( "magic_box_difficulty", 1 ); //Easier
 				setdvar("magic_box_expensive", 1);
 				setdvar("easy_health", 1);
 				setdvar("easy_health_scale", 20);
@@ -267,6 +269,7 @@ main(init_zombie_spawner_name)
 		}
 		else if(mode_float_value == 0)
 		{
+			setdvar( "magic_box_difficulty", 0 );
 			setdvar("magic_box_expensive", 0);
 			setdvar("easy_health", 0);
 			setdvar("easy_health_scale", 0);
@@ -281,6 +284,7 @@ main(init_zombie_spawner_name)
 		setdvar("zmode", 0);
 	}
 	iprintln("Reduce sunlight");
+	//! Can set box difficulty vars here instead of using the dvar to determine behavior 
 	if (getdvar("magic_box_expensive") != "" && getdvarint("magic_box_expensive") == 1)
 	{
 		level.zombie_treasure_chest_cost = 1500;
@@ -289,7 +293,7 @@ main(init_zombie_spawner_name)
 	{
 		level.zombie_treasure_chest_cost = 950;//restore default
 	}
-	
+
 	for (i = 0; i < level.chests.size; i++)
 	{
 		level.chests[i] notify( "cost_update" );
@@ -694,12 +698,12 @@ init_levelvars()
 
 	// Scoring
 	set_zombie_var( "zombie_score_start", 				200 );
-/#
+
 	if( GetDvarInt( "zombie_cheat" ) >= 1 )
 	{
 		set_zombie_var( "zombie_score_start", 			100000 );
 	}
-#/
+
 	set_zombie_var( "zombie_score_kill", 				50 );
 	set_zombie_var( "zombie_score_damage", 				5 );
 	set_zombie_var( "zombie_score_bonus_melee", 		80 );
@@ -754,9 +758,14 @@ init_dvars()
 		SetDvar( "magic_chest_movable", "1" );
 	}
 
+	if(getdvar("magic_box_difficulty") == "")
+	{
+		SetDvar( "magic_box_difficulty", 0 );
+	}
+
 	if(getdvar("magic_box_explore_only") == "")
 	{
-		SetDvar( "magic_box_explore_only", "1" );
+		SetDvar( "magic_box_explore_only", 1 );
 	}
 
 	if ( GetDvar( "dogs_enabled" ) == "" || ( GetDvar( "dogs_enabled" ) != "1" && GetDvar( "dogs_enabled" ) == "0") )

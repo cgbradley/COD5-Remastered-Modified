@@ -1325,7 +1325,31 @@ treasure_chest_weapon_spawn( chest, player )
 			flag_set("moving_chest_now");
 			level.chest_accessed = 0;
 
-			player maps\_zombiemode_score::add_to_player_score( 950 );
+			if( IsDefined( level.zombie_treasure_chest_cost ) )
+			{
+				box_refund = level.zombie_treasure_chest_cost;
+			}
+			else
+			{
+				box_refund = 950;
+			}
+
+			if(getdvar("magic_box_difficulty") != "") 
+			{
+				if(getdvarint("magic_box_difficulty") == 1) 
+				{
+					box_refund = box_refund * 0.5;
+				}
+				else if(getdvarint("magic_box_difficulty") >= 2) 
+				{
+					box_refund = 0;
+				}
+				else
+				{
+					//Unknown or base difficulty
+				}
+			}
+			player maps\_zombiemode_score::add_to_player_score( round_up_to_ten(box_refund) );
 
 			//allow power weapon to be accessed.
 			level.box_moved = true;

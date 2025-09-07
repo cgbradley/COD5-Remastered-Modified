@@ -546,7 +546,7 @@ treasure_chest_init()
             
             level.chest_index++;     
       }
-
+		level.chests[level.chest_index] thread treasure_chest_wait_get_hint(); // if using custom box price, update here
 		//init time chest accessed amount.
 		
 		if(level.script != "nazi_zombie_prototype")
@@ -578,7 +578,6 @@ treasure_chest_init()
 			level.pandora_light SetModel( "tag_origin" );
 			//playfxontag(level._effect["lght_marker"], level.pandora_light, "tag_origin");
 		}		
-		
 		//determine magic box starting location at random or normal
 		init_starting_chest_location();
 	
@@ -724,19 +723,35 @@ show_magic_box()
 
 }
 
-treasure_chest_think()
-{	
-	cost = 950;
+box_get_cost()
+{
 	if( IsDefined( level.zombie_treasure_chest_cost ) )
 	{
-		cost = level.zombie_treasure_chest_cost;
+		return level.zombie_treasure_chest_cost; //assume this is a random number every time you restart level
 	}
 	else
 	{
-		cost = self.zombie_cost;
+		return 950;
 	}
+}
 
-	self SetHintString( &"REMASTERED_ZOMBIE_RANDOM_WEAPON_950" ); 
+treasure_chest_set_hint(cost)
+{
+	self SetHintString(&"REMASTERED_ZOMBIE_RANDOM_WEAPON", "&&1", cost);
+}
+
+treasure_chest_wait_get_hint()
+{
+	self waittill("cost_update");
+	//iprintln("hint wait update MANUAL!!");
+	cost = box_get_cost();
+	treasure_chest_set_hint(cost);
+}
+
+treasure_chest_think()
+{	
+	cost = box_get_cost();
+	treasure_chest_set_hint(cost);
 	self setCursorHint( "HINT_NOICON" );
 
 	//self thread decide_hide_show_chest_hint( "move_imminent" );
@@ -752,6 +767,8 @@ treasure_chest_think()
 			wait( 0.1 );
 			continue;
 		}
+		cost = box_get_cost();
+		treasure_chest_set_hint(cost);
 
 		// make sure the user is a player, and that they can afford it
 		if( is_player_valid( user ) && user.score >= cost )
@@ -1526,8 +1543,32 @@ treasure_chest_weapon_spawn( chest, player )
 			flag_set("moving_chest_now");
 			self notify( "move_imminent" );
 			level.chest_accessed = 0;
+			
+			if( IsDefined( level.zombie_treasure_chest_cost ) )
+			{
+				box_refund = level.zombie_treasure_chest_cost;
+			}
+			else
+			{
+				box_refund = 950;
+			}
 
-			player maps\_zombiemode_score::add_to_player_score( 950 );
+			if(getdvar("magic_box_difficulty") != "") 
+			{
+				if(getdvarint("magic_box_difficulty") == 1) 
+				{
+					box_refund = box_refund * 0.5;
+				}
+				else if(getdvarint("magic_box_difficulty") >= 2) 
+				{
+					box_refund = 0;
+				}
+				else
+				{
+					//Unknown or base difficulty
+				}
+			}
+			player maps\_zombiemode_score::add_to_player_score( round_up_to_ten(box_refund) );
 
 			//allow power weapon to be accessed.
 			level.box_moved = true;

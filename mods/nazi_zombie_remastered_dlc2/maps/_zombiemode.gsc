@@ -190,6 +190,7 @@ main()
 			
 			if (main_mode == 1) //Alternate difficulty
 			{
+				setdvar( "magic_box_difficulty", 2 ); //Harder
 				setdvar("magic_box_expensive", 1);
 				setdvar("easy_health", 0);
 				setdvar("easy_health_scale", 0);
@@ -201,6 +202,7 @@ main()
 			}
 			else if (main_mode == 2) //Simple mode
 			{
+				setdvar( "magic_box_difficulty", 1 ); //Easier
 				setdvar("magic_box_expensive", 1);
 				setdvar("easy_health", 1);
 				setdvar("easy_health_scale", 20);
@@ -231,6 +233,7 @@ main()
 		}
 		else if(mode_float_value == 0)
 		{
+			setdvar( "magic_box_difficulty", 0 );
 			setdvar("magic_box_expensive", 0);
 			setdvar("easy_health", 0);
 			setdvar("easy_health_scale", 0);
@@ -733,14 +736,14 @@ init_dvars()
 		SetDvar( "magic_box_explore_only", "1" );
 	}
 
-	/*if(getdvar("magic_box_difficulty") == "")
+	if(getdvar("magic_box_difficulty") == "")
 	{
-		SetDvar( "magic_box_difficulty", "0" );
-	}*/
+		SetDvar( "magic_box_difficulty", 0 );
+	}
 
 	if(getdvar("magic_box_expensive") == "")
 	{
-		SetDvar( "magic_box_expensive", "0" );
+		SetDvar( "magic_box_expensive", 0 );
 	}
 
 	SetDvar( "revive_trigger_radius", "60" ); 
@@ -798,7 +801,7 @@ init_dvars()
 	{
 		setdvar("enable_weather", 0);
 	}
-	
+
 	/*
 	start_dist 			= 404.39;
 	halfway_dist 		= 1543.52;
