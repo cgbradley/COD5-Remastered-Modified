@@ -2276,17 +2276,27 @@ award_grenades_for_survivors()
 
 ai_calculate_health()
 {
+	level.zombie_health = level.zombie_vars["zombie_health_start"];
+	
+	//////////////////////////////////////////
+	// New default calculate
+	//(will get correct health independent of stored value or wave skipping)
+
+	// Start increasing health at wave 2
+	if( level.round_number > 1 )
+	{
+		early_increases = min(level.round_number, 9) - 1;//-1 since we skip first round increment
+		level.zombie_health = Int( level.zombie_health + Int(early_increases * level.zombie_vars["zombie_health_increase"]) ); 
+	}
 	// After round 10, get exponentially harder
 	if( level.round_number >= 10 )
 	{
-		level.zombie_health += Int( level.zombie_health * level.zombie_vars["zombie_health_increase_percent"] ); 
-		return;
+		for(i = 10; i <= level.round_number; i++)
+		{
+			level.zombie_health += Int( level.zombie_health * level.zombie_vars["zombie_health_increase_percent"] );
+		}
 	}
-
-	if( level.round_number > 1 )
-	{
-		level.zombie_health = Int( level.zombie_health + level.zombie_vars["zombie_health_increase"] ); 
-	}
+	//////////////////////////////////////////
 
 }
 
