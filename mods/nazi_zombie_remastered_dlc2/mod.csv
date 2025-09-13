@@ -79,7 +79,7 @@ sound,achievement_sound,,all_mp
 sound,dlc2_share
 // test
 sound,nazi_zombie_sumpf
-include,rain
+//include,rain
 sound,dlc_weather
 // test
 xmodel,viewmodel_jap_type99_bipod_lmg
@@ -183,6 +183,7 @@ fx,env/water/fx_water_rain_distortion
 // for _weather
 fx,env/weather/fx_rain_sys_heavy
 fx,env/weather/fx_rain_sys_med
+fx,env/weather/fx_rain_sys_medc
 fx,env/weather/fx_rain_sys_med2
 fx,env/weather/fx_rain_sys_lght
 fx,env/weather/fx_rain_hvy
