@@ -106,7 +106,7 @@ play_vending_vo( machine, origin )
 			player = players_somewhat_near[i];
 			//iprintln("aimed at perk");
 		}
-		else if(players_super_near > 0 )
+		else if(players_super_near.size > 0 )
 		{
 			player = players_super_near[i];
 			//iprintln("super near");

@@ -482,7 +482,7 @@ check_player_has_perk(perk)
 			{
 				if(DistanceSquared( players[i].origin, self.origin ) < dist)
 				{
-					if(!players[i] hasperk(perk) && !(players[i] in_revive_trigger()) && (self.is_drinking != 1 || !isdefined(self.is_drinking)) )
+					if(!players[i] hasperk(perk) && !(players[i] in_revive_trigger()) && (!isdefined(self.is_drinking) || self.is_drinking != 1) )
 					{
 						self setvisibletoplayer(players[i]);
 						//iprintlnbold("turn it off to player");
