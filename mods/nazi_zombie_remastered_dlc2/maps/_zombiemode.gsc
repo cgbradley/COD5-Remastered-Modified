@@ -179,6 +179,7 @@ main()
 	SetSavedDvar( "r_filmTweakLightTint", "0.75 0.66 0.65");//r_filmTweakLightTint 0.75 0.66 0.65
 	//SetSavedDvar( "r_filmTweakDarkTint", "0.63 0.64 0.61");//r_filmTweakDarkTint 0.63 0.64 0.61
 
+	keep_visuals_zmode = false;//zmode has 0.5 at end, so skip over visual changes
 	if (getdvar("zmode") != "")
 	{
 		mode_float_value = getdvarfloat("zmode");
@@ -222,6 +223,7 @@ main()
 			if (sub_mode >= 0.5) //Empty passthrough
 			{
 				//do not overwrite visual settings
+				keep_visuals_zmode = true;
 			}
 			else
 			{
@@ -229,6 +231,7 @@ main()
 				{
 					SetDvar( "fog_brightness", 0.9 );
 				}
+				setdvar("set_sun", 1);
 			
 			}
 			setdvar("fog_set", 6);//Reset fog to current dvars, pretty sure it clears on restart so this is necessary
@@ -249,6 +252,12 @@ main()
 	else
 	{
 		setdvar("zmode", 0);
+	}
+	if ( keep_visuals_zmode == false && (getdvarfloat("fog_brightness") == 1 || getdvarint("developer") == 1))
+	{
+		SetDvar( "fog_brightness", 0.9 );
+		if(getdvarint("developer") == 1)
+			setdvar("set_sun", 1);
 	}
 	iprintln("Reduce sunlight");
 
@@ -838,7 +847,7 @@ init_dvars()
 	}
 	//if(getdvar("alternate_difficulty") == "" || (abs(getdvarint("alternate_difficulty")) != 1) )
 
-	if (getdvar("enable_weather") != "")
+	if (getdvar("enable_weather") == "")
 	{
 		setdvar("enable_weather", 0);
 	}
@@ -850,6 +859,10 @@ init_dvars()
 	base_height 		= -244.014;//200 is dog fog
 	*/
 
+	if(getdvar("set_sun") == "")// || getdvarint("set_sun") > 1 )
+	{
+		SetDvar( "set_sun", 0);//Default modded set_sun preset
+	}
 	if(getdvar("fog_set") == "" || getdvarint("fog_set") == 0)//getdvarint("fog_set") < 0 || getdvarint("fog_set") > 1)
 	{
 		SetDvar( "fog_set", 4 );//Default modded fog preset
@@ -864,7 +877,8 @@ init_dvars()
 		SetDvar( "fog_brightness", 1 );
 	}
 	level thread fog_monitor();
-
+	//if(getdvarint("developer") == 1)
+	level thread sun_monitor();
 	SetDvar( "revive_trigger_radius", "60" );
 }
 
@@ -919,6 +933,68 @@ fog_monitor()
 			SetDvar( "fog_set", 0 );
 		}
 		wait( 5 );
+	}
+}
+
+// Adjusts the sun
+sun_monitor()
+{
+	self endon( "disconnect" ); 
+	level endon( "intermission" );
+
+	while( 1 )
+	{
+		if(getdvarfloat("set_sun") > 0) {
+			
+			if(getdvarint("set_sun") == 1) //default
+			{
+				SetSunLight(0, 0, 0);
+				//SetSunDirection( ( 180, 180, 0 ) );
+			}
+			else if(getdvarint("set_sun") == 2)
+			{
+				SetSunDirection( ( 180, 180, 0 ) );
+			} 
+			else if(getdvarint("set_sun") == 3)
+			{
+				SetSunDirection( ( -180, 180, 0 ) );
+			}else if(getdvarint("set_sun") == 4)
+			{
+				SetSunDirection( ( 270, 0, 0 ) );
+			}
+			else if(getdvarint("set_sun") == 5) {
+				SetSunDirection( ( -270, 0, 0 ) );
+			}
+			else if(getdvarint("set_sun") == 6) {
+				SetSunDirection( ( -180, -180, 0 ) );
+			}
+			else if(getdvarint("set_sun") == 7) {
+				SetSunDirection( ( -180, -180, -180 ) );
+			}
+			sunfloat = GetDvarFloat("set_sun")- getdvarint("set_sun");
+			if(sunfloat == 0.5)
+			{
+				SetSunLight(0, 0, 0);
+				iprintln("Lowest sun light");
+			}
+			
+		}
+		else if(getdvarint("set_sun") < 0) {
+			if(getdvarint("set_sun") == -1) {
+				ResetSunLight();
+				ResetSunDirection();
+				iprintln("Reset sun light + direction");
+			} else if(getdvarint("set_sun") == -2) {
+				ResetSunLight();
+				iprintln("Reset sun light");
+			}
+			else if(getdvarint("set_sun") == -3) {
+				ResetSunDirection();
+				iprintln("Reset sun direction");
+			}
+		}
+		SetDvar( "set_sun", 0 );
+		wait( 10 );
 	}
 }
 
