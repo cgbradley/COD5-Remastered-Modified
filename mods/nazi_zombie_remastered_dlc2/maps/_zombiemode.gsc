@@ -185,7 +185,7 @@ main()
 		mode_float_value = getdvarfloat("zmode");
 		main_mode = Int(mode_float_value);
 		sub_mode = abs(mode_float_value - main_mode);
-		iprintln("zmode "+ string(mode_float_value));
+		iprintln("zmode: "+ string(mode_float_value));
 		if (mode_float_value > 0)
 		{
 			
@@ -229,7 +229,7 @@ main()
 			{
 				if (getdvarfloat("fog_brightness") > 0.9 || getdvarfloat("fog_brightness") < 0.6)
 				{
-					SetDvar( "fog_brightness", 0.9 );
+					SetDvar( "fog_brightness", 0.9 );//0.80 - 0.85 looks good, depending on vibe
 				}
 				setdvar("set_sun", 1);
 			
@@ -252,14 +252,21 @@ main()
 	else
 	{
 		setdvar("zmode", 0);
+		iprintln("zmode: default 0!");
 	}
-	if ( keep_visuals_zmode == false && (getdvarfloat("fog_brightness") == 1 || getdvarint("developer") == 1))
+	if ( keep_visuals_zmode == false)
 	{
-		SetDvar( "fog_brightness", 0.9 );
+		if(getdvarfloat("fog_brightness") == 1)
+		{
+			SetDvar( "fog_brightness", 0.9 );
+		}
 		if(getdvarint("developer") == 1)
 			setdvar("set_sun", 1);
 	}
-	iprintln("Reduce sunlight");
+	if(getdvar("set_sun") == "" || getdvarfloat("set_sun") == 0) //else if (getdvarfloat("zmode") == 0)
+	{
+		iprintln("Reduce tweak sunlight!");
+	}
 
 	// -                     -
 	// =-- TWEAK MYSTERY BOX --=
@@ -316,6 +323,8 @@ main()
 	{
 		level.chests[i] notify( "cost_update" );
 	}
+	if(getdvar("developer") == "1")
+		iprintln("Finished setup");
 }
 
 /*revive_retreat_point()
@@ -954,7 +963,7 @@ sun_monitor()
 			else if(getdvarint("set_sun") == 2)
 			{
 				SetSunDirection( ( 180, 180, 0 ) );
-			} 
+			}
 			else if(getdvarint("set_sun") == 3)
 			{
 				SetSunDirection( ( -180, 180, 0 ) );
@@ -972,10 +981,23 @@ sun_monitor()
 				SetSunDirection( ( -180, -180, -180 ) );
 			}
 			sunfloat = GetDvarFloat("set_sun")- getdvarint("set_sun");
-			if(sunfloat == 0.5)
+			if(sunfloat == 0.1)//Change these branches to use the float in the set function
 			{
 				SetSunLight(0, 0, 0);
-				iprintln("Lowest sun light");
+				if(getdvarint("developer") == 1)
+					iprintln("Lowest sun light");
+			}
+			else if(sunfloat == 0.25)
+			{
+				SetSunLight(0.25, 0.25, 0.25);
+				if(getdvarint("developer") == 1)
+					iprintln("0.25 sun light");
+			}
+			else if(sunfloat == 0.5)
+			{
+				SetSunLight(0.5, 0.5, 0.5);
+				if(getdvarint("developer") == 1)
+					iprintln("0.5 sun light");
 			}
 			
 		}

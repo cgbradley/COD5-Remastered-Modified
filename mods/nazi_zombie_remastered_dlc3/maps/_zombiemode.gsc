@@ -220,7 +220,7 @@ main(init_zombie_spawner_name)
 		mode_float_value = getdvarfloat("zmode");
 		main_mode = Int(mode_float_value);
 		sub_mode = abs(mode_float_value - main_mode);
-		iprintln("zmode "+ string(mode_float_value));
+		iprintln("zmode: "+ string(mode_float_value));
 		if (mode_float_value > 0)
 		{
 			
@@ -285,8 +285,12 @@ main(init_zombie_spawner_name)
 	else
 	{
 		setdvar("zmode", 0);
+		iprintln("zmode: default 0!");
 	}
-	iprintln("Reduce sunlight");
+	if (getdvarfloat("zmode") >= 0)
+	{
+		iprintln("Reduce tweak sunlight!");//always remind
+	}
 
 	// -                     -
 	// =-- TWEAK MYSTERY BOX --=

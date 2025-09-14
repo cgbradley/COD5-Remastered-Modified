@@ -511,11 +511,12 @@ treasure_chest_init()
 	
 	
 	level.chests = GetEntArray( "treasure_chest_use", "targetname" );
-	
-	iprintln("Waiting for customize flag");
+	if(getdvar("developer") == "1")
+		iprintln("Box waiting for customize flag");
 	flag_wait("customize");
 	flag_clear("customize");
-	iprintln("DONE Waiting for customize flag");
+	if(getdvar("developer") == "1")
+		iprintln("Box init - flag");//waits on customize flag
 	if (level.chests.size > 1)
 	{
 
