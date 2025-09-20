@@ -18,14 +18,15 @@ player_add_points( event, mod, hit_location ,is_dog)
 	{
 		return;
 	}
-	
+	/*
 	if(!isdefined (self.score_alt))
 	{
 		self.score_alt = 500;//alternate fake total we do ourselves in this function
 		self.score_diff_alt = 0;//diff we keep track of to track difference between our total and real total
 		self.score_quiet_points = 0;//points we didnt print
 	}
-
+	*/
+	
 	points = 0;
 	alteredpoints = 0;
 	//string_data = "";
@@ -89,16 +90,17 @@ player_add_points( event, mod, hit_location ,is_dog)
 
 	points = round_up_to_ten( points ) * level.zombie_vars["zombie_point_scalar"];
 	alteredpoints = round_up_to_ten( alteredpoints ) * level.zombie_vars["zombie_point_scalar"];
-	
+	/*
+	self.score_alt += points;
 	prescore_diff = self.score_total - self.score_alt;//current diff before adding points
-
+	*/
 	self.score += alteredpoints; 
 	self.score_total += points;
-	self.score_alt += points;
 
 	//string_data = string_data + " || P" + string(points) + " | A" + string(alteredpoints) + " | ";
 	//println(string_data);// + " ||| " + string(self.score) + " , " + string(self.score_total));
-
+	
+	/*
 	//Compare now, if scores dont equal despite compensating any previous difference between them
 	if((self.score_diff_alt + self.score_alt) != self.score_total){
 		stored_diff = self.score_diff_alt;//diff we assumed hadnt changed
@@ -122,7 +124,7 @@ player_add_points( event, mod, hit_location ,is_dog)
 	else {
 		self.score_quiet_points += points;
 	}
-	
+	*/	
 	//stat tracking
 	self.stats["score"] = self.score_total;
 

@@ -229,8 +229,9 @@ main(init_zombie_spawner_name)
 				setdvar( "magic_box_difficulty", 2); //Harder
 				setdvar("magic_box_expensive", 1);
 				setdvar( "magic_box_random_start", 1);
-				setdvar("easy_health", 0);
-				setdvar("easy_health_scale", 0);
+				setdvar("zombie_easy_health", 0);
+				setdvar("zombie_easy_health_scale", 0);
+				setdvar( "zombie_exponential_health_round", 10 );
 				setdvar("round_rate", 0);
 				setdvar("zombie_max_concurrent", 0);
 				setdvar("zombie_speed", 0);
@@ -242,8 +243,9 @@ main(init_zombie_spawner_name)
 				setdvar( "magic_box_difficulty", 1); //Easier
 				setdvar("magic_box_expensive", 1);
 				setdvar( "magic_box_random_start", 1);
-				setdvar("easy_health", 1);
-				setdvar("easy_health_scale", 20);
+				setdvar("zombie_easy_health", 1);
+				setdvar("zombie_easy_health_scale", 20);
+				setdvar( "zombie_exponential_health_round", 10 );
 				setdvar("round_rate", 2);
 				setdvar("zombie_max_concurrent", 0);
 				setdvar("zombie_speed", 0);
@@ -251,9 +253,6 @@ main(init_zombie_spawner_name)
 			}
 			else //Empty passthrough
 			{
-				//setdvar("magic_box_expensive", 1);
-				//setdvar("easy_health", 1);
-				//setdvar("easy_health_scale", 20);
 			}
 			if (sub_mode >= 0.5) //Empty passthrough
 			{
@@ -269,13 +268,14 @@ main(init_zombie_spawner_name)
 			}
 			setdvar("fog_set", 6);//Reset fog to current dvars, pretty sure it clears on restart so this is necessary
 		}
-		else if(mode_float_value == 0)
+		else if(mode_float_value == 0) //Reset all to default
 		{
 			setdvar( "magic_box_difficulty", 0);
 			setdvar("magic_box_expensive", 0);
 			setdvar( "magic_box_random_start", 0);
-			setdvar("easy_health", 0);
-			setdvar("easy_health_scale", 0);
+			setdvar("zombie_easy_health", 0);
+			setdvar("zombie_easy_health_scale", 0);
+			setdvar( "zombie_exponential_health_round", 10 );
 			setdvar("round_rate", 0);
 			setdvar("zombie_max_concurrent", 0);
 			setdvar("zombie_speed", 0);
@@ -837,14 +837,19 @@ init_dvars()
 		SetDvar( "alternate_difficulty", "0" );
 	}
 
-	if(getdvar("easy_health") == "")//will only add a small amount of health per round and recalculate as if always doing that
+	if(getdvar("zombie_easy_health") == "")//will only add a small amount of health per round and recalculate as if always doing that
 	{
-		SetDvar( "easy_health", "0" );
+		SetDvar( "zombie_easy_health", "0" );
 	}
 
-	if(getdvar("easy_health_scale") == "" || getdvarint("easy_health_scale") < 1)//how much to add each round for easy health
+	if(getdvar("zombie_easy_health_scale") == "" || getdvarint("zombie_easy_health_scale") < 1)//how much to add each round for easy health
 	{
-		SetDvar( "easy_health_scale", 0 );
+		SetDvar( "zombie_easy_health_scale", 0 );
+	}
+
+	if(getdvar("zombie_exponential_health_round") == "" || getdvarint("zombie_exponential_health_round") < 1)//round where health starts growing exponentially
+	{
+		SetDvar( "zombie_exponential_health_round", 10 );
 	}
 
 	if(getdvar("zombie_max_concurrent") == "" || getdvarint("zombie_max_concurrent") < 1)//override max amount of enemies at once (not round max)
@@ -1320,12 +1325,14 @@ onPlayerConnect()
 
 		player.score = level.zombie_vars["zombie_score_start"]; 
 		player.score_total = 500;//always give vanilla amount 
-		player.old_score = player.score; 
+		player.old_score = player.score; // confident it should not use score total
 
+		/*
+		//These are not vanilla below
 		player.score_alt = 500;//alternate fake total we do ourselves in this function
 		player.score_diff_alt = 0;//diff we keep track of to track difference between our total and real total
 		player.score_quiet_points = 0;//points we didnt print
-
+		*/
 		player.is_zombie = false; 
 		player.initialized = false;
 		player.zombification_time = 0;
@@ -1883,6 +1890,55 @@ get_safe_breadcrumb_pos( player )
 	return undefined;
 }
 
+debug_print_round_health(vanilla_health)
+{
+	// Store current level details
+	cround = level.round_number;
+	chealth = level.zombie_health;
+	// Default starting health
+	level.zombie_health = level.zombie_vars["zombie_health_start"];
+
+	setprintchannel("script_debug");
+	if(isDefined(vanilla_health) && vanilla_health == 1)
+	{
+		println("Vanilla calculated zombie health: ");//will write in console and log
+		for(i = 1; i <= 20; i++)
+		{
+			if( i >= 10 )
+			{
+				level.zombie_health += Int( level.zombie_health * level.zombie_vars["zombie_health_increase_percent"] ); 
+				println("Round: " + string(i) + ", Zombie Health: " + string(level.zombie_health));
+				continue;
+			}
+
+			if( i > 1 )
+			{
+				level.zombie_health = Int( level.zombie_health + level.zombie_vars["zombie_health_increase"] ); 
+				println("Round: " + string(i) + ", Zombie Health: " + string(level.zombie_health));
+			}
+		}
+		if ( i == 21 && level.zombie_health != 2701 )
+		{
+			iprintln("ERROR, health does not match vanilla at 20! ["+string(level.zombie_health)+"]? != 2701");
+		}
+	}
+	else // Run whatever current health settings
+	{
+		println("Active settings calculated zombie health: ");
+		for(i = 1; i <= 20; i++)
+		{
+			level.round_number = i;
+			ai_calculate_health();
+			println("Round: " + string(i) + ", Zombie Health: " + string(level.zombie_health));
+		}
+	}
+
+	// Restore to previous state
+	level.zombie_health = chealth;
+	level.round_number = cround;
+	setprintchannel("script"); //restore script channel
+}
+
 round_spawning()
 {
 	level endon( "intermission" );
@@ -1898,8 +1954,15 @@ round_spawning()
 		ASSERTMSG( "No spawners with targetname zombie_spawner in map." ); 
 		return; 
 	}
-
+/#
+	//println("zombie_health_increase_percent: "+string(level.zombie_vars["zombie_health_increase_percent"]));
+	//debug_print_round_health(true);
+	debug_print_round_health();
+#/
 	ai_calculate_health(); 
+/#
+	println("Current Round: " + string(level.round_number) + ", Zombie Health: " + string(level.zombie_health));
+#/
 
 	count = 0; 
 
@@ -2579,7 +2642,8 @@ round_think()
 
 		players = get_players();
 		array_thread( players, maps\_zombiemode_blockers_new::rebuild_barrier_reward_reset );
-		iprintln("--Total--:" + string(players[0].score_total));//Notify total score
+		scriptPrintln("script", "--Total--:" + string(players[0].score_total));//Notify total score
+		/*
 		SetDvar( "score_round", players[0].score_total );
 		if (level.round_number > 0)
 		{
@@ -2591,6 +2655,7 @@ round_think()
 			}
 			SetDvar( "score_quietpoints", players[0].score_quiet_points );
 		}
+		*/
 		level thread award_grenades_for_survivors();
 
 		bbPrint( "zombie_rounds: round %d player_count %d", level.round_number, players.size );
@@ -2691,14 +2756,31 @@ award_grenades_for_survivors()
 ai_calculate_health()
 {
 	level.zombie_health = level.zombie_vars["zombie_health_start"];
-	if(getdvarint("easy_health") == 1)//Scale health slowly
+	if(getdvarint("zombie_easy_health") == 1)//Scale health slowly
 	{
 		health_scale = 20;
-		if(getdvarint("easy_health_scale") > 0)
+		if(getdvarint("zombie_easy_health_scale") > 0)
 		{
-			health_scale = getdvarint("easy_health_scale");
+			health_scale = getdvarint("zombie_easy_health_scale");
 		}
-		level.zombie_health = Int( level.zombie_health + ( level.round_number * health_scale ) ); 
+		level.zombie_health = Int( level.zombie_health + ( (level.round_number - 1) * health_scale ) ); 
+		return;
+	}
+	else if(getdvarint("alternate_difficulty") == 1)//Scale health slowly
+	{
+		health_scale = 20; //early scale for first N rounds
+		exponential_round = getdvarint("zombie_exponential_health_round"); // default is 10
+		early_increases = min(level.round_number, exponential_round - 1) - 1;//-1 since we skip first round increment and limit offset
+		level.zombie_health = Int( level.zombie_health + ( early_increases * health_scale ) ); 
+		
+		// After round N, get exponentially harder
+		if( level.round_number >= exponential_round )
+		{
+			for(i = exponential_round; i <= level.round_number; i++)
+			{
+				level.zombie_health += Int( level.zombie_health * level.zombie_vars["zombie_health_increase_percent"] );
+			}
+		}
 		return;
 	}
 
@@ -3468,9 +3550,9 @@ end_game()
 	level notify( "stop_intermission" );
 	array_thread( get_players(), ::player_exit_level );
 	wait( 1.5 );
-	iprintln("--Alt Total:" + string(players[0].score_alt) + " | Quiet Points --:" + string(players[0].score_quiet_points));//Notify total score
+	/*iprintln("--Alt Total:" + string(players[0].score_alt) + " | Quiet Points --:" + string(players[0].score_quiet_points));//Notify total score
 	SetDvar( "score_finalalt", players[0].score_alt );
-	SetDvar( "score_quietpoints", players[0].score_quiet_points );
+	SetDvar( "score_quietpoints", players[0].score_quiet_points );*/
 	if( is_coop() )
 	{
 	//	setmusicstate( "SILENT" );
