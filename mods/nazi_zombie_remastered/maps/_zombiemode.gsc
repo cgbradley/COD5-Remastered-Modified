@@ -4,6 +4,7 @@
 #include maps\_music; 
 #include maps\_zombiemode_utility; 
 #include maps\_busing;
+#include maps\_debug; // if load is moved from raw, move this line there
 
 #using_animtree( "generic_human" ); 
 

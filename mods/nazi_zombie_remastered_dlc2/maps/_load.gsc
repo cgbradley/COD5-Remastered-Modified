@@ -1,6 +1,6 @@
 #include common_scripts\utility;
 #include maps\_utility;
-//#include maps\_debug;
+#include maps\_debug;
 #include maps\_hud_util;
 
 main( bScriptgened,bCSVgened,bsgenabled )

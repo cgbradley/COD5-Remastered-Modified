@@ -59,6 +59,7 @@ images\w_bar_mp_c.iwi
 maps\_busing.gsc
 maps\_callbackglobal.gsc
 maps\_callbacksetup.gsc
+maps\_debug.gsc
 maps\_destructible_opel_blitz.gsc
 maps\_detonategrenades.gsc
 maps\_gameskill.gsc

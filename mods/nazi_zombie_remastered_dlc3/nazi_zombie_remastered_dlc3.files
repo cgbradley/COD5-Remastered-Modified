@@ -81,6 +81,7 @@ maps\_audio.gsc
 maps\_callbackglobal.gsc
 maps\_challenges_coop.gsc
 maps\_collectibles_game.gsc
+maps\_debug.gsc
 maps\_friendlyfire.gsc
 maps\_gameskill.gsc
 maps\_hud_achievement.gsc
