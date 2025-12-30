@@ -13,24 +13,6 @@ VERSION             "1"
 CONFIG              "C:\cod5\cod\cod5\bin\StringEd.cfg"
 FILENOTES           ""
 
-REFERENCE           BUTTON_BUY_OPEN_DEBRIS_2500
-LANG_ENGLISH        "Press & hold ^3&&1^7 to Clear Debris [Cost: 2500]"
-
-REFERENCE           BUTTON_BUY_OPEN_DEBRIS_3000
-LANG_ENGLISH        "Press & hold ^3&&1^7 to Clear Debris [Cost: 3000]"
-
-REFERENCE           BUTTON_BUY_OPEN_DOOR_2500
-LANG_ENGLISH        "Press & hold ^3&&1^7 to Open Door [Cost: 2500]"
-
-REFERENCE           BUTTON_BUY_OPEN_DOOR_3000
-LANG_ENGLISH        "Press & hold ^3&&1^7 to Open Door [Cost: 3000]"
-
-//REFERENCE           BUTTON_BUY_OPEN_AREA_2500
-//LANG_ENGLISH        "Press & hold ^3&&1^7 to Open Area [Cost: 2500]"
-
-//REFERENCE           BUTTON_BUY_OPEN_AREA_3000
-//LANG_ENGLISH        "Press & hold ^3&&1^7 to Open Area [Cost: 3000]"
-
 REFERENCE           RANDOM_WEAPON
 LANG_ENGLISH        "Press & hold ^3&&1^7 for a Random Weapon [Cost: &&2]"
 
