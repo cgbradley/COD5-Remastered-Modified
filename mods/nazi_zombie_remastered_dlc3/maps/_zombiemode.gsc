@@ -15,8 +15,8 @@ main(init_zombie_spawner_name)
 	PrecacheItem( "fraggrenade" );
 	PrecacheItem( "colt" );
 
-	game[ "menu_clientdvar" ] = "menu_clientdvar";   // these two lines at beginning of gsc
-	precacheMenu( game[ "menu_clientdvar" ] );
+	//game[ "menu_clientdvar" ] = "menu_clientdvar";   // these two lines at beginning of gsc
+	//precacheMenu( game[ "menu_clientdvar" ] );
 
 	init_strings();
 	init_levelvars();
@@ -50,7 +50,7 @@ main(init_zombie_spawner_name)
 	// load map defaults
 	maps\_load::main();
 
-	level.remove_ee_ef = 0;
+	//level.remove_ee_ef = 0;
 	level.hudelem_count = 0;
 	level.solo_reviving_failsafe = 0;
 
@@ -207,6 +207,7 @@ main(init_zombie_spawner_name)
 	level.startInvulnerableTime = GetDvarInt( "player_deathInvulnerableTime" );
 
 	// Do a SaveGame, so we can restart properly when we die
+	SaveGame( "zombie_start", &"AUTOSAVE_LEVELSTART", "", true );
 
 
 
@@ -365,6 +366,9 @@ track_ammo_count()
 {
 	self endon("disconnect");
 	self endon("death");
+
+	self waittill( "spawned_player" ); 
+
 	if(!IsDefined (self.player_ammo_low))	
 	{
 		self.player_ammo_low = false;
@@ -1285,6 +1289,8 @@ watchGrenadeThrow()
 	self endon( "disconnect" ); 
 	self endon( "death" );
 
+	self waittill( "spawned_player" ); 
+
 	while(1)
 	{
 		self waittill("grenade_fire", grenade);
@@ -1312,7 +1318,7 @@ onPlayerConnect()
 		player thread player_revive_monitor();
 		player thread watchGrenadeThrow();
 		
-		player thread maps\walking_anim::main();
+		player thread maps\_walking_anim::player_init();
 
 		player thread track_ammo_count();
 
@@ -1321,7 +1327,7 @@ onPlayerConnect()
 
 		player thread maps\_zombiemode_molotov::trackMolotov(); 
 
-		player thread getAimAssistDvar();
+		//player thread getAimAssistDvar();
 
 		player.score = level.zombie_vars["zombie_score_start"]; 
 		player.score_total = 500;//always give vanilla amount 
@@ -1367,9 +1373,9 @@ onPlayerConnect_clientDvars()
 		"player_aimblend_back_low", "0 0.3 0.5", // 3rd person look up/down
 		"cg_hudDamageIconTime", "2500" ); // fixed damage marks from disappearing too quick
 
-	self SetClientDvars(
+/*	self SetClientDvars(
 		"cg_overheadIconsize", "0",
-        "cg_overheadRanksize", "0"); 
+        "cg_overheadRanksize", "0"); */
 
 	if( getDvar( "classic_perks" ) == "" || getDvar("classic_perks") == "0" ) // if dvar doesn't exist or is disabled, we stay default
 	{
@@ -1406,13 +1412,13 @@ onPlayerSpawned()
 		if(players.size > 1)
 		{
 			self SetClientDvar( "cg_ScoresColor_Gamertag_0" , "1 1 1 1" );
-			self SetClientDvar( "cg_ScoresColor_Gamertag_1" , GetDvar( "cg_ScoresColor_Gamertag_1") );
-			self SetClientDvar( "cg_ScoresColor_Gamertag_2" , GetDvar( "cg_ScoresColor_Gamertag_2") );
-			self SetClientDvar( "cg_ScoresColor_Gamertag_3" , GetDvar( "cg_ScoresColor_Gamertag_3") );
+			self SetClientDvar( "cg_ScoresColor_Gamertag_1" , "0.486275 0.811765 0.933333 0" );
+			self SetClientDvar( "cg_ScoresColor_Gamertag_2" , "0.964706 0.792157 0.313726 0" );
+			self SetClientDvar( "cg_ScoresColor_Gamertag_3" , "0.513726 0.92549 0.533333 0" );
 		}
-		self SetClientDvars(
+/*		self SetClientDvars(
 				"cg_overheadIconsize", "0",
-		        "cg_overheadRanksize", "0"); 
+		        "cg_overheadRanksize", "0"); */
 			
 		self.can_solo_revive = false;
 
@@ -1992,6 +1998,7 @@ round_spawning()
 	if( player_num == 1 && getDvarInt( "classic_zombies") == 1 )
 	{
 		max += 0;
+		level.cheats_defined = true;
 	}
 	else if( player_num == 1 )
 	{
@@ -3445,7 +3452,7 @@ player_damage_override( eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, 
 	if( count == players.size )
 	{
 		level notify( "end_game" );
-		level.remove_ee_ef = 1;
+		//level.remove_ee_ef = 1;
 	}
 	else
 	{
@@ -3522,12 +3529,13 @@ end_game()
 	survived FadeOverTime( 1 );
 	survived.alpha = 1;
 
-	destroy_chalk_hud();
 
 	wait( 1 );
 	//play_sound_at_pos( "end_of_game", ( 0, 0, 0 ) );
 	wait( 2 );
 	level.player_is_speaking = 1;
+
+	destroy_chalk_hud();
 
 	players = get_players();
 	for (i = 0; i < players.size; i++)
@@ -3893,7 +3901,7 @@ store_crumb( origin )
 //CODER MOD: TOMMY K
 nazizombies_upload_highscore()
 {
-	if( getDvarInt( "classic_zombies") == 1 || getDvarInt( "zombiemode_dev") == 1 ) // if playing with 24 limit or with super sprinters disabled, these are considered cheats because they make the game easier. classic perks or grabby zombies is OK, these make the game harder
+	if( getDvarInt( "classic_zombies") == 1 || getDvarInt( "zombiemode_dev") == 1 || (isDefined(level.cheats_defined) && level.cheats_defined == true) ) // if playing with 24 limit or with super sprinters disabled, these are considered cheats because they make the game easier. classic perks or grabby zombies is OK, these make the game harder
 	{
 		//iPrintLn("Highscores not saved, current Game Options configuration not allowed");
 		return;
@@ -3989,6 +3997,8 @@ playerZombieStatSet( map, variable, value, override )
 
 nazizombies_set_new_zombie_stats()
 {
+	rank_init();
+
 	level.current_play_time = int( GetTime()/1000 ); 		// gets the time in seconds	
 
 	players = get_players();		
@@ -4024,40 +4034,68 @@ nazizombies_set_new_zombie_stats()
 		{*/
 		players[i].xp = players[i] zombieStatGet( "rankxp" );
 
-		if( players[i].xp <= 160000 ) // once we get 160k XP, then we are at max level so dont need to keep adding
+		if( players[i].xp < 153950 ) // once we get 160k XP, then we are at max level so dont need to keep adding
 		{
 			players[i].xp = total_kills * 10; // calculate our new xp,  based on 1 zombie kill = 10 xp, we cannot lose progress because its tied to total kills which gets summed above 
-
-			players[i].rank = players[i] maps\_challenges_coop::getRankForXp( players[i].xp ); // this allows us to SetRank below which updates it on the HUD on the end game screen
-			players[i] zombieStatSet( "rankxp", players[i].xp );  // this is the hardcoded stat we need to save progress
+		}
+		else
+		{
+			players[i].xp = 153950;
 		}
 
-		if ( players[i].xp >= 160000 ) // once we have gotten max rank, we can prestige
+		players[i].rank = players[i] maps\_challenges_coop::getRankForXp( players[i].xp ); 
+		players[i] zombieStatSet( "rankxp", players[i].xp ); 
+
+		if ( players[i].xp >= 153950 ) // once we have gotten max rank, we can prestige
 		{
 			players[i].prestige = int(total_rounds/total_downs); // round to down ratio, because this ratio is different every game we can lose progress on this stat
 
-			if(players[i].prestige > 10) // if higher than 10, lock at 10
+			if(players[i].prestige > 10)
 			{
 				players[i].prestige = 10;
 			}
-			
-			//players[i] SetClientDvars("prestige_dlc3", prestige); // new, runs menu that averages all 4 map prestiges
-			//players[i] openMenunomouse(game["menu_endgame_prestige"]);
 
 			players[i] zombieStatSet( "plevel", players[i].prestige ); 
 		}
 		else
 		{
-			players[i].prestige = 0; // if we are still not max level we remain at no prestige
+			players[i].prestige = 0;
 		}
 
-		players[i] setRank( players[i].rank, players[i].prestige ); // i believe this is needed for updating it on HUD end game screen
+		players[i] setRank( players[i].rank + 1, players[i].prestige );
+		players[i] setstat(252, players[i].rank + 1 ); // add one because rankindex starts at 0
 	//	}
 
 		// note: to get stat number, do table lookup without GetStat--GetStat forces the stat value
 	}
 
 	UpdateGamerProfile();
+}
+
+// Initializations related to the ranks
+rank_init()
+{
+	// Set up the lookup tables for fetching rank data
+	level.rankTable = [];
+
+	//level.maxRank = int(tableLookup( "mp/rankTable.csv", 0, "maxrank", 1 ));
+	//level.maxPrestige = int(tableLookup( "mp/rankIconTable.csv", 0, "maxprestige", 1 ));
+
+	rankId = 0;
+	rankName = tableLookup( "mp/ranktable.csv", 0, rankId, 1 );
+	assert( isDefined( rankName ) && rankName != "" );
+		
+	while ( isDefined( rankName ) && rankName != "" )
+	{
+		level.rankTable[rankId][1] = tableLookup( "mp/ranktable.csv", 0, rankId, 1 );
+		level.rankTable[rankId][2] = tableLookup( "mp/ranktable.csv", 0, rankId, 2 );
+		level.rankTable[rankId][3] = tableLookup( "mp/ranktable.csv", 0, rankId, 3 );
+		level.rankTable[rankId][7] = tableLookup( "mp/ranktable.csv", 0, rankId, 7 );
+
+		rankId++;
+		rankName = tableLookup( "mp/ranktable.csv", 0, rankId, 1 );		
+	}
+
 }
 
 makeRankNumber( wave, players, time )

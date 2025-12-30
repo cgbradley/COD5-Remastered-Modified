@@ -82,7 +82,7 @@
 	menuDef
 	{
     	name			"MantleHint"
-    	rect			0 155 40 40 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER // 0 115 40 40 // originally 0 126
+    	rect			0 -89 40 40 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_BOTTOM // 0 115 40 40 // originally 0 126
 		fullScreen		0
 		visible 1;
 
@@ -107,7 +107,7 @@
 			textstyle		ITEM_TEXTSTYLE_SHADOWED
 			textalign		ITEM_ALIGN_CENTER
 			exp 			text ( /*"- " + */locString( "@REMASTERED_HINT_PRESS" ) + KeyBinding("+activate") +  locString( "@REMASTERED_HINT_ENTER_FIRST" ) );
-			visible			when( dvarInt( "playerSpectating" ) == 1 && dvarBool( cl_paused ) == 0 && dvarBool(cg_thirdPerson) == 1 && dvarInt( "cg_drawDpadHUD" ) != 1  )
+			visible			when( dvarInt( "playerSpectatingHide" ) == 0 && dvarInt( "playerSpectating" ) == 1 && dvarBool( cl_paused ) == 0 && dvarBool(cg_thirdPerson) == 1 && dvarInt( "cg_drawGamepadHUD" ) != 1  )
 			decoration
 		}
 		itemDef
@@ -118,32 +118,130 @@
 			textstyle		ITEM_TEXTSTYLE_SHADOWED
 			textalign		ITEM_ALIGN_CENTER
 			exp 			text ( /*"- " + */locString( "@REMASTERED_HINT_PRESS" ) + KeyBinding("+activate") +  locString( "@REMASTERED_HINT_ENTER_THIRD" ) );
-			visible			when( dvarInt( "playerSpectating" ) == 1  && dvarBool( cl_paused ) == 0 && dvarBool(cg_thirdPerson) == 0 && dvarInt( "cg_drawDpadHUD" ) != 1 )
+			visible			when( dvarInt( "playerSpectatingHide" ) == 0 && dvarInt( "playerSpectating" ) == 1  && dvarBool( cl_paused ) == 0 && dvarBool(cg_thirdPerson) == 0 && dvarInt( "cg_drawGamepadHUD" ) != 1 )
 			decoration
 		}
-		itemDef
+/*		itemDef
 		{
 			name			"In_3rdPersonGP"
 			type			ITEM_TYPE_TEXT
-			textscale		TEXTSIZE_SPEC
+			textscale		(TEXTSIZE_SMALL - 0.04)
 			textstyle		ITEM_TEXTSTYLE_SHADOWED
 			textalign		ITEM_ALIGN_CENTER
-			exp 			text ( /*"- " + */locString( "@REMASTERED_HINT_PRESS" ) + locString( "@KEY_HINT_GP" ) +  locString( "@REMASTERED_HINT_ENTER_FIRST" ) );
-			visible			when( dvarInt( "playerSpectating" ) == 1  && dvarBool( cl_paused ) == 0 && dvarBool(cg_thirdPerson) == 1 && dvarInt( "cg_drawDpadHUD" ) == 1 )
+			textfont 		UI_FONT_SMALL // TEMP
+
+			exp 			text ( locString( "@REMASTERED_HINT_PRESS" ) + locString( "@KEY_HINT_GP" ) +  locString( "@REMASTERED_HINT_ENTER_FIRST" ) );
+			visible			when( dvarInt( "playerSpectating" ) == 1  && dvarBool( cl_paused ) == 0 && dvarBool(cg_thirdPerson) == 1 && dvarInt( "cg_drawGamepadHUD" ) == 1 )
 			decoration
 		}
 		itemDef
 		{
 			name			"In_1stPersonGP"
 			type			ITEM_TYPE_TEXT
-			textscale		TEXTSIZE_SPEC
+			textscale		(TEXTSIZE_SMALL - 0.04)
 			textstyle		ITEM_TEXTSTYLE_SHADOWED
 			textalign		ITEM_ALIGN_CENTER
-			exp 			text ( /*"- " + */locString( "@REMASTERED_HINT_PRESS" ) + locString( "@KEY_HINT_GP" ) +  locString( "@REMASTERED_HINT_ENTER_THIRD" ) );
-			visible			when( dvarInt( "playerSpectating" ) == 1  && dvarBool( cl_paused ) == 0 && dvarBool(cg_thirdPerson) == 0 && dvarInt( "cg_drawDpadHUD" ) == 1 )
+			textfont 		UI_FONT_SMALL // TEMP
+
+			exp 			text ( locString( "@REMASTERED_HINT_PRESS" ) + locString( "@KEY_HINT_GP" ) +  locString( "@REMASTERED_HINT_ENTER_THIRD" ) );
+			visible			when( dvarInt( "playerSpectating" ) == 1  && dvarBool( cl_paused ) == 0 && dvarBool(cg_thirdPerson) == 0 && dvarInt( "cg_drawGamepadHUD" ) == 1 )
+			decoration
+		}*/
+
+		#define SPEC_OFFSET_X -131
+		#define SPEC_OFFSET_Y -222
+		#define SPEC_FACTOR_X 28
+		#define SPEC_SHADER_FACTOR 2.25
+
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			rect			(SPEC_OFFSET_X - 27.4) (SPEC_OFFSET_Y - 16 ) (64/SPEC_SHADER_FACTOR) (512/SPEC_SHADER_FACTOR) HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_BOTTOM
+			origin			0 0
+			background		"spec_xenon"
+			forecolor		1 1 1 1
+			visible			when( dvarInt( "playerSpectatingHide" ) == 1 && dvarInt( "playerSpectating" ) == 1  && dvarBool( cl_paused ) == 0 && dvarInt( "cg_drawGamepadHUD" ) == 1 )
 			decoration
 		}
 
+		itemDef
+		{
+			name			"SpectateGP_Menu"
+	    	rect			SPEC_OFFSET_X SPEC_OFFSET_Y 40 40 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_BOTTOM
+			type			ITEM_TYPE_TEXT
+			textscale		(TEXTSIZE_SMALL)
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			textalign		ITEM_ALIGN_LEFT
+			textfont 		UI_FONT_SMALL 
+			exp 			text ( locString( "@REMASTERED_SPEC_MENU" ) );
+			visible			when( dvarInt( "playerSpectatingHide" ) == 1 && dvarInt( "playerSpectating" ) == 1  && dvarBool( cl_paused ) == 0 && dvarInt( "cg_drawGamepadHUD" ) == 1 )
+			decoration
+		}
+		itemDef
+		{
+			name			"SpectateGP_Next"
+	    	rect			SPEC_OFFSET_X (SPEC_OFFSET_Y + SPEC_FACTOR_X * 1) 40 40 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_BOTTOM
+			type			ITEM_TYPE_TEXT
+			textscale		(TEXTSIZE_SMALL)
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			textalign		ITEM_ALIGN_LEFT
+			textfont 		UI_FONT_SMALL 
+			exp 			text ( locString( "@REMASTERED_SPEC_NEXT" ) );
+			visible			when( dvarInt( "playerSpectatingHide" ) == 1 && dvarInt( "playerSpectating" ) == 1  && dvarBool( cl_paused ) == 0 && dvarInt( "cg_drawGamepadHUD" ) == 1 )
+			decoration
+		}
+		itemDef
+		{
+			name			"SpectateGP_Prev"
+	    	rect			SPEC_OFFSET_X (SPEC_OFFSET_Y + SPEC_FACTOR_X * 2) 40 40 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_BOTTOM
+			type			ITEM_TYPE_TEXT
+			textscale		(TEXTSIZE_SMALL)
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			textalign		ITEM_ALIGN_LEFT
+			textfont 		UI_FONT_SMALL 
+			exp 			text ( locString( "@REMASTERED_SPEC_PREV" ) );
+			visible			when( dvarInt( "playerSpectatingHide" ) == 1 && dvarInt( "playerSpectating" ) == 1  && dvarBool( cl_paused ) == 0 && dvarInt( "cg_drawGamepadHUD" ) == 1 )
+			decoration
+		}
+		itemDef
+		{
+			name			"SpectateGP_First"
+	    	rect			SPEC_OFFSET_X (SPEC_OFFSET_Y + SPEC_FACTOR_X * 3) 40 40 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_BOTTOM
+			type			ITEM_TYPE_TEXT
+			textscale		(TEXTSIZE_SMALL)
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			textalign		ITEM_ALIGN_LEFT
+			textfont 		UI_FONT_SMALL 
+			exp 			text ( locString( "@REMASTERED_SPEC_FIRST" ) );
+			visible			when( dvarBool(cg_thirdPerson) == 1 && dvarInt( "playerSpectatingHide" ) == 1 && dvarInt( "playerSpectating" ) == 1  && dvarBool( cl_paused ) == 0 && dvarInt( "cg_drawGamepadHUD" ) == 1 )
+			decoration
+		}
+		itemDef
+		{
+			name			"SpectateGP_Third"
+	    	rect			SPEC_OFFSET_X (SPEC_OFFSET_Y + SPEC_FACTOR_X * 3) 40 40 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_BOTTOM
+			type			ITEM_TYPE_TEXT
+			textscale		(TEXTSIZE_SMALL)
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			textalign		ITEM_ALIGN_LEFT
+			textfont 		UI_FONT_SMALL 
+			exp 			text ( locString( "@REMASTERED_SPEC_THIRD" ) );
+			visible			when( dvarBool(cg_thirdPerson) == 0 && dvarInt( "playerSpectatingHide" ) == 1 && dvarInt( "playerSpectating" ) == 1  && dvarBool( cl_paused ) == 0 && dvarInt( "cg_drawGamepadHUD" ) == 1 )
+			decoration
+		}
+		itemDef
+		{
+			name			"SpectateGP_Score"
+	    	rect			SPEC_OFFSET_X (SPEC_OFFSET_Y + SPEC_FACTOR_X * 4) 40 40 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_BOTTOM
+			type			ITEM_TYPE_TEXT
+			textscale		(TEXTSIZE_SMALL)
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			textalign		ITEM_ALIGN_LEFT
+			textfont 		UI_FONT_SMALL 
+			exp 			text ( locString( "@REMASTERED_SPEC_SCORE" ) );
+			visible			when( dvarInt( "playerSpectatingHide" ) == 1 && dvarInt( "playerSpectating" ) == 1  && dvarBool( cl_paused ) == 0 && dvarInt( "cg_drawGamepadHUD" ) == 1 )
+			decoration
+		}
 	}
 
 	// Cursor hints
@@ -152,7 +250,7 @@
 		name			"Cursorhints"
     	rect			0 70 40 40 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
 		fullScreen		0
-		visible	when ( CHAPLIN_CHEAT_OFF && ( dvarString( mapname ) != "credits" ) );
+		visible	when ( CHAPLIN_CHEAT_OFF && ( dvarString( mapname ) != "credits" ) && dvarBool( cl_paused ) == 0 );
 
 		itemDef
 		{
@@ -161,19 +259,20 @@
 			textscale		TEXTSIZE_SMALL
 			textstyle		ITEM_TEXTSTYLE_SHADOWED
 			ownerdraw		CG_CURSORHINT
-			visible			when(dvarInt( "cg_drawDpadHUD" ) != 1 )
+			visible			when(dvarInt( "cg_drawGamepadHUD" ) != 1 )
 			decoration
 		}
 
 		itemDef
 		{
-			name			"chRect_xbox"
+			name			"chRect_console"
 			rect			0 0 40 40 // 64x64
-			textscale		(TEXTSIZE_SMALL + 0.02)
+			textscale		(TEXTSIZE_SMALL - 0.04)
+			//textscale		TEXTSIZE_SMALL
 			textstyle		ITEM_TEXTSTYLE_SHADOWED
-			//textfont 		UI_FONT_SMALL
+			textfont 		UI_FONT_SMALL // OR DEFINE CUSTOM FONT
 			ownerdraw		CG_CURSORHINT
-			visible			when(dvarInt( "cg_drawDpadHUD" ) == 1)
+			visible			when(dvarInt( "cg_drawGamepadHUD" ) == 1)
 			decoration
 		}
 	}
@@ -188,7 +287,7 @@
 		rect			90 -70 48 48 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_BOTTOM
 #endif						
     	fullScreen		0
-		exp visible when ( !SUBTITLES_ACTIVE && CHAPLIN_CHEAT_OFF && !flashbanged() && dvarBool( hud_missionFailed ) == 0 && !ui_active() && dvarint( ui_hud_hardcore ) == 0);
+		exp visible when ( !SUBTITLES_ACTIVE && CHAPLIN_CHEAT_OFF && !flashbanged() && dvarBool( hud_missionFailed ) == 0 && !ui_active() && dvarint( ui_hud_hardcore ) == 0 && dvarBool( cl_paused ) == 0 );
 
 		itemDef
 		{
@@ -249,7 +348,7 @@
 	{
 		name			"missionsuccessbar_arcademode"
 		rect			0 0 640 480
-		visible			when ( !ui_active() && dvarBool( missionsuccessbar ) == 1 && dvarint( arcademode ) == 1 && !dvarInt( "splitscreen" ));
+		visible			when ( !ui_active() && dvarBool( missionsuccessbar ) == 1 && dvarint( arcademode ) == 1 && !dvarInt( "splitscreen") && dvarBool( cl_paused ) == 0 );
 
 		itemDef
 		{
@@ -329,7 +428,7 @@
 	{
 		name			"arcademodebonus"
 		rect			0 0 640 480
-		visible			when ( !ui_active() && dvarBool( bonusbackground ) == 1 && dvarint( arcademode ) == 1 && !dvarInt( "splitscreen" ));
+		visible			when ( !ui_active() && dvarBool( bonusbackground ) == 1 && dvarint( arcademode ) == 1 && !dvarInt( "splitscreen" ) && dvarBool( cl_paused ) == 0);
 
 		itemDef
 		{
@@ -402,32 +501,39 @@
 menuDef
 {
 	name			"competitivemodescores"
-	rect			-128 -75 0 0 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_BOTTOM
+	rect			(-124 + 10) (-75 - 2) 0 0 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_BOTTOM
 	fullScreen		0
-	visible when 	( !ui_active() && dvarint( ui_hud_hardcore ) == 0 && dvarBool( miniscoreboardhide ) == 0 && dvarBool( hud_missionFailed ) == 0 && dvarint( arcademode ) == 1 || dvarint( zombiemode ) == 1 );
+	visible when 	( !ui_active() && dvarint( ui_hud_hardcore ) == 0 && dvarBool( miniscoreboardhide ) == 0 && dvarBool( hud_missionFailed ) == 0 && dvarint( arcademode ) == 1 || dvarint( zombiemode ) == 1 && dvarBool( cl_paused ) == 0 );
 	
 	itemDef
 	{
-		name			"playerscores"
-		rect			0 0 100 0
+		name			"playerscores_console"
+		rect			0 0 90 0 // changed from 100 to 85, less stretched out like console
 		ownerdraw		CG_COMPETITIVE_MODE_SCORES
-		visible			1
+		visible			when ( dvarInt( "cg_drawGamepadHUD" ) == 1)
+	}		
+	itemDef
+	{
+		name			"playerscores"
+		rect			0 0 90 0 // changed from 100 to 85, less stretched out like console
+		ownerdraw		CG_COMPETITIVE_MODE_SCORES
+		visible			when ( dvarInt( "cg_drawGamepadHUD" ) != 1)
 	}		
 }	
 
 #ifdef PC
-#define WEAPINFO_X -190
+#define WEAPINFO_X -170
 #else
 #define WEAPINFO_X -150
 #endif
-#define WEAPINFO_Y -64
+#define WEAPINFO_Y (-64 - 2)
 
 	menuDef
 	{
 		name			"weaponinfo"
 		rect			0 0 0 0 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_BOTTOM
 		fullScreen		0
-		visible when ( !SUBTITLES_ACTIVE && CHAPLIN_CHEAT_OFF && dvarBool( mgNameHide ) != 1 && dvarBool( ammoCounterHide ) == 0 && dvarBool( hud_missionFailed ) == 0 /*&& !flashbanged()*/ && !ui_active() && dvarint( ui_hud_hardcore ) == 0 );
+		visible when ( !SUBTITLES_ACTIVE && CHAPLIN_CHEAT_OFF && dvarBool( mgNameHide ) != 1 && dvarBool( ammoCounterHide ) == 0 && dvarBool( hud_missionFailed ) == 0 /*&& !flashbanged()*/ && !ui_active() && dvarint( ui_hud_hardcore ) == 0 && dvarBool( cl_paused ) == 0 );
 
 /*		itemDef
 		{
@@ -456,9 +562,23 @@ menuDef
 			rect			(WEAPINFO_X +111) (WEAPINFO_Y +56) 1 1
 			forecolor		1 1 1 HUD_ALPHA
 			ownerdraw		CG_PLAYER_WEAPON_AMMO_CLIP_GRAPHIC
-			visible			1
+			visible			when ( dvarInt( "cg_drawAmmoText" ) != 1)
 			decoration
 		}
+
+		itemDef
+		{
+ 			name			"ammotex"
+			rect			(WEAPINFO_X +50) (WEAPINFO_Y +64) 60 40 // 87 X for allign with wep name
+			textscale		TEXTSIZE_SMALL
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			textfont		UI_FONT_NORMAL
+			forecolor		1 1 1 1
+			ownerdraw		CG_PLAYER_AMMO_VALUE
+			visible			when ( dvarInt( "cg_drawAmmoText" ) == 1)
+			decoration
+		}
+		
 
 		itemDef
 		{
@@ -516,7 +636,7 @@ menuDef
 			textfont		UI_FONT_OBJECTIVE
 			forecolor		1 1 1 HUD_FOREGROUND_ALPHA
 			ownerdraw		CG_PLAYER_WEAPON_AMMO_STOCK
-			visible			1
+			visible			when ( dvarInt( "cg_drawAmmoText" ) != 1)
 			decoration
 		}
 /*
@@ -558,7 +678,23 @@ menuDef
 			//background	"white"
 			ownerdraw		CG_PLAYER_WEAPON_LOW_AMMO_WARNING
 			//exp 			text("^3" + KeyBinding("+reload") + "^7");
-			visible	when ( dvarInt( g_gameskill ) == 0 || dvarInt( g_gameskill ) == 1 || dvarstring( mapname ) == LEVEL_TRAINING );
+			visible	when ( dvarInt( "cg_drawGamepadHUD" ) != 1 && (dvarInt( g_gameskill ) == 0 || dvarInt( g_gameskill ) == 1 || dvarstring( mapname ) == LEVEL_TRAINING) );
+			decoration
+		}
+		itemDef
+		{
+			name			"lowammowarning_console"	
+			rect			-10 15 100 30 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
+			//textfont		UI_FONT_DEFAULT
+			textfont 		UI_FONT_SMALL // OR DEFINE CUSTOM FONT
+			textscale		(TEXTSIZE_SMALL - 0.04)
+			textalign		(ITEM_ALIGN_CENTER | ITEM_ALIGN_MIDDLE)
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			forecolor		1 1 1 1
+			//background	"white"
+			ownerdraw		CG_PLAYER_WEAPON_LOW_AMMO_WARNING
+			//exp 			text("^3" + KeyBinding("+reload") + "^7");
+			visible	when ( dvarInt( "cg_drawGamepadHUD" ) == 1 && (dvarInt( g_gameskill ) == 0 || dvarInt( g_gameskill ) == 1 || dvarstring( mapname ) == LEVEL_TRAINING) );
 			decoration
 		}
 	}
@@ -566,9 +702,9 @@ menuDef
 	menuDef
 	{
 		name			"heatinfo"
-		rect			0 0 0 0 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_BOTTOM
+		rect			-5 0 0 0 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_BOTTOM
 		fullScreen		0
-		visible			when ( !SUBTITLES_ACTIVE && CHAPLIN_CHEAT_OFF && dvarBool( ammoCounterHide ) == 0 && dvarBool( hud_missionFailed ) == 0 /*&& !flashbanged()*/ && !ui_active() && dvarint( ui_hud_hardcore ) == 0 );
+		visible			when ( !SUBTITLES_ACTIVE && CHAPLIN_CHEAT_OFF && dvarBool( ammoCounterHide ) == 0 && dvarBool( hud_missionFailed ) == 0 /*&& !flashbanged()*/ && !ui_active() && dvarint( ui_hud_hardcore ) == 0 && dvarBool( cl_paused ) == 0 );
 		
 		itemDef
 		{
@@ -595,7 +731,7 @@ menuDef
  	   	visible			1
  	   	hiddenDuringScope
 		hiddenDuringFlashbang
-		visible when  ( CHAPLIN_CHEAT_OFF && issplitscreen() == 1  && dvarBool( compass ) == 1 && dvarBool( hud_missionFailed ) == 0 && (dvarString( createfx ) != "on") && !ui_active() );
+		visible when  ( CHAPLIN_CHEAT_OFF && issplitscreen() == 1  && dvarBool( compass ) == 1 && dvarBool( hud_missionFailed ) == 0 && (dvarString( createfx ) != "on") && !ui_active() && dvarBool( cl_paused ) == 0 );
 
 		itemDef
         {
@@ -675,7 +811,7 @@ menuDef
 	{
 		name "RoundCompass"
  	   	fullScreen MENU_FALSE
- 	   	visible when  ( dvarBool( compass ) && !issplitscreen() && !dvarBool( cl_paused ) && !ui_active() && dvarint( ui_hud_hardcore )==0 );
+ 	   	visible when  ( dvarBool( compass ) && !issplitscreen() && !dvarBool( cl_paused ) && !ui_active() && dvarint( ui_hud_hardcore )==0 && dvarBool( cl_paused ) == 0 );
 #ifdef PC
 		rect -15 -140 COMPASS_SIZE COMPASS_SIZE HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_BOTTOM
 #else
@@ -1038,7 +1174,7 @@ menuDef
  	   	rect			BOTTOM_RECT_X (BOTTOM_RECT_Y-42) 25 25 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_BOTTOM
 		exp				rect Y( (BOTTOM_RECT_Y-42) - (ONLINEGAME * ONLINEGAME_OFFSET) );
  	   	fullScreen		0
-		visible			when( !inkillcam() /*&& !flashbanged()*/ && !ui_active() && !scoped() && (dvarString( createfx ) != "on") && dvarint( ui_hud_hardcore ) == 0 );
+		visible			when( !inkillcam() /*&& !flashbanged()*/ && !ui_active() && !scoped() && (dvarString( createfx ) != "on") && dvarint( ui_hud_hardcore ) == 0 && dvarBool( cl_paused ) == 0 );
  	   
  	   	// Up
 		itemDef // XBOX logo
@@ -1047,7 +1183,7 @@ menuDef
 			background		"hud_dpad"
 			rect			-DPAD_BASE_SIZE_HALF (DPAD_ICON_Y + DPAD_HEIGHT_CONSOLE) DPAD_BASE_SIZE DPAD_BASE_SIZE
             forecolor		1 1 1 DPAD_ICON_ALPHA
-			visible 		when( /*ActionSlotUsable( 1 ) &&*/ dvarInt( "cg_drawDpadHUD" ) == 1 && dvarInt( "cg_drawDpadLogos" ) == 1 && dvarInt( "miniscoreboardhide" ) != 1 ) // unsure if i want this to be usable
+			visible 		when( /*ActionSlotUsable( 1 ) &&*/ dvarInt( "cg_drawGamepadHUD" ) == 1 && dvarInt( "cg_drawDpadLogos" ) == 1 && dvarInt( "miniscoreboardhide" ) != 1 ) // unsure if i want this to be usable
 			decoration
         }
 		itemDef // XBOX arrow
@@ -1057,7 +1193,7 @@ menuDef
 			forecolor		1 1 1 DPAD_ICON_ALPHA
 			ownerdraw		CG_PLAYER_WEAPON_BACKGROUND // this bit is weird
 			background		"hud_arrow_up"
-			visible 	when( ActionSlotUsable( 1 ) && dvarInt( "cg_drawDpadHUD" ) == 1 && dvarInt( "cg_drawDpadLogos" ) == 1  )
+			visible 	when( ActionSlotUsable( 1 ) && dvarInt( "cg_drawGamepadHUD" ) == 1 && dvarInt( "cg_drawDpadLogos" ) == 1  )
 			decoration
 		}
 		itemDef // XBOX arrow without logo
@@ -1067,7 +1203,7 @@ menuDef
 			forecolor		1 1 1 DPAD_ICON_ALPHA
 			ownerdraw		CG_PLAYER_WEAPON_BACKGROUND // this bit is weird
 			background		"hud_arrow_up"
-			visible 	when( ActionSlotUsable( 1 ) && dvarInt( "cg_drawDpadHUD" ) == 1 && dvarInt( "cg_drawDpadLogos" ) != 1 )
+			visible 	when( ActionSlotUsable( 1 ) && dvarInt( "cg_drawGamepadHUD" ) == 1 && dvarInt( "cg_drawDpadLogos" ) != 1 )
 			decoration
 		}
 		itemDef // XBOX image
@@ -1076,7 +1212,7 @@ menuDef
 			rect			-DPAD_BASE_SIZE_HALF (DPAD_ICON_Y + DPAD_HEIGHT_CONSOLE) DPAD_BASE_SIZE DPAD_BASE_SIZE
 			ownerdraw		CG_PLAYER_ACTIONSLOT_1
 			forecolor		1 1 1 HUD_ALPHA
-			visible 		when( dvarInt( "cg_drawDpadHUD" ) == 1 )
+			visible 		when( dvarInt( "cg_drawGamepadHUD" ) == 1 )
 			decoration
 			textstyle		ITEM_TEXTSTYLE_SHADOWED
 			textalign		ITEM_ALIGN_LEFT
@@ -1089,7 +1225,7 @@ menuDef
 			rect			-DPAD_BASE_SIZE_HALF DPAD_ICON_Y DPAD_BASE_SIZE DPAD_BASE_SIZE
 			ownerdraw		CG_PLAYER_ACTIONSLOT_1
 			forecolor		1 1 1 HUD_ALPHA
-			visible 		when( dvarInt( "cg_drawDpadHUD" ) != 1 )
+			visible 		when( dvarInt( "cg_drawGamepadHUD" ) != 1 )
 			decoration
 			textstyle		ITEM_TEXTSTYLE_SHADOWED
 			textalign		ITEM_ALIGN_LEFT
@@ -1106,7 +1242,7 @@ menuDef
 			textscale	0.25
 			textalign	ITEM_ALIGN_CENTER
 			textstyle	ITEM_TEXTSTYLE_SHADOWED
-			visible 	when( ActionSlotUsable( 1 ) && dvarInt( "cg_drawDpadHUD" ) != 1 )
+			visible 	when( ActionSlotUsable( 1 ) && dvarInt( "cg_drawGamepadHUD" ) != 1 )
 			decoration 
 		}
 
@@ -1117,7 +1253,7 @@ menuDef
             rect			(-DPAD_ICON_SPACING - DPAD_BASE_SIZE) DPAD_ICON_Y DPAD_BASE_SIZE DPAD_BASE_SIZE
 			ownerdraw		CG_PLAYER_ACTIONSLOT_3
 			forecolor		1 1 1 HUD_ALPHA
-			visible 		when( dvarInt( "cg_drawDpadHUD" ) != 1 )
+			visible 		when( dvarInt( "cg_drawGamepadHUD" ) != 1 )
 			decoration
 			textstyle		ITEM_TEXTSTYLE_SHADOWED
 			textalign		ITEM_ALIGN_LEFT
@@ -1134,7 +1270,7 @@ menuDef
 			textalign	ITEM_ALIGN_CENTER
 		
 			textstyle	ITEM_TEXTSTYLE_SHADOWED
-			visible 	when( ActionSlotUsable( 3 ) && dvarInt( "cg_drawDpadHUD" ) != 1 )
+			visible 	when( ActionSlotUsable( 3 ) && dvarInt( "cg_drawGamepadHUD" ) != 1 )
 			decoration 
 		}
 
@@ -1143,38 +1279,38 @@ menuDef
         {
 			ownerdraw		CG_PLAYER_WEAPON_BACKGROUND
 			background		"hud_dpad"
-            rect			(-DPAD_ICON_SPACING - DPAD_BASE_SIZE + 41) (DPAD_ICON_Y + DPAD_HEIGHT_CONSOLE) DPAD_BASE_SIZE DPAD_BASE_SIZE
+            rect			(-DPAD_ICON_SPACING - DPAD_BASE_SIZE + 43) (DPAD_ICON_Y + DPAD_HEIGHT_CONSOLE) DPAD_BASE_SIZE DPAD_BASE_SIZE
             forecolor		1 1 1 DPAD_ICON_ALPHA
-			visible 		when( dvarInt( "cg_drawDpadHUD" ) == 1 && dvarInt( "cg_drawDpadLogos" ) == 1 && dvarInt( "miniscoreboardhide" ) != 1 )
+			visible 		when( dvarInt( "cg_drawGamepadHUD" ) == 1 && dvarInt( "cg_drawDpadLogos" ) == 1 && dvarInt( "miniscoreboardhide" ) != 1 )
 			decoration
         }
 		itemDef // XBOX arrow
 		{
 			name			"xbox_left"
-			rect			(-DPAD_ICON_SPACING - DPAD_BASE_SIZE_HALF + 27) (DPAD_ICON_Y + 2.2 + DPAD_HEIGHT_CONSOLE) 24 24
+			rect			(-DPAD_ICON_SPACING - DPAD_BASE_SIZE_HALF + 29) (DPAD_ICON_Y + 2.2 + DPAD_HEIGHT_CONSOLE) 24 24
 			forecolor		1 1 1 DPAD_ICON_ALPHA
 			ownerdraw		CG_PLAYER_WEAPON_BACKGROUND
 			background		"hud_arrow_left"
-			visible 	when( /*ActionSlotUsable( 3 ) &&*/ dvarInt( "cg_drawDpadHUD" ) == 1 && dvarInt( "cg_drawDpadLogos" ) == 1 && dvarInt( "miniscoreboardhide" ) != 1 )
+			visible 	when( /*ActionSlotUsable( 3 ) &&*/ dvarInt( "cg_drawGamepadHUD" ) == 1 && dvarInt( "cg_drawDpadLogos" ) == 1 && dvarInt( "miniscoreboardhide" ) != 1 )
 			decoration
 		}
 		itemDef // XBOX arrow with no logo
 		{
 			name			"xbox_left"
-			rect			(-DPAD_ICON_SPACING - DPAD_BASE_SIZE_HALF + 17) (DPAD_ICON_Y + 2.2 + DPAD_HEIGHT_CONSOLE) 24 24
+			rect			(-DPAD_ICON_SPACING - DPAD_BASE_SIZE_HALF + 19) (DPAD_ICON_Y + 2.2 + DPAD_HEIGHT_CONSOLE) 24 24
 			forecolor		1 1 1 DPAD_ICON_ALPHA
 			ownerdraw		CG_PLAYER_WEAPON_BACKGROUND 
 			background		"hud_arrow_left"
-			visible 	when( ActionSlotUsable( 3 ) && dvarInt( "cg_drawDpadHUD" ) == 1 && dvarInt( "cg_drawDpadLogos" ) != 1 )
+			visible 	when( ActionSlotUsable( 3 ) && dvarInt( "cg_drawGamepadHUD" ) == 1 && dvarInt( "cg_drawDpadLogos" ) != 1 )
 			decoration
 		}
 		itemDef // XBOX image
         {
             name			"slot3_xbox"
-            rect			(-DPAD_ICON_SPACING - DPAD_BASE_SIZE + 41) (DPAD_ICON_Y + DPAD_HEIGHT_CONSOLE) DPAD_BASE_SIZE DPAD_BASE_SIZE
+            rect			(-DPAD_ICON_SPACING - DPAD_BASE_SIZE + 43) (DPAD_ICON_Y + DPAD_HEIGHT_CONSOLE) DPAD_BASE_SIZE DPAD_BASE_SIZE
 			ownerdraw		CG_PLAYER_ACTIONSLOT_3
 			forecolor		1 1 1 DPAD_ICON_ALPHA
-			visible 		when( dvarInt( "cg_drawDpadHUD" ) == 1 )
+			visible 		when( dvarInt( "cg_drawGamepadHUD" ) == 1 )
 			decoration
 			textstyle		ITEM_TEXTSTYLE_SHADOWED
 			textalign		ITEM_ALIGN_LEFT
@@ -1189,7 +1325,7 @@ menuDef
             rect			DPAD_ICON_SPACING DPAD_ICON_Y DPAD_BASE_SIZE DPAD_BASE_SIZE
 			ownerdraw		CG_PLAYER_ACTIONSLOT_4
 			forecolor		1 1 1 HUD_ALPHA
-			visible 		when( dvarInt( "cg_drawDpadHUD" ) != 1 )
+			visible 		when( dvarInt( "cg_drawGamepadHUD" ) != 1 )
 			decoration
 			textstyle		ITEM_TEXTSTYLE_SHADOWED
 			textalign		ITEM_ALIGN_LEFT
@@ -1206,7 +1342,7 @@ menuDef
 			textscale	0.25
 			textalign	ITEM_ALIGN_CENTER
 			textstyle	ITEM_TEXTSTYLE_SHADOWED
-			visible 	when( ActionSlotUsable( 4 ) && dvarInt( "cg_drawDpadHUD" ) != 1 )
+			visible 	when( ActionSlotUsable( 4 ) && dvarInt( "cg_drawGamepadHUD" ) != 1 )
 			decoration 
 		}
 
@@ -1215,38 +1351,38 @@ menuDef
         {
 			ownerdraw		CG_PLAYER_WEAPON_BACKGROUND
 			background		"hud_dpad"
-            rect			(DPAD_ICON_SPACING - 41) (DPAD_ICON_Y + DPAD_HEIGHT_CONSOLE) DPAD_BASE_SIZE DPAD_BASE_SIZE
+            rect			(DPAD_ICON_SPACING - 43) (DPAD_ICON_Y + DPAD_HEIGHT_CONSOLE) DPAD_BASE_SIZE DPAD_BASE_SIZE
             forecolor		1 1 1 DPAD_ICON_ALPHA
-			visible 		when( dvarInt( "cg_drawDpadHUD" ) == 1 && dvarInt( "cg_drawDpadLogos" ) == 1 && dvarInt( "miniscoreboardhide" ) != 1 )
+			visible 		when( dvarInt( "cg_drawGamepadHUD" ) == 1 && dvarInt( "cg_drawDpadLogos" ) == 1 && dvarInt( "miniscoreboardhide" ) != 1 )
 			decoration
         }
 		itemDef // XBOX arrow
 		{
 			name			"xbox_right"
-			rect			(DPAD_ICON_SPACING + DPAD_BASE_SIZE_HALF - 51) (DPAD_ICON_Y + 2.2 + DPAD_HEIGHT_CONSOLE)  24 24
+			rect			(DPAD_ICON_SPACING + DPAD_BASE_SIZE_HALF - 53) (DPAD_ICON_Y + 2.2 + DPAD_HEIGHT_CONSOLE)  24 24
 			forecolor		1 1 1 DPAD_ICON_ALPHA
 			ownerdraw		CG_PLAYER_WEAPON_BACKGROUND 
 			background		"hud_arrow_right"
-			visible 	when( /*ActionSlotUsable( 4 ) &&*/ dvarInt( "cg_drawDpadHUD" ) == 1 && dvarInt( "cg_drawDpadLogos" ) == 1 && dvarInt( "miniscoreboardhide" ) != 1 )
+			visible 	when( /*ActionSlotUsable( 4 ) &&*/ dvarInt( "cg_drawGamepadHUD" ) == 1 && dvarInt( "cg_drawDpadLogos" ) == 1 && dvarInt( "miniscoreboardhide" ) != 1 )
 			decoration
 		}
 		itemDef // XBOX arrow with no logo
 		{
 			name			"xbox_right"
-			rect			(DPAD_ICON_SPACING + DPAD_BASE_SIZE_HALF - 38) (DPAD_ICON_Y + 2.2 + DPAD_HEIGHT_CONSOLE)  24 24
+			rect			(DPAD_ICON_SPACING + DPAD_BASE_SIZE_HALF - 40) (DPAD_ICON_Y + 2.2 + DPAD_HEIGHT_CONSOLE)  24 24
 			forecolor		1 1 1 DPAD_ICON_ALPHA
 			ownerdraw		CG_PLAYER_WEAPON_BACKGROUND 
 			background		"hud_arrow_right"
-			visible 	when( ActionSlotUsable( 4 ) && dvarInt( "cg_drawDpadHUD" ) == 1 && dvarInt( "cg_drawDpadLogos" ) != 1 )
+			visible 	when( ActionSlotUsable( 4 ) && dvarInt( "cg_drawGamepadHUD" ) == 1 && dvarInt( "cg_drawDpadLogos" ) != 1 )
 			decoration
 		}
 		itemDef // XBOX image
         {
             name			"slot4_xbox"
-            rect			(DPAD_ICON_SPACING - 41) (DPAD_ICON_Y + DPAD_HEIGHT_CONSOLE) DPAD_BASE_SIZE DPAD_BASE_SIZE
+            rect			(DPAD_ICON_SPACING - 43) (DPAD_ICON_Y + DPAD_HEIGHT_CONSOLE) DPAD_BASE_SIZE DPAD_BASE_SIZE
 			ownerdraw		CG_PLAYER_ACTIONSLOT_4
 			forecolor		1 1 1 DPAD_ICON_ALPHA
-			visible 		when( dvarInt( "cg_drawDpadHUD" ) == 1 )
+			visible 		when( dvarInt( "cg_drawGamepadHUD" ) == 1 )
 			decoration
 			textstyle		ITEM_TEXTSTYLE_SHADOWED
 			textalign		ITEM_ALIGN_LEFT
@@ -1262,7 +1398,7 @@ menuDef
     	name			"amitalking"
 		rect			-30 80 24 24 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_TOP
     	fullScreen		0
-    	visible			when( ( dvarbool( systemlink ) || dvarbool( onlinegame ) ) && !ui_active() && dvarint( ui_hud_hardcore ) == 0 );
+    	visible			when( ( dvarbool( systemlink ) || dvarbool( onlinegame ) ) && !ui_active() && dvarint( ui_hud_hardcore ) == 0 && dvarBool( cl_paused ) == 0 );
 
 		itemDef
 		{
@@ -1283,7 +1419,7 @@ menuDef
     	name			"talkers"
 		rect			-30 0 24 24 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_TOP
     	fullScreen		0
-    	visible			when( ( dvarbool( systemlink ) || dvarbool( onlinegame ) ) && !ui_active() && dvarint( ui_hud_hardcore ) == 0 );
+    	visible			when( ( dvarbool( systemlink ) || dvarbool( onlinegame ) ) && !ui_active() && dvarint( ui_hud_hardcore ) == 0 && dvarBool( cl_paused ) == 0 );
 
 		itemDef
 		{
@@ -1345,7 +1481,7 @@ menuDef
 		rect			100 -66 60 60 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_BOTTOM 
 #endif
 		fullScreen		0
-		visible			when( !ui_active() && dvarBool( vehInfoHide ) == 0 )
+		visible			when( !ui_active() && dvarBool( vehInfoHide ) == 0 && dvarBool( cl_paused ) == 0 )
 		itemDef 
 		{
 			name			"tankbody"
@@ -1464,7 +1600,7 @@ menuDef
 		name			"HoldBreathHint"
 		rect			0 -130 0 0 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
 		fullScreen		0
-		visible when ( !adsjavelin() && CHAPLIN_CHEAT_OFF );
+		visible when ( !adsjavelin() && CHAPLIN_CHEAT_OFF  && dvarBool( cl_paused ) == 0 );
 
 		itemDef 
 		{
@@ -1474,9 +1610,34 @@ menuDef
 			textscale		TEXTSIZE_SMALL
 			textstyle		ITEM_TEXTSTYLE_SHADOWED
 			ownerdraw		CG_HOLD_BREATH_HINT
-			visible			1
+//			visible			when( dvarInt( "cg_drawGamepadHUD" ) != 1 )
+			visible 1
 			decoration
 		}
+/*		itemDef 
+		{
+			name			"chRect_console"
+			rect			0 0 0 0
+			textfont		UI_FONT_NORMAL
+			textscale		TEXTSIZE_SMALL
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			textalign		ITEM_ALIGN_CENTER
+			text		"Click and hold LS(up) to steady"
+			visible			when( dvarInt("ui_gamepad_stick") != 1 && dvarInt( "cg_drawGamepadHUD" ) == 1 && scoped() )
+			decoration
+		}
+		itemDef 
+		{
+			name			"chRect_console"
+			rect			0 0 0 0
+			textfont		UI_FONT_NORMAL
+			textscale		TEXTSIZE_SMALL
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			textalign		ITEM_ALIGN_CENTER
+			text		"Click and hold LS(down) to steady"
+			visible			when( dvarInt("ui_gamepad_stick") == 1 && dvarInt( "cg_drawGamepadHUD" ) == 1 && scoped() )
+			decoration
+		}*/
 	}
 	
 	// Saving Icon
@@ -1548,7 +1709,7 @@ menuDef
 		name			"VehicleHud"
  	   	rect			0 0 640 480 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
  	   	fullScreen		0
- 	   	visible			1
+ 	   	visible			when( dvarBool( cl_paused ) == 0 );
 		
 		itemDef
 		{
@@ -1712,7 +1873,7 @@ menuDef
 		name			"gamemessages"
 		rect			6 10 0 0 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP
 		fullScreen		0
-		visible when ( CHAPLIN_CHEAT_OFF );
+		visible when ( CHAPLIN_CHEAT_OFF && dvarBool( cl_paused ) == 0 );
 		
 		itemDef
 		{
@@ -1734,7 +1895,7 @@ menuDef
 		name			"boldgamemessages"
 		rect			0 180 0 0 HORIZONTAL_ALIGN_CENTER_SAFEAREA VERTICAL_ALIGN_TOP
 		fullScreen		0
-		visible when ( CHAPLIN_CHEAT_OFF );
+		visible when ( CHAPLIN_CHEAT_OFF && dvarBool( cl_paused ) == 0 );
 		
 		itemDef
 		{
@@ -1755,7 +1916,7 @@ menuDef
 		name			"subtitles"
 		rect			0 375 0 0 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_TOP
 		fullScreen		0
-		visible when ( CHAPLIN_CHEAT_OFF && dvarBool( credits_active ) == 0 );
+		visible when ( CHAPLIN_CHEAT_OFF && dvarBool( credits_active ) == 0 && dvarBool( cl_paused ) == 0 );
 		
 		itemDef
 		{
@@ -1777,7 +1938,7 @@ menuDef
 		name			"subtitles_chaplin"
 		rect			0 375 0 0 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_TOP
 		fullScreen		0
-		visible when ( !CHAPLIN_CHEAT_OFF );
+		visible when ( !CHAPLIN_CHEAT_OFF && dvarBool( cl_paused ) == 0 );
 		
 		itemDef
 		{
@@ -1799,7 +1960,7 @@ menuDef
 		name			"coopmessages"
 		rect			8 -175 10 10 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_BOTTOM
 		fullScreen		0
-		visible 		when ( CHAPLIN_CHEAT_OFF );
+		visible 		when ( CHAPLIN_CHEAT_OFF && dvarBool( cl_paused ) == 0 );
 	
 		itemDef
 		{			

@@ -747,22 +747,22 @@ give_model( class )
 					break;
 				case 1:
 					character\char_usa_marine_player2::main();
-					self SetClientDvar( "cg_ScoresColor_Gamertag_0" , GetDvar( "cg_ScoresColor_Gamertag_1" ) );
+					self SetClientDvar( "cg_ScoresColor_Gamertag_0" , "0.486275 0.811765 0.933333 0" );
 					//self iprintln("Character 2, Cap, vest");
 					break;
 				case 2:
 					character\char_usa_marine_player3::main();
-					self SetClientDvar( "cg_ScoresColor_Gamertag_0" , GetDvar( "cg_ScoresColor_Gamertag_2" ) );
+					self SetClientDvar( "cg_ScoresColor_Gamertag_0" , "0.964706 0.792157 0.313726 0" );
 					//self iprintln("Character 3, Helmet, gear" );
 					break;
 				case 3:
 					character\char_usa_marine_player4::main();
-					self SetClientDvar( "cg_ScoresColor_Gamertag_0" , GetDvar( "cg_ScoresColor_Gamertag_3" ) );
+					self SetClientDvar( "cg_ScoresColor_Gamertag_0" , "0.513726 0.92549 0.533333 0" );
 					//self iprintln("Character 4, No headware, gear, loose pants");
 					break;
 			}
 
-			solo_white = GetDvarint("cg_SoloScoreColorWhite");
+			solo_white = GetDvarint("cg_soloScoreColorWhite");
 			if(isDefined(solo_white) && solo_white == 1)
 			{
 				self SetClientDvar( "cg_ScoresColor_Gamertag_0" , "1 1 1 1" );

@@ -27,7 +27,6 @@ watchGrenadeUsage()
 	{
 		self waittill ( "grenade_pullback", weaponName );
 		self.throwingGrenade = true;
-		
 		// SRS 11/28/07: updated to satchel_charge
 		if ( weaponName == "satchel_charge" )
 			self beginSatchelTracking();
@@ -154,12 +153,27 @@ beginGrenadeTracking()
 	self endon ( "death" );
 	
 	self waittill ( "grenade_fire", grenade, weaponName );
-//	if ( weaponName == "frag_grenade_mp" )
-//		grenade thread maps\mp\gametypes\_shellshock::grenade_earthQuake();
+	if ( weaponName == "Stielhandgranate" || weaponName == "st_grenade" || weaponName == "zombie_cymbal_monkey" )
+		grenade thread grenade_earthQuake();
 		
 	self.throwingGrenade = false;
 }
 
+endOnDeath()
+{
+	self waittill( "death" );
+	waittillframeend;
+	self notify ( "end_explode" );
+}
+
+grenade_earthQuake()
+{
+	self thread endOnDeath();
+	self endon( "end_explode" );
+	self waittill( "explode", position );
+	//PlayRumbleOnPosition( "grenade_rumble", position );
+	earthquake( 0.3, 0.5, position, 400 );
+}
 
 beginSatchelTracking()
 {

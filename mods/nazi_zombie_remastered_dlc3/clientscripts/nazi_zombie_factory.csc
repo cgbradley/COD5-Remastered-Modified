@@ -83,6 +83,9 @@ player_dvar_init()
 	for(i = 0; i < players.size; i++)
 	{
 		players[i] thread dvar_update();
+		players[i] thread pause_check();
+		//players[i] thread ui_anim_timer();
+
 		//players[i] thread fov_fix(i);
 
 	}
@@ -105,9 +108,27 @@ fov_fix()
 	}
 }
 
+ui_anim_timer()
+{
+    for(;;)
+    {
+        current = getDvarInt("ui_gamepad_stick");
+
+        if ( current == 0 )
+            SetClientDvar( "ui_gamepad_stick", 1 );
+        else
+            SetClientDvar( "ui_gamepad_stick", 0 );
+
+        realwait(1);
+
+    }
+}
+
 dvar_update() // if we happen to change the dummy setting VARS on the main menu and load in-game, the actual dvar will not reflect the dummy, which in these cases we hard-code in the dvar to update
 {
 	self endon("disconnect");
+
+	wait(0.1);
 
 	if(GetDvarInt("cg_fov_settings") < 65 ) // failsafe
 	{
@@ -140,6 +161,10 @@ dvar_update() // if we happen to change the dummy setting VARS on the main menu 
 
 	for(;;)
 	{
+		aim_assist = GetDvarInt("gpad_autoaim_enabled");
+		SetClientDvar("aim_lockon_enabled", aim_assist);
+		SetClientDvar("aim_slowdown_enabled", aim_assist);
+
 		if(GetDvarInt("r_fog_settings") == 0 )
 		{
 			SetClientDvar("r_fog", 0);
@@ -166,7 +191,11 @@ dvar_update() // if we happen to change the dummy setting VARS on the main menu 
 		{
 			SetClientDvar("r_lodBiasRigid", -200);
 		}
-		else if(GetDvarInt("r_lodBiasRigid_settings") == -1000 ) 
+		else if(GetDvarInt("r_lodBiasRigid_settings") == -500 )
+		{
+			SetClientDvar("r_lodBiasRigid", -500);
+		}
+		else if(GetDvarInt("r_lodBiasRigid_settings") == -1000 )
 		{
 			SetClientDvar("r_lodBiasRigid", -1000);
 		}
@@ -179,23 +208,13 @@ dvar_update() // if we happen to change the dummy setting VARS on the main menu 
 		{
 			SetClientDvar("r_lodBiasSkinned", -200);
 		}
+		else if(GetDvarInt("r_lodBiasSkinned_settings") == -500 ) 
+		{
+			SetClientDvar("r_lodBiasSkinned", -500);
+		}
 		else if(GetDvarInt("r_lodBiasSkinned_settings") == -1000 ) 
 		{
 			SetClientDvar("r_lodBiasSkinned", -1000);
-		}
-
-		real_deadzone = GetDvarFloat("gpad_button_deadzone_settings");
-		if(real_deadzone < 0)
-		{
-			SetClientDvar("gpad_button_deadzone", 0);
-		}
-		else if(real_deadzone > 0.99)
-		{
-			SetClientDvar("gpad_button_deadzone", 0.99);
-		}
-		else
-		{
-			SetClientDvar("gpad_button_deadzone", real_deadzone);
 		}
 
 		// FAILSAFES FOR BETTER BOBBING
@@ -229,4 +248,39 @@ dvar_update() // if we happen to change the dummy setting VARS on the main menu 
 		wait(0.05);
 
 	}
+}
+
+pause_check()
+{
+	SetClientDvar("cg_draw2D", 1); // failsafe to clear blur
+
+    defaultState = 1; 
+
+	SetClientDvar("cl_paused_ui", 0);
+
+    while ( true )
+    {
+        currentState = getDvarInt( "cl_paused_ui" ); // 0 until we set it to 1 in menu
+
+        if ( currentState != defaultState )
+        {        	
+			safeArea_ui = GetDvarFloat("safeArea_ui");
+			SetClientDvar("safeArea_horizontal", safeArea_ui);
+			SetClientDvar("safeArea_vertical", safeArea_ui);
+
+			if(safeArea_ui < 1.0)
+			{
+	    	    wait .05; 
+			}
+			
+			hud = GetDvarInt("cg_draw2D_ui");
+			SetClientDvar("cg_draw2D", hud);
+
+			SetClientDvar("cl_paused_ui", 0);
+            defaultState = 0;
+        }
+
+        wait .05; 
+    }
+
 }
