@@ -41,8 +41,8 @@ main()
 	setdvar("visionstore_glowTweakSkyBleedIntensity1", "");
 
 	level thread fog_settings();
- 
-	level thread maps\_utility::set_all_players_visionset( "zombie_sumpf", 0.1 );
+	//Can set our custom vision here in future or edit this one to fulfill
+	//level thread maps\_utility::set_all_players_visionset( "zombie_sumpf", 0.1 );
 }
 
 fog_settings()

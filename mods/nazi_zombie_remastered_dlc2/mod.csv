@@ -1,3 +1,5 @@
+rawfile,vision/nazi_zombie_sumpf_patch.vision
+rawfile,vision/zombie_sumpf_dogs.vision
 stringtable,maps/didyouknow_coop.csv
 localize,mod
 sound,custom_character,,all_sp

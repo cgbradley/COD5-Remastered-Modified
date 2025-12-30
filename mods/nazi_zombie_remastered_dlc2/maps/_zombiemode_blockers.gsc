@@ -99,12 +99,20 @@ door_init()
 	self.doors = targets;
 
 	//AssertEx( IsDefined( self.type ), "You must determine how this door opens. Specify script_angles, script_vector, or a script_noteworthy... Door at: " + self.origin ); 
-
+	//Start room GATE
+	flag_wait("initialize_game");
 	cost = 1000;
-	if( IsDefined( self.zombie_cost ) )
+	if( IsDefined( level.start_door_cost ) )
 	{
+		//iprintln("Door cost set from level!");
+		cost = level.start_door_cost;
+	}
+	else if( IsDefined( self.zombie_cost ) )
+	{
+		//iprintln("Door cost set default!");
 		cost = self.zombie_cost;
 	}
+	self.zombie_cost = cost;//Make cost use value
 
 	self set_hint_string( self, "default_buy_door_" + cost );
 	self SetCursorHint( "HINT_NOICON" ); 	
@@ -348,14 +356,21 @@ set_door_unusable()
 // DEBRIS ----------------------------------------------------------------------------------- //
 //
 
-debris_init()
+debris_init() //The debris closest to spawn with down stairs
 {
+	flag_wait("initialize_game");
 	cost = 1000;
-	if( IsDefined( self.zombie_cost ) )
+	if( IsDefined( level.start_door_cost ) )
 	{
+		//iprintln("Debris cost set from level!");
+		cost = level.start_door_cost;
+	}
+	else if( IsDefined( self.zombie_cost ) )
+	{
+		//iprintln("Debris cost set default!");
 		cost = self.zombie_cost;
 	}
-
+	self.zombie_cost = cost;//Make cost use value
 	self set_hint_string( self, "default_buy_debris_" + cost );
 	self SetCursorHint( "HINT_NOICON" ); 
 

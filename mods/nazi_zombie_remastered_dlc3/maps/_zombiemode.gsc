@@ -26,7 +26,7 @@ main(init_zombie_spawner_name)
 	init_flags();
 
 	//Limit zombie to 24 max, must have for network purposes
-	SetAILimit( 24 );
+	SetAILimit( 32 );
 	// the initial spawners
 	if( !IsDefined( init_zombie_spawner_name) )
 	{
@@ -730,7 +730,7 @@ init_levelvars()
 	// Round	
 	set_zombie_var( "zombie_use_failsafe", 				true );
 	set_zombie_var( "zombie_round_time", 				30 );
-	set_zombie_var( "zombie_between_round_time", 		10 );
+	set_zombie_var( "zombie_between_round_time", 		20 );
 	set_zombie_var( "zombie_intermission_time", 		15 );
 
 	// Spawning
@@ -742,7 +742,7 @@ init_levelvars()
 	set_zombie_var( "zombie_health_increase", 			100 );
 	set_zombie_var( "zombie_health_increase_percent", 	10, 	100 );
 	set_zombie_var( "zombie_health_start", 				150 );
-	set_zombie_var( "zombie_max_ai", 					24 );
+	set_zombie_var( "zombie_max_ai", 					32 );
 	set_zombie_var( "zombie_ai_per_player", 			6 );
 
 	// Scoring
@@ -2019,6 +2019,7 @@ round_spawning()
 		max = int( max * 0.8 );
 	}
 
+	max_concurrent = 31;
 	concurrent_enemies = 31;//default concurrent enemies
 	if(getdvarint("zombie_max_concurrent") > 1)
 	{
@@ -2027,8 +2028,9 @@ round_spawning()
 	else if(getdvar("alternate_difficulty") == "1")
 	{
 	concurrent_enemies = 7;
-	concurrent_enemies = int( max( concurrent_enemies, int(2 + ( level.round_number * 2) )));
+	concurrent_enemies = int( max( concurrent_enemies, int(2 + ( (level.round_number - 3) * 2) )));
 	}
+	concurrent_enemies = min(concurrent_enemies, max_concurrent);//Clamp amount within max
 
 	level.zombie_total = max;//set how many spawn per round here
 	mixed_spawns = 0;	// Number of mixed spawns this round.  Currently means number of dogs in a mixed round

@@ -546,7 +546,8 @@ dog_round_stop()
 	level.doground_nomusic = 0;
 	level notify( "dog_round_ending" );
 	clientnotify( "dog_stop" );
-
+	//restore fog via notify or here specifically # dogfog dogfogs dog_fog dogs_fog or dog_stop_monitor() (=>dvar crash)
+	SetDvar( "fog_set", -1 ); //restore fog mode
 	SetDvar( "ai_meleeRange", level.melee_range_sav ); 
 	SetDvar( "ai_meleeWidth", level.melee_width_sav );
 	SetDvar( "ai_meleeHeight", level.melee_height_sav );

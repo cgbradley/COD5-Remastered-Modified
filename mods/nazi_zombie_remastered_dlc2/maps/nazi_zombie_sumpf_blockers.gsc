@@ -5,7 +5,7 @@
 init()
 {
     zombie_double_doors = GetEntArray( "zombie_double_door", "targetname" );
-    
+    //iprintln("Double door count: "+zombie_double_doors.size);
     for( i = 0; i < zombie_double_doors.size; i++ )
 	{
 		zombie_double_doors[i] thread double_door_init(); 
@@ -44,13 +44,24 @@ double_door_init()
         self.hinges[(self.hinges).size] = hinges[i];    
     }
     self.doors = doors;
-	
+	//All second and third doors
 	cost = 1000;
 	if( IsDefined( self.zombie_cost ) )
 	{
 		cost = self.zombie_cost;
+		if(cost == 750)
+		{
+			cost = level.hut_door_cost;
+		}
+		else
+		{
+			cost = level.door_cost;
+		}
 	}
 	
+	self.zombie_cost = cost;//Make cost use value
+	/*iprintln("2nd or third door: "+cost + " originalcost: "+defa + " hinges: "
+		+hinges.size +" mhinges: "+self.hinges.size+ " doors: "+doors.size);*/
 	self set_hint_string( self, "default_buy_door_" + cost );
 	self SetCursorHint( "HINT_NOICON" );
 	self UseTriggerRequireLookAt();

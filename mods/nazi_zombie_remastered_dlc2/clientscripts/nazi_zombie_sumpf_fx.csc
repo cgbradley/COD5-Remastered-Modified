@@ -250,7 +250,7 @@ dog_stop_monitor()
 	while( 1 )
 	{
 		level waittill( "dog_stop" );
-		SetVolFog( 404.39, 1543.52, 460.33, -244.014, 0.65, 0.84, 0.79, 6 );
+		//SetVolFog( 404.39, 1543.52, 460.33, -244.014, 0.65, 0.84, 0.79, 6 );
 		//VisionSetNaked(0, "zombie_sumpf", 4 );
 		
 	}

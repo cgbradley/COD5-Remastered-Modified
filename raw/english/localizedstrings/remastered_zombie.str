@@ -13,6 +13,24 @@ VERSION             "1"
 CONFIG              "C:\cod5\cod\cod5\bin\StringEd.cfg"
 FILENOTES           ""
 
+REFERENCE           BUTTON_BUY_OPEN_DEBRIS_2500
+LANG_ENGLISH        "Press & hold ^3&&1^7 to Clear Debris [Cost: 2500]"
+
+REFERENCE           BUTTON_BUY_OPEN_DEBRIS_3000
+LANG_ENGLISH        "Press & hold ^3&&1^7 to Clear Debris [Cost: 3000]"
+
+REFERENCE           BUTTON_BUY_OPEN_DOOR_2500
+LANG_ENGLISH        "Press & hold ^3&&1^7 to Open Door [Cost: 2500]"
+
+REFERENCE           BUTTON_BUY_OPEN_DOOR_3000
+LANG_ENGLISH        "Press & hold ^3&&1^7 to Open Door [Cost: 3000]"
+
+//REFERENCE           BUTTON_BUY_OPEN_AREA_2500
+//LANG_ENGLISH        "Press & hold ^3&&1^7 to Open Area [Cost: 2500]"
+
+//REFERENCE           BUTTON_BUY_OPEN_AREA_3000
+//LANG_ENGLISH        "Press & hold ^3&&1^7 to Open Area [Cost: 3000]"
+
 REFERENCE           RANDOM_WEAPON
 LANG_ENGLISH        "Press & hold ^3&&1^7 for a Random Weapon [Cost: &&2]"
 
@@ -53,7 +71,16 @@ REFERENCE           WEAPON_BAR_BIPOD_2500
 LANG_ENGLISH        "Press & hold ^3&&1^7 to buy M1918 BAR [Cost: 1800]"
 
 REFERENCE           PERK_QUICKREVIVE
-LANG_ENGLISH        "Press & hold ^3&&1^7 to buy Quick Revive [Cost: 1500]"
+LANG_ENGLISH        "Press & hold ^3&&1^7 to buy Quick Revive [Cost: &&2]"
+
+REFERENCE           PERK_FASTRELOAD
+LANG_ENGLISH        "Press & hold ^3&&1^7 to buy Speed Cola [Cost: &&2]"
+
+REFERENCE           PERK_DOUBLETAP
+LANG_ENGLISH        "Press & hold ^3&&1^7 to buy Double Tap Root Beer [Cost: &&2]"
+
+REFERENCE           PERK_JUGGERNAUT
+LANG_ENGLISH        "Press & hold ^3&&1^7 to buy Jugger-Nog [Cost: &&2]"
 
 REFERENCE           ZIPLINE_ACTIVATE
 LANG_ENGLISH        "Press & hold ^3&&1^7 to turn on the Zipline "
