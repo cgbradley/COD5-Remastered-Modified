@@ -114,7 +114,8 @@ door_init()
 	}
 	self.zombie_cost = cost;//Make cost use value
 
-	self set_hint_string( self, "default_buy_door_" + cost );
+	//self set_hint_string( self, "default_buy_door_" + cost );
+	self SetHintString( &"REMASTERED_ZOMBIE_BUTTON_BUY_OPEN_DOOR", "&&1", cost );
 	self SetCursorHint( "HINT_NOICON" ); 	
 	self UseTriggerRequireLookAt();
 	self thread door_think(); 
@@ -371,7 +372,8 @@ debris_init() //The debris closest to spawn with down stairs
 		cost = self.zombie_cost;
 	}
 	self.zombie_cost = cost;//Make cost use value
-	self set_hint_string( self, "default_buy_debris_" + cost );
+	//self set_hint_string( self, "default_buy_debris_" + cost );
+	self SetHintString( &"REMASTERED_ZOMBIE_BUTTON_BUY_CLEAR_DEBRIS", "&&1", cost );
 	self SetCursorHint( "HINT_NOICON" ); 
 
 	if( isdefined (self.script_flag)  && !IsDefined( level.flag[self.script_flag] ) )

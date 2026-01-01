@@ -425,9 +425,9 @@ main()
 	{
 		if(getdvar("developer") == "1")
 			iprintln("Doors expensive!");
-		level.hut_door_cost = 2000;
-		level.door_cost = 1500;
-		level.start_door_cost = 1250;
+		level.hut_door_cost = 3500;//1000;
+		level.door_cost = 2500;//1750;
+		level.start_door_cost = 3000;//1500;
 	}
 	else
 	{
@@ -722,7 +722,8 @@ init_strings()
 	PrecacheString( &"ZOMBIE_SURVIVED_ROUNDS" );
 	PrecacheString( &"REMASTERED_ZOMBIE_TRADE_WEAPONS");
 	PrecacheString( &"REMASTERED_ZOMBIE_TRADE_WEAPONS_ALT");
-
+	PrecacheString( &"REMASTERED_ZOMBIE_BUTTON_BUY_OPEN_DOOR");
+	PrecacheString( &"REMASTERED_ZOMBIE_BUTTON_BUY_CLEAR_DEBRIS");
 	add_zombie_hint( "undefined", &"ZOMBIE_UNDEFINED" );
 
 	// Random Treasure Chest
@@ -743,7 +744,7 @@ init_strings()
 	add_zombie_hint( "default_reward_barrier_piece_50", &"ZOMBIE_BUTTON_REWARD_BARRIER_50" );
 
 	// Debris
-	add_zombie_hint( "default_buy_debris_100", &"ZOMBIE_BUTTON_BUY_CLEAR_DEBRIS_100" );
+	/*add_zombie_hint( "default_buy_debris_100", &"ZOMBIE_BUTTON_BUY_CLEAR_DEBRIS_100" );
 	add_zombie_hint( "default_buy_debris_200", &"ZOMBIE_BUTTON_BUY_CLEAR_DEBRIS_200" );
 	add_zombie_hint( "default_buy_debris_250", &"ZOMBIE_BUTTON_BUY_CLEAR_DEBRIS_250" );
 	add_zombie_hint( "default_buy_debris_500", &"ZOMBIE_BUTTON_BUY_CLEAR_DEBRIS_500" );
@@ -752,12 +753,10 @@ init_strings()
 	add_zombie_hint( "default_buy_debris_1250", &"ZOMBIE_BUTTON_BUY_CLEAR_DEBRIS_1250" );
 	add_zombie_hint( "default_buy_debris_1500", &"ZOMBIE_BUTTON_BUY_CLEAR_DEBRIS_1500" );
 	add_zombie_hint( "default_buy_debris_1750", &"ZOMBIE_BUTTON_BUY_CLEAR_DEBRIS_1750" );
-	add_zombie_hint( "default_buy_debris_2000", &"ZOMBIE_BUTTON_BUY_CLEAR_DEBRIS_2000" );
-	add_zombie_hint( "default_buy_debris_2500", &"REMASTERED_ZOMBIE_BUTTON_BUY_OPEN_DEBRIS_2500" );
-	add_zombie_hint( "default_buy_debris_3000", &"REMASTERED_ZOMBIE_BUTTON_BUY_OPEN_DEBRIS_3000" );
+	add_zombie_hint( "default_buy_debris_2000", &"ZOMBIE_BUTTON_BUY_CLEAR_DEBRIS_2000" );*/
 
 	// Doors
-	add_zombie_hint( "default_buy_door_100", &"ZOMBIE_BUTTON_BUY_OPEN_DOOR_100" );
+	/*add_zombie_hint( "default_buy_door_100", &"ZOMBIE_BUTTON_BUY_OPEN_DOOR_100" );
 	add_zombie_hint( "default_buy_door_200", &"ZOMBIE_BUTTON_BUY_OPEN_DOOR_200" );
 	add_zombie_hint( "default_buy_door_250", &"ZOMBIE_BUTTON_BUY_OPEN_DOOR_250" );
 	add_zombie_hint( "default_buy_door_500", &"ZOMBIE_BUTTON_BUY_OPEN_DOOR_500" );
@@ -767,8 +766,6 @@ init_strings()
 	add_zombie_hint( "default_buy_door_1500", &"ZOMBIE_BUTTON_BUY_OPEN_DOOR_1500" );
 	add_zombie_hint( "default_buy_door_1750", &"ZOMBIE_BUTTON_BUY_OPEN_DOOR_1750" );
 	add_zombie_hint( "default_buy_door_2000", &"ZOMBIE_BUTTON_BUY_OPEN_DOOR_2000" );
-	add_zombie_hint( "default_buy_door_2500", &"REMASTERED_ZOMBIE_BUTTON_BUY_OPEN_DOOR_2500" );
-	add_zombie_hint( "default_buy_door_3000", &"REMASTERED_ZOMBIE_BUTTON_BUY_OPEN_DOOR_3000" );
 
 	// Areas
 	//add_zombie_hint( "default_buy_area_100", &"ZOMBIE_BUTTON_BUY_OPEN_AREA_100" );
@@ -780,9 +777,7 @@ init_strings()
 	add_zombie_hint( "default_buy_area_1250", &"ZOMBIE_BUTTON_BUY_OPEN_AREA_1250" );
 	add_zombie_hint( "default_buy_area_1500", &"ZOMBIE_BUTTON_BUY_OPEN_AREA_1500" );
 	add_zombie_hint( "default_buy_area_1750", &"ZOMBIE_BUTTON_BUY_OPEN_AREA_1750" );
-	add_zombie_hint( "default_buy_area_2000", &"ZOMBIE_BUTTON_BUY_OPEN_AREA_2000" );
-	//add_zombie_hint( "default_buy_area_2500", &"REMASTERED_ZOMBIE_BUTTON_BUY_OPEN_AREA_2500" );
-	//add_zombie_hint( "default_buy_area_3000", &"REMASTERED_ZOMBIE_BUTTON_BUY_OPEN_AREA_3000" );
+	add_zombie_hint( "default_buy_area_2000", &"ZOMBIE_BUTTON_BUY_OPEN_AREA_2000" );*/
 }
 
 init_sounds()
@@ -964,7 +959,7 @@ init_dvars()
 
 	if ( GetDvar( "dogs_enabled" ) == "" || ( GetDvar( "dogs_enabled" ) != "1" && GetDvar( "dogs_enabled" ) == "0") )
 	{
-		SetDvar( "dogs_enabled", "0" );
+		SetDvar( "dogs_enabled", "1" );
 	}
 
 	if(getdvar("zombie_easy_health") == "")//will only add a small amount of health per round and recalculate as if always doing that
@@ -3696,8 +3691,10 @@ end_game()
 
 	level.intermission = true;
 
-	if( getDvarInt( "sv_cheats") != 1 || getDvarInt( "force_leaderboard") == 1)
+	
+	if( getDvarInt( "sv_cheats") != 1 || getDvarInt( "force_leaderboard") > 0)
 	{
+		if(getDvarInt( "zombie_cheat" ) != 1)
 		update_leaderboards();
 	}
 

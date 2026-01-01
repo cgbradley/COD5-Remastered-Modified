@@ -13,6 +13,12 @@ VERSION             "1"
 CONFIG              "C:\cod5\cod\cod5\bin\StringEd.cfg"
 FILENOTES           ""
 
+REFERENCE           BUTTON_BUY_CLEAR_DEBRIS
+LANG_ENGLISH        "Press & hold ^3&&1^7 to Clear Debris [Cost: &&2]"
+
+REFERENCE           BUTTON_BUY_OPEN_DOOR
+LANG_ENGLISH        "Press & hold ^3&&1^7 to Open Door [Cost: &&2]"
+
 REFERENCE           RANDOM_WEAPON
 LANG_ENGLISH        "Press & hold ^3&&1^7 for a Random Weapon [Cost: &&2]"
 

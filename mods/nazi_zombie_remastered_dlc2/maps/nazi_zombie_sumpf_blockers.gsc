@@ -62,7 +62,8 @@ double_door_init()
 	self.zombie_cost = cost;//Make cost use value
 	/*iprintln("2nd or third door: "+cost + " originalcost: "+defa + " hinges: "
 		+hinges.size +" mhinges: "+self.hinges.size+ " doors: "+doors.size);*/
-	self set_hint_string( self, "default_buy_door_" + cost );
+	//self set_hint_string( self, "default_buy_door_" + cost );
+	self SetHintString( &"REMASTERED_ZOMBIE_BUTTON_BUY_OPEN_DOOR", "&&1", cost );
 	self SetCursorHint( "HINT_NOICON" );
 	self UseTriggerRequireLookAt();
 
