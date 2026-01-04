@@ -122,7 +122,6 @@ maps\_gameskill.gsc
 maps\_hud_achievement.gsc
 maps\_hud_util.gsc
 maps\_laststand.gsc
-maps\_load.gsc
 maps\_loadout.gsc
 maps\_mgturret.gsc
 maps\_utility.gsc

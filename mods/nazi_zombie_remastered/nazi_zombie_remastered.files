@@ -68,7 +68,6 @@ maps\_gameskill.gsc
 maps\_hud_achievement.gsc
 maps\_interactive_objects.gsc
 maps\_laststand.gsc
-maps\_load.gsc
 maps\_loadout.gsc
 maps\_utility.gsc
 maps\_walking_anim.gsc

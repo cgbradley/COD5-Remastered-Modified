@@ -106,7 +106,7 @@ main()
 	{
 		level.solo_quick_revive = true;
 	}
-
+/*
 	switch(players.size)
 	{	
 		case 1:
@@ -126,7 +126,7 @@ main()
 			break;	
 	}
 
-	SetDvar( "dynEnt_spawnedLimit", level.dynEnt_spawnedLimit );//setsaveddvar because of console error
+	SetDvar( "dynEnt_spawnedLimit", level.dynEnt_spawnedLimit );*/
 /*	if(getDvarInt("classic_perks") == 1) //enable old jug
 	{
 		level thread check_for_old_jug();
@@ -1633,7 +1633,7 @@ zombie_intro_screen( string1, string2, string3, string4, string5 )
 		"aim_automelee_range", "96",
         "aim_automelee_lerp", "50",
         "player_meleechargefriction", "2500",
-        "dynEnt_spawnedLimit", level.dynEnt_spawnedLimit,
+        //"dynEnt_spawnedLimit", level.dynEnt_spawnedLimit,
 		"aim_autobayonet_range", "100",
 		"cg_hudDamageIconTime", "2500", // fixed damage marks from disappearing too quick
 		"cg_firstPersonTracerchance", "0.5", // can see bullet tracers as you shoot in 1st person now
@@ -1664,7 +1664,7 @@ players_playing()
 		"aim_automelee_range", "96",
         "aim_automelee_lerp", "50",
         "player_meleechargefriction", "2500",
-        "dynEnt_spawnedLimit", level.dynEnt_spawnedLimit,
+        //"dynEnt_spawnedLimit", level.dynEnt_spawnedLimit,
 		"aim_autobayonet_range", "100",
 		"cg_hudDamageIconTime", "2500", // fixed damage marks from disappearing too quick
 		"cg_firstPersonTracerchance", "0.5", // can see bullet tracers as you shoot in 1st person now
@@ -3762,6 +3762,8 @@ end_game()
 	players = get_players();
 	for (i = 0; i < players.size; i++)
 	{
+		players[i] SetClientDvars("cg_fov", "65");
+
 		players[i] SetClientDvars( "ammoCounterHide", "1",
 				"miniscoreboardhide", "1" );
 		

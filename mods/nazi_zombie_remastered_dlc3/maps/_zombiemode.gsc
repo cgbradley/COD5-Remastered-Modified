@@ -139,7 +139,7 @@ main(init_zombie_spawner_name)
 		level.solo_quick_revive = true; //handles machine disappearing & lives
 	}
 
-	switch(players.size)
+/*	switch(players.size)
 	{	
 		case 1:
 			level.dynEnt_spawnedLimit = 50;
@@ -158,28 +158,7 @@ main(init_zombie_spawner_name)
 			break;	
 	}
 
-	/*iprintln("Here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-	iprintln("Here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-	iprintln("Here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-	iprintln("Here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-	iprintln("Here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-	if( IsDefined( level.zombie_weapons ) )
-	{
-		struct = level.zombie_weapons["zombie_gewehr43"];
-		struct.cost = 400;
-		//struct.hint = &"ZOMBIE_WEAPON_GEWEHR43_400";
-		level.zombie_weapons["zombie_gewehr43"] = struct;
-	}
-
-	struct = level.zombie_weapons["kar98k"];
-	struct.cost = 300;
-	level.zombie_weapons["kar98k"] = struct;
-
-	struct = level.zombie_weapons["zombie_kar98k"];
-	struct.cost = 500;
-	level.zombie_weapons["zombie_kar98k"] = struct;*/
-
-	SetDvar( "dynEnt_spawnedLimit", level.dynEnt_spawnedLimit );
+	SetDvar( "dynEnt_spawnedLimit", level.dynEnt_spawnedLimit );*/
 /*	if(getDvarInt("classic_perks") == 1) //enable old jug
 	{
 		level thread check_for_old_jug();
@@ -1239,7 +1218,7 @@ zombie_intro_screen( string1, string2, string3, string4, string5 )
 		"aim_automelee_range", "96",
         "aim_automelee_lerp", "50",
         "player_meleechargefriction", "2500",
-        "dynEnt_spawnedLimit", level.dynEnt_spawnedLimit,
+        //"dynEnt_spawnedLimit", level.dynEnt_spawnedLimit,
 		"cg_hudDamageIconTime", "2500", // fixed damage marks from disappearing too quick
 		"cg_firstPersonTracerchance", "0.5", // can see bullet tracers as you shoot in 1st person now
 		"player_aimblend_back_low", "0 0.3 0.5", // 3rd person look up/down
@@ -1270,7 +1249,7 @@ players_playing()
 		"aim_automelee_range", "96",
         "aim_automelee_lerp", "50",
         "player_meleechargefriction", "2500",
-        "dynEnt_spawnedLimit", level.dynEnt_spawnedLimit,
+        //"dynEnt_spawnedLimit", level.dynEnt_spawnedLimit,
 		"cg_hudDamageIconTime", "2500", // fixed damage marks from disappearing too quick
 		"cg_firstPersonTracerchance", "0.5", // can see bullet tracers as you shoot in 1st person now
 		"player_aimblend_back_low", "0 0.3 0.5", // 3rd person look up/down
@@ -3540,6 +3519,8 @@ end_game()
 	players = get_players();
 	for (i = 0; i < players.size; i++)
 	{
+		players[i] SetClientDvars("cg_fov", "65");
+
 		players[i] SetClientDvars( "ammoCounterHide", "1",
 				"miniscoreboardhide", "1" );
 		
