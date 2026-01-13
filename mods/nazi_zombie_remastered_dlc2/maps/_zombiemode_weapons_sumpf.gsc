@@ -5,12 +5,14 @@
 init()
 {
 	init_weapons();
+	//level thread init_weapon_upgrade();
 	init_weapon_upgrade();
 	//init_weapon_cabinet();
 	level thread treasure_chest_init();
 	level.box_moved = false;
 
 	level thread init_bayonet_wallbuy(); // new
+	//level thread update_gun_prices();
 }
 
 add_zombie_weapon( weapon_name, hint, cost, weaponVO, variation_count, ammo_cost  )
@@ -26,10 +28,12 @@ add_zombie_weapon( weapon_name, hint, cost, weaponVO, variation_count, ammo_cost
 	table = "mp/zombiemode.csv";
 	table_cost = TableLookUp( table, 0, weapon_name, 1 );
 	table_ammo_cost = TableLookUp( table, 0, weapon_name, 2 );
+	//default_cost = cost;
 
 	if( IsDefined( table_cost ) && table_cost != "" )
 	{
-		cost = round_up_to_ten( int( table_cost ) );
+		//default_cost = round_up_to_ten( int( table_cost ) );
+		//cost = round_up_to_ten( int( table_cost ) );
 	}
 
 	if( IsDefined( table_ammo_cost ) && table_ammo_cost != "" )
@@ -51,6 +55,10 @@ add_zombie_weapon( weapon_name, hint, cost, weaponVO, variation_count, ammo_cost
 	struct.weapon_classname = "weapon_" + weapon_name;
 	struct.hint = hint;
 	struct.cost = cost;
+	//struct.cost = default_cost;
+	//struct.custom_cost = cost;
+	//struct.cost = round_up_to_ten( int( cost ) );
+	//struct.custom_cost = ( (cost - Int(cost)) != 0);
 	struct.sound = weaponVO;
 	struct.variation_count = variation_count;
     struct.is_in_box = level.zombie_include_weapons[weapon_name];
@@ -204,12 +212,12 @@ init_weapon_upgrade()
 {
 	weapon_spawns = [];
 	weapon_spawns = GetEntArray( "weapon_upgrade", "targetname" ); 
-
+	//flag_wait("initialize_game");
 	for( i = 0; i < weapon_spawns.size; i++ )
 	{
 		hint_string = get_weapon_hint( weapon_spawns[i].zombie_weapon_upgrade ); 
-
-		weapon_spawns[i] SetHintString( hint_string ); 
+		//cost_string = get_weapon_cost( weapon_spawns[i].zombie_weapon_upgrade ); 
+		weapon_spawns[i] SetHintString( hint_string ); //, "&&1", cost_string); 
 		weapon_spawns[i] setCursorHint( "HINT_NOICON" ); 
 		weapon_spawns[i] UseTriggerRequireLookAt();
 
@@ -1719,6 +1727,7 @@ weapon_cabinet_think()
 			self play_sound_on_ent( "purchase" ); 
 
 			self SetHintString( &"ZOMBIE_WEAPONCOSTAMMO", cost, ammo_cost ); 
+			//self SetHintString( &"REMASTERED_ZOMBIE_WEAPONCOSTAMMO", "&&1", cost, ammo_cost ); 
 			//		self SetHintString( get_weapon_hint( self.zombie_weapon_upgrade ) );
 			self setCursorHint( "HINT_NOICON" ); 
 			player maps\_zombiemode_score::minus_to_player_score( self.zombie_cost ); 
@@ -1839,6 +1848,7 @@ weapon_spawn_think()
 					if(!is_grenade)
 					{
 						self SetHintString( &"ZOMBIE_WEAPONCOSTAMMO", cost, ammo_cost ); 
+						//self SetHintString( &"REMASTERED_ZOMBIE_WEAPONCOSTAMMO", "&&1", cost, ammo_cost );  
 					}
 				}
 
@@ -1889,6 +1899,7 @@ weapon_spawn_think()
 					if(!is_grenade)
 					{ 
 						self SetHintString( &"ZOMBIE_WEAPONCOSTAMMO", cost, ammo_cost ); 
+						//self SetHintString( &"REMASTERED_ZOMBIE_WEAPONCOSTAMMO", "&&1", cost, ammo_cost ); 
 					}
 				}
 

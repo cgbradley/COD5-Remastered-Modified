@@ -126,6 +126,7 @@ maps\_loadout.gsc
 maps\_mgturret.gsc
 maps\_utility.gsc
 maps\_walking_anim.gsc
+maps\_weather.gsc
 maps\_zombie_poi.gsc
 maps\_zombiemode.gsc
 maps\_zombiemode_achievement.gsc

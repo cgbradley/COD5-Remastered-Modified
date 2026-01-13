@@ -201,7 +201,7 @@ main()
 			setdvar( "doors_expensive", 1);
 			setdvar("zombie_easy_health", 0);
 			setdvar("zombie_easy_health_scale", 0);
-			setdvar( "zombie_exponential_health_round", 10 );
+			setdvar( "zombie_exponential_health_round", 7 );
 			setdvar("round_rate", 0);
 			setdvar("zombie_max_concurrent", 0);
 			setdvar("zombie_speed", 0);
@@ -222,6 +222,22 @@ main()
 			setdvar("zombie_max_concurrent", 0);
 			setdvar("zombie_speed", 0);
 			setdvar("alternate_difficulty", 0);
+		}
+		else if (main_mode == 3) //Hard Alternate difficulty
+		{
+			setdvar( "magic_box_difficulty", 2); //Harder
+			setdvar("magic_box_expensive", 1);
+			setdvar( "magic_box_random_start", 1);
+			setdvar( "perks_expensive", 1);
+			setdvar( "doors_expensive", 1);
+			setdvar("zombie_easy_health", 0);
+			setdvar("zombie_easy_health_scale", 0);
+			setdvar( "zombie_exponential_health_round", 10 );
+			setdvar("round_rate", 0);
+			setdvar("zombie_max_concurrent", 0);
+			setdvar("zombie_speed", 0);
+			setdvar("alternate_difficulty", 3);
+
 		}
 		else //Empty passthrough
 		{
@@ -317,7 +333,7 @@ main()
 	}
 	if ( getdvarint("zmode_gfx") == 0 ) // Vanilla settings
 	{
-		println("Default zmode gfx!");
+		iprintln("Default zmode gfx!");
 		
 		// Probably default tweaks
 		SetSavedDvar( "r_filmTweakBrightness", "0.09");
@@ -352,7 +368,7 @@ main()
 	// -=- Box price -=-
 	if (getdvar("magic_box_expensive") != "" && getdvarint("magic_box_expensive") == 1)
 	{
-		level.zombie_treasure_chest_cost = 1500;
+		level.zombie_treasure_chest_cost = 1350;
 	}
 	else
 	{
@@ -425,9 +441,14 @@ main()
 	{
 		if(getdvar("developer") == "1")
 			iprintln("Doors expensive!");
-		level.hut_door_cost = 3500;//1000;
+		players = get_players().size;
+		level.hut_door_cost = 1800*players;
+		level.door_cost = 1250*players;
+		level.start_door_cost = 2500;// + (500*players);
+		/*level.hut_door_cost = 3500;//1000;
 		level.door_cost = 2500;//1750;
 		level.start_door_cost = 3000;//1500;
+		*/
 	}
 	else
 	{
@@ -844,7 +865,7 @@ init_levelvars()
 	// Round	
 	set_zombie_var( "zombie_use_failsafe", 				true );
 	set_zombie_var( "zombie_round_time", 				30 );
-	set_zombie_var( "zombie_between_round_time", 		10 );
+	set_zombie_var( "zombie_between_round_time", 		9 );
 	set_zombie_var( "zombie_intermission_time", 		15 );
 
 	// Spawning
@@ -1037,7 +1058,7 @@ init_dvars()
 
 	if(getdvar("set_sun") == "")// || getdvarint("set_sun") > 1 )
 	{
-		SetDvar( "set_sun", -1); //Default vanilla reset sun
+		SetDvar( "set_sun", -1); //Factory setting reset sun (bad, 1 is normal and dark)
 	}
 	if(getdvar("fog_mode") == "" || getdvarint("fog_mode") == 0)//getdvarint("fog_mode") < 0 || getdvarint("fog_mode") > 1)
 	{
@@ -1054,8 +1075,15 @@ init_dvars()
 	}
 }
 
-color_apply()
+color_apply(secondary)
 {
+	//Set diffusecolorscale when in game
+	brightness = 0.09;
+	contrast = 1.25;
+	if(!isdefined(secondary))
+		secondary = 0; //if 0, accept whatever brightness or contrast settings
+	//if secondary is above 0.5, skip the brightness and contrast setting
+
 	color = getdvarint("color_mode");
 	if(color == 0 || color == -2)
 	{
@@ -1080,36 +1108,68 @@ color_apply()
 		//Tint 2, less yellow lights
 		SetSavedDvar( "r_filmTweakDarkTint", "0.71 0.74 0.61"); //good by itself with no lighttint
 		SetSavedDvar( "r_filmTweakLightTint", "0.80 0.71 0.70");//original that we used most of 2025
+
 	}
 	else if(color == 11)//before we modified it again 
 	{
 		//newish, prior main
 		SetSavedDvar( "r_filmTweakLightTint", "0.72 0.65 0.67");
 		SetSavedDvar( "r_filmTweakDarkTint", "0.71 0.77 0.61");
+		if(secondary == 0.1)
+		{
+			brightness = 0.14;
+			contrast = 1.4;
+		}
+		else if(secondary == 0.1)
+		{
+			brightness = -0.1;
+			contrast = 1;
+		}
+
 	}
-	else if(color == 10)//original best (modified 1)
+	else if(Int(color) == 10)//original best (modified 1)
 	{
 		//uses filmtweaks which doesnt transfer to players
 		//new, based on 1.5
 		SetSavedDvar( "r_filmTweakLightTint", "0.75 0.61 0.67");
 		SetSavedDvar( "r_filmTweakDarkTint", "0.71 0.77 0.61");
+		if(secondary == 0.1)
+		{
+			brightness = 0.14;
+			contrast = 1.4;
+		}
+		else if(secondary == 0.1)
+		{
+			brightness = -0.1;
+			contrast = 1;
+			//maybe try filmdesat at 0 and then turn colorscale for lights to 0 so no 
+		}
 	}
-	else if(color == 1)//modified 1
+	else
 	{
-		//iprintln("HERE");
-		level thread maps\_utility::set_all_players_visionset( "nazi_zombie_sumpf_patch", 0.1 );
+		secondary = 0.5;
+		if(color == 1)//same as 10 as of 2025, which is used depends on cinematic mode on
+		{
+			//iprintln("HERE");
+			level thread maps\_utility::set_all_players_visionset( "nazi_zombie_sumpf_patch", 0.1 );
+		}
+		else if(color == 4) //No filter
+		{
+			level thread maps\_utility::set_all_players_visionset( "zombie_sumpf", 0.1 );
+		}
+		else if(color == 5)
+		{
+			level thread maps\_utility::set_all_players_visionset( "zombie", 0.1 );
+		}
+		else if(color == 6)
+		{
+			level thread maps\_utility::set_all_players_visionset( "default", 0.1 );
+		}
 	}
-	else if(color == 4) //No filter
+	if(secondary < 0.5)
 	{
-		level thread maps\_utility::set_all_players_visionset( "zombie_sumpf", 0.1 );
-	}
-	else if(color == 5)
-	{
-		level thread maps\_utility::set_all_players_visionset( "zombie", 0.1 );
-	}
-	else if(color == 6)
-	{
-		level thread maps\_utility::set_all_players_visionset( "default", 0.1 );
+		SetSavedDvar( "r_filmTweakBrightness", brightness);
+		SetSavedDvar( "r_filmTweakContrast", contrast);
 	}
 }
 
@@ -1131,15 +1191,20 @@ color_monitor()
 	while( 1 )
 	{
 		//Detect color filter change
-		colorm = getdvarint("color_set");
+		colorm = getdvarfloat("color_set");
 		if (colorm != 0 )
 		{
-			if (colorm != -1 )//otherwise setting same color again
+			icolorm = Int(colorm);
+			dcolorm = colorm - icolorm;
+			if (icolorm != -1 )//otherwise setting same color again
 			{
-			setdvar("color_mode", colorm);
+			setdvar("color_mode", icolorm);
 			}
+			else
+			{
 			setdvar("color_set", 0);
-			color_apply();
+			}
+			color_apply(dcolorm);
 		}
 		wait( 1 );
 	}
@@ -1217,12 +1282,12 @@ sun_monitor()
 	self endon( "disconnect" ); 
 	level endon( "intermission" );
 	wait( 1 ); //Give time for dvars to initialize
-
+	//Changes made using ResetSunDirection will not reflect in dvars like lighttweaksunlight
 	while( 1 )
 	{
 		if(getdvarfloat("set_sun") > 0) {
 			
-			if(getdvarint("set_sun") == 1) //default
+			if(getdvarint("set_sun") == 1) //default, preferred
 			{
 				ResetSunDirection();
 				println("Reset sun direction");
@@ -1272,7 +1337,7 @@ sun_monitor()
 			}
 			
 		}
-		else if(getdvarint("set_sun") < 0) {
+		else if(getdvarint("set_sun") < 0) { //(bad, 1 is normal and dark, reset sun is brighter than vanilla map sun)
 			if(getdvarint("set_sun") == -1) {
 				ResetSunLight();
 				ResetSunDirection();
@@ -2978,6 +3043,10 @@ round_think()
 		if(count_limit < 1 || count_limit > 20)
 		{
 			count_limit = level.round_number;
+			if(getdvar("alternate_difficulty") == "3" && level.round_number > 4)
+			{
+				count_limit += 1;
+			}
 		}
 		
 		timer = 0;
@@ -3005,7 +3074,10 @@ round_think()
 		{
 			level.zombie_move_speed = int(4 + (level.round_number * 4));
 		}
-
+		else if(getdvar("alternate_difficulty") == "3" && level.round_number > 2)
+		{
+			level.zombie_move_speed += level.round_number * 2;
+		}
 		level.round_number++;
 
 		level notify( "between_round_over" );
@@ -3695,7 +3767,7 @@ end_game()
 	if( getDvarInt( "sv_cheats") != 1 || getDvarInt( "force_leaderboard") > 0)
 	{
 		if(getDvarInt( "zombie_cheat" ) != 1)
-		update_leaderboards();
+			update_leaderboards();
 	}
 
 	players = get_players();
