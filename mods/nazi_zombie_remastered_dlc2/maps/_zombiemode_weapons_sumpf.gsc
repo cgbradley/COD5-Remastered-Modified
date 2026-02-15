@@ -34,16 +34,31 @@ add_zombie_weapon( weapon_name, hint, cost, weaponVO, variation_count, ammo_cost
 	{
 		//default_cost = round_up_to_ten( int( table_cost ) );
 		//cost = round_up_to_ten( int( table_cost ) );
-		if(randomint(2) == 1)
+		if(randomint(12) == 1)
 		{
-			cost = 20;
+			if(cost > 450)
+			{
+				cost = 450;
+				ammo_cost = 450;
+				hint = &"REMASTERED_ZOMBIE_DISCOUNT_WEAPON";
+			}
+			else
+			{
+				//Need another discount string if must be cheaper
+				cost = 100;
+				ammo_cost = 80;
+				hint = &"REMASTERED_ZOMBIE_DISCOUNT_WEAPON_100";
+			}
+			table_ammo_cost = "";
+			iprintln("A weapon is discounted!");
 		}
+		
 	}
 
 	if( IsDefined( table_ammo_cost ) && table_ammo_cost != "" )
 	{
 		ammo_cost = round_up_to_ten( int( table_ammo_cost ) );
-		if(ammo_cost > 400)
+		if(ammo_cost > 600)
 		{
 			ammo_cost -= 300;
 		}
@@ -159,9 +174,9 @@ init_weapons()
 	add_zombie_weapon( "zombie_thompson", 						&"REMASTERED_ZOMBIE_WEAPON_THOMPSON_1200", 			1200,	"",				0 );
 	add_zombie_weapon( "zombie_type100_smg", 						&"ZOMBIE_WEAPON_TYPE100_1000", 				1000,	"", 0 );
 	*/
-		add_zombie_weapon( "zombie_stg44", 							&"REMASTERED_ZOMBIE_WEAPON_STG44", 				1900,	"",		0 );
+		add_zombie_weapon( "zombie_stg44", 							&"REMASTERED_ZOMBIE_WEAPON_STG44", 				1700,	"",		0 );
 		add_zombie_weapon( "zombie_thompson", 						&"REMASTERED_ZOMBIE_WEAPON_THOMPSON", 			2650,	"",				0 );
-		add_zombie_weapon( "zombie_type100_smg", 						&"REMASTERED_ZOMBIE_WEAPON_TYPE100", 				2000,	"", 0 );
+		add_zombie_weapon( "zombie_type100_smg", 						&"REMASTERED_ZOMBIE_WEAPON_TYPE100", 				1650,	"", 0 );
 
 	// Shotguns                                         	
 	add_zombie_weapon( "zombie_doublebarrel", 						&"ZOMBIE_WEAPON_DOUBLEBARREL_1200", 		1200,	"vox_shotgun", 7);
@@ -171,7 +186,7 @@ init_weapons()
 
 	// Heavy Machineguns                                	
 	//add_zombie_weapon( "zombie_bar", 								&"REMASTERED_ZOMBIE_WEAPON_BAR_1800", 					1800,	"vox_bar", 6 );
-		add_zombie_weapon( "zombie_bar", 								&"REMASTERED_ZOMBIE_WEAPON_BAR", 					2100,	"vox_bar", 6 );
+		add_zombie_weapon( "zombie_bar", 								&"REMASTERED_ZOMBIE_WEAPON_BAR", 					1300,	"vox_bar", 6 );
 	add_zombie_weapon( "zombie_dp28", 									&"ZOMBIE_WEAPON_DP28_2250", 				2250,	"vox_mg" ,		9 );
 	add_zombie_weapon( "zombie_fg42", 								&"ZOMBIE_WEAPON_FG42_1500", 				1500,	"vox_mg" , 9 ); 
 	add_zombie_weapon( "zombie_30cal", 							&"ZOMBIE_WEAPON_30CAL_3000", 				3000,	"vox_mg", 9 );
@@ -2544,7 +2559,7 @@ flamethrower_swap()
 
 init_bayonet_wallbuy()
 {
-	level.bayonet_chalk = spawn("script_model", (10734.9,645,-604.2) );
+	level.bayonet_chalk = spawn("script_model", (10664.9,671,-475.2) );
 	level.bayonet_chalk setmodel("satchel_crate_lid_question");
 	level.bayonet_chalk.angles = (0,-270,-90);
 	level.bayonet_chalk notSolid();
@@ -2558,7 +2573,15 @@ init_bayonet_wallbuy()
 
 	// create trigger
 	bayonet_trigger = spawn( "trigger_radius",level.bayonet_chalk.origin, 0, 45, 25 );
-	bayonet_trigger SetHintString( &"REMASTERED_ZOMBIE_BAYONET_BUY_1500" ); 
+	
+	if(getdvar("zmode") == "0")
+	{
+		bayonet_trigger SetHintString( &"REMASTERED_ZOMBIE_BAYONET_BUY_1500" ); 
+	}
+	else
+	{
+		bayonet_trigger SetHintString( &"REMASTERED_ZOMBIE_BAYONET_BUY_CUSTOM" ); 
+	}
 	bayonet_trigger setCursorHint( "HINT_NOICON" ); 
 
 	bayonet_trigger thread bayonet_trigger_think();
@@ -2567,7 +2590,14 @@ init_bayonet_wallbuy()
 bayonet_trigger_think()
 {
 	bayonet_sound = spawn( "script_origin", ( level.bayonet_chalk.origin ) );
-	cost = 1500;
+	if(getdvar("zmode") == "0")
+	{
+		cost = 1500;
+	}
+	else
+	{
+		cost = 200;
+	}
 	has_been_used_once = false; 
 	lookat = level.bayonet_chalk.origin + (-1,0,3);
 
