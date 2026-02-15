@@ -3296,7 +3296,7 @@ weather_control()
       addLightningExploder( 10005 );
    
    level.nextLightning = GetTime() + 1;
-   //thread lightning( ::lightning_normal, ::lightning_flash );
+   thread lightning( ::lightning_normal, ::lightning_flash );
 }
 lightning_normal()
 {
@@ -3305,6 +3305,14 @@ lightning_normal()
    //setVolFog(250, 750, 400, -128, 0.44, 0.52, 0.44, 0); 
    //maps\_zombiemode::fogfunctionhere();
 }
+
+lightning_flash_fog(fog_subr, fog_subg, fog_subb)
+{
+	brightn = GetDvarFloat("fog_brightness");
+	SetVolFog( getdvarint("fog_start_dist"), getdvarint("fog_halfway_dist"), getdvarint("fog_halfway_height"), getdvarint("fog_base_height"), 
+					(0.65*brightn)-fog_subr, (0.84*brightn)-fog_subg, (0.79*brightn)-fog_subb, 1 );
+}
+
 lightning_flash()
 {
 	//iprintln(getdvar("fog_brightness"));//works
@@ -3344,5 +3352,61 @@ lightning_flash()
    wait( 0.0015 );
    
    SetSunLight( 2.5, 2.5, 3 );
-   setVolFog(250, 550, 400, -128, 0.65, 0.65, 0.7, 0);           
+   setVolFog(250, 550, 400, -128, 0.65, 0.65, 0.7, 0);  
+   
+   //My additions
+   SetSunLight(0, 0, 0);//ideally but maybe we should set sun monitor so it goes to the proper setting
+   lightning_flash_fog(0, 0, 0);//restore fog
+}
+
+
+lightning_flash_custom()
+{
+	//iprintln(getdvar("fog_brightness"));//works
+   SetSunLight( 4, 4, 4.5 );
+   //setVolFog(250, 550, 400, -128, 0.6, 0.6, 0.7, 0);
+   lightning_flash_fog(0.05, 0.05, 0);
+         
+   SetSunLight( 1, 1, 1.5 );
+   //setVolFog(250, 550, 400, -128, 0.45, 0.45, 0.5, 0);
+   lightning_flash_fog(0.2, 0.2, 0.15);	
+   wait( 0.0014 );             
+                
+   SetSunLight( 3, 3, 3.5 );
+   //setVolFog(250, 550, 400, -128, 0.55, 0.55, 0.6, 0);        
+   lightning_flash_fog(0.1, 0.1, 0.1);
+   
+   SetSunLight( 2, 2, 2.5 );
+   //setVolFog(250, 550, 400, -128, 0.65, 0.65, 0.7, 0);                                 
+   lightning_flash_fog(0, 0, 0);
+                            
+   SetSunLight( 1.5, 1.5, 2 );
+   //setVolFog(250, 550, 400, -128, 0.7, 0.7, 0.75, 0);                     
+   lightning_flash_fog(-0.05, -0.05, -0.05);
+   wait( 0.0010 );
+   
+   SetSunLight( 1, 1, 1.5 );
+   //setVolFog(250, 550, 400, -128, 0.55, 0.55, 0.6, 0);               
+   lightning_flash_fog(0.1, 0.1, 0.1);
+   
+   SetSunLight( 5, 5, 5.5 );
+   //setVolFog(250, 550, 400, -128, 0.5, 0.5, 0.55, 0);                   
+   lightning_flash_fog(0.1, 0.1, 0.15);
+   wait( 0.0011 );
+   
+   SetSunLight( 4, 4, 4.5 );
+   //setVolFog(250, 550, 400, -128, 0.55, 0.55, 0.6, 0);             
+   lightning_flash_fog(0.1, 0.1, 0.1);
+
+   SetSunLight( 1, 1, 1.5 );
+   //setVolFog(250, 550, 400, -128, 0.55, 0.55, 0.6, 0);                       
+   lightning_flash_fog(0.1, 0.1, 0.1);
+   wait( 0.0015 );
+   
+   //SetSunLight( 2.5, 2.5, 3 );
+   //setVolFog(250, 550, 400, -128, 0.65, 0.65, 0.7, 0);  
+   
+   //My additions
+   SetSunLight(0, 0, 0);//ideally but maybe we should set sun monitor so it goes to the proper setting
+   lightning_flash_fog(0, 0, 0);//restore fog
 }

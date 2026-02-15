@@ -1272,7 +1272,7 @@ fog_monitor()
 					0.65*brightn, 0.84*brightn, 0.79*brightn, 1 );
 			}
 		}
-		wait( 10 );
+		wait( 5 );
 	}
 }
 
