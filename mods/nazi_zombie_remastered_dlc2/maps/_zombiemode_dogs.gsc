@@ -467,7 +467,7 @@ dog_health_increase()
 dog_round_tracker()
 {	
 	level.dog_round_count = 1;
-	if(getdvar("alternate_difficulty") == "3")
+	if(getdvar("alternate_difficulty") == "2")//Hard
 	{
 		//iprintln("DOG EXTRA HARD");
 		level.dog_round_count = 2;
@@ -475,7 +475,14 @@ dog_round_tracker()
 	
 	// PI_CHANGE_BEGIN - JMA - making dog rounds random between round 5 thru 7
 	// NOTE:  RandomIntRange returns a random integer r, where min <= r < max
-	level.next_dog_round = randomintrange( 7, 9 );	
+	if(getdvar("alternate_difficulty") != "0")
+		{
+		level.next_dog_round = randomintrange( 7, 9 );
+		}
+	else
+		{
+		level.next_dog_round = randomintrange( 5, 8 ); //Vanilla range (not confirmed)
+		}
 	// PI_CHANGE_END
 	
 	sav_func = level.round_spawn_func;

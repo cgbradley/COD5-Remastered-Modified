@@ -192,52 +192,52 @@ main()
 	else if (main_mode != 0)
 	{
 		
-		if (main_mode == 1) //Alternate difficulty
+		if (main_mode == 1) //Medium difficulty
 		{
-			setdvar( "magic_box_difficulty", 2); //Harder
+			setdvar("magic_box_difficulty", 1); //Harder
 			setdvar("magic_box_expensive", 1);
-			setdvar( "magic_box_random_start", 1);
-			setdvar( "perks_expensive", 1);
-			setdvar( "doors_expensive", 1);
+			setdvar("magic_box_random_start", 1);
+			setdvar("perks_expensive", 1);
+			setdvar("doors_expensive", 1);
 			setdvar("zombie_easy_health", 0);
 			setdvar("zombie_easy_health_scale", 0);
-			setdvar( "zombie_exponential_health_round", 7 );
+			setdvar("zombie_exponential_health_round", 7 );
 			setdvar("round_rate", 0);
 			setdvar("zombie_max_concurrent", 0);
 			setdvar("zombie_speed", 0);
 			setdvar("alternate_difficulty", 1);
 
 		}
-		else if (main_mode == 2) //Simple mode
+		else if (main_mode == 2) //Hard Alternate difficulty
 		{
-			setdvar( "magic_box_difficulty", 1); //Easier
+			setdvar("magic_box_difficulty", 2); //Harder
 			setdvar("magic_box_expensive", 1);
-			setdvar( "magic_box_random_start", 1);
-			setdvar( "perks_expensive", 0);
-			setdvar( "doors_expensive", 1);
-			setdvar("zombie_easy_health", 1);
-			setdvar("zombie_easy_health_scale", 20);
-			setdvar( "zombie_exponential_health_round", 10 );
-			setdvar("round_rate", 2);
-			setdvar("zombie_max_concurrent", 0);
-			setdvar("zombie_speed", 0);
-			setdvar("alternate_difficulty", 0);
-		}
-		else if (main_mode == 3) //Hard Alternate difficulty
-		{
-			setdvar( "magic_box_difficulty", 2); //Harder
-			setdvar("magic_box_expensive", 1);
-			setdvar( "magic_box_random_start", 1);
-			setdvar( "perks_expensive", 1);
-			setdvar( "doors_expensive", 1);
+			setdvar("magic_box_random_start", 1);
+			setdvar("perks_expensive", 1);
+			setdvar("doors_expensive", 1);
 			setdvar("zombie_easy_health", 0);
 			setdvar("zombie_easy_health_scale", 0);
-			setdvar( "zombie_exponential_health_round", 10 );
+			setdvar("zombie_exponential_health_round", 9 );
 			setdvar("round_rate", 0);
 			setdvar("zombie_max_concurrent", 0);
 			setdvar("zombie_speed", 0);
-			setdvar("alternate_difficulty", 3);
+			setdvar("alternate_difficulty", 2);
 
+		}
+		else if (main_mode == 3) //Simple mode
+		{
+			setdvar("magic_box_difficulty", 1); //Easier
+			setdvar("magic_box_expensive", 1);
+			setdvar("magic_box_random_start", 1);
+			setdvar("perks_expensive", 0);
+			setdvar("doors_expensive", 1);
+			setdvar("zombie_easy_health", 1);
+			setdvar("zombie_easy_health_scale", 20);
+			setdvar("zombie_exponential_health_round", 10 );
+			setdvar("round_rate", 2);
+			setdvar("zombie_max_concurrent", 0);
+			setdvar("zombie_speed", 0);
+			setdvar("alternate_difficulty", 3);
 		}
 		else //Empty passthrough
 		{
@@ -245,14 +245,14 @@ main()
 	}
 	else// if(mode_float_value == 0) //Reset all to default
 	{
-		setdvar( "magic_box_difficulty", 0);
+		setdvar("magic_box_difficulty", 0);
 		setdvar("magic_box_expensive", 0);
-		setdvar( "magic_box_random_start", 0);
-		setdvar( "perks_expensive", 0);
-		setdvar( "doors_expensive", 0);
+		setdvar("magic_box_random_start", 0);
+		setdvar("perks_expensive", 0);
+		setdvar("doors_expensive", 0);
 		setdvar("zombie_easy_health", 0);
 		setdvar("zombie_easy_health_scale", 0);
-		setdvar( "zombie_exponential_health_round", 10 );
+		setdvar("zombie_exponential_health_round", 10 );
 		setdvar("round_rate", 0);
 		setdvar("zombie_max_concurrent", 0);
 		setdvar("zombie_speed", 0);
@@ -299,6 +299,8 @@ main()
 		}
 		else //Empty passthrough
 		{
+			setdvar("fog_mode", 1);//Vanilla settings
+			setdvar("set_sun", -1);//Vanilla sun
 			setdvar("fog_mode", 6);//Reset fog to current dvars, pretty sure it clears on restart so this is necessary
 		}
 		if (sub_mode > 0) //Empty passthrough
@@ -316,7 +318,7 @@ main()
 			// Probably default tweaks
 			SetSavedDvar( "r_filmTweakBrightness", "0.09");
 			SetSavedDvar( "r_filmTweakContrast", "1.25");
-
+			SetSavedDvar( "r_diffuseColorScale", 0.3);
 				//Base no cinematic mode change tint
 				//SetSavedDvar( "r_filmTweakDarkTint", "0.73 0.74 0.71");
 				//SetSavedDvar( "r_filmTweakLightTint", "0.80 0.71 0.70");
@@ -876,7 +878,7 @@ init_levelvars()
 	set_zombie_var( "zombie_health_increase", 			100 );
 	set_zombie_var( "zombie_health_increase_percent", 	10, 	100 );
 	set_zombie_var( "zombie_health_start", 				150 );
-	set_zombie_var( "zombie_max_ai", 					24 );
+	set_zombie_var( "zombie_max_ai", 					31 );
 	set_zombie_var( "zombie_ai_per_player", 			6 );
 
 	// Scoring
@@ -1290,8 +1292,8 @@ sun_monitor()
 			if(getdvarint("set_sun") == 1) //default, preferred
 			{
 				ResetSunDirection();
-				println("Reset sun direction");
-				SetSunLight(0, 0, 0);
+				SetSunLight(0, 0, 0);//Sun Completely off
+				println("Sun off + reset direction");
 				//SetSunDirection( ( 180, 180, 0 ) );
 			}
 			else if(getdvarint("set_sun") == 2)
@@ -1316,42 +1318,64 @@ sun_monitor()
 			else if(getdvarint("set_sun") == 7) {
 				SetSunDirection( ( -180, -180, -180 ) );
 			}
+			//FLOAT PART HANDLING
+			//Can make a custom sun level
+			//If last sun change was not sun_reset, then the console var will be unable to change it, hence this part
 			sunfloat = GetDvarFloat("set_sun")- getdvarint("set_sun");
-			if(sunfloat > 0 && sunfloat < 0.25)//Change these branches to use the float in the set function
+			if(sunfloat > 0)
 			{
-				SetSunLight(0, 0, 0); // Sunlight off
+				//Must find sun color in console multiply it here by a (constant - sunfloat)
+				SetSunLight(sunfloat, sunfloat, sunfloat);
 				if(getdvarint("developer") == 1)
-					iprintln("Lowest sun light");
+					iprintln("Custom sun light " + sunfloat);
 			}
-			else if(sunfloat == 0.25)
+			/* Can change this to do something specific later
+				if(sunfloat > 0 && sunfloat < 0.25)//Change these branches to use the float in the set function
+				{
+					SetSunLight(0, 0, 0); // Sunlight off
+					if(getdvarint("developer") == 1)
+						iprintln("Lowest sun light");
+				}
+				else if(sunfloat == 0.25)
+				{
+					SetSunLight(0.25, 0.25, 0.25);
+					if(getdvarint("developer") == 1)
+						iprintln("0.25 sun light");
+				}
+				else if(sunfloat == 0.5)
+				{
+					SetSunLight(0.5, 0.5, 0.5);
+					if(getdvarint("developer") == 1)
+						iprintln("0.5 sun light");
+				}
+				else*/ 
+		
+		} //If the state is negative choose what to reset:
+		else if(getdvarint("set_sun") < 0) //(<0 bad, 1 is normal and dark, reset sun is brighter than vanilla map sun)
+		{
+			if(getdvarint("set_sun") == -1)
 			{
-				SetSunLight(0.25, 0.25, 0.25);
-				if(getdvarint("developer") == 1)
-					iprintln("0.25 sun light");
-			}
-			else if(sunfloat == 0.5)
-			{
-				SetSunLight(0.5, 0.5, 0.5);
-				if(getdvarint("developer") == 1)
-					iprintln("0.5 sun light");
-			}
-			
-		}
-		else if(getdvarint("set_sun") < 0) { //(bad, 1 is normal and dark, reset sun is brighter than vanilla map sun)
-			if(getdvarint("set_sun") == -1) {
 				ResetSunLight();
 				ResetSunDirection();
 				iprintln("Reset sun light + direction");
-			} else if(getdvarint("set_sun") == -2) {
+			} 
+			else if(getdvarint("set_sun") == -2)
+			{
 				ResetSunLight();
-				iprintln("Reset sun light");
+				iprintln("Reset sun light only");
 			}
-			else if(getdvarint("set_sun") == -3) {
+			else if(getdvarint("set_sun") == -3)
+			{
 				ResetSunDirection();
-				iprintln("Reset sun direction");
+				iprintln("Reset sun direction only");
+			}
+			else if(getdvarint("set_sun") == -4)
+			{
+				SetSunLight(0, 0, 0); // Sunlight off
+				iprintln("Set sunlight to 0 only");
 			}
 		}
-		SetDvar( "set_sun", 0 );
+		SetDvar( "set_sun", 0 ); //Reset state to none
 		wait( 10 );
 	}
 }
@@ -2513,7 +2537,10 @@ round_spawning()
 		max += int( ( ( player_num - 1 ) * level.zombie_vars["zombie_ai_per_player"] ) * multiplier ); 
 	}
 
-
+	if(getdvar("alternate_difficulty") == "2")//Hard
+	{
+		max += player_num * level.round_number;
+	}
 	
 	if ( level.first_round )
 	{
@@ -2537,7 +2564,17 @@ round_spawning()
 	{
 		concurrent_enemies = GetDVarInt("zombie_max_concurrent");//override amount that can be in play at once
 	}
-	else if(getdvar("alternate_difficulty") == "1")
+	else if(getdvar("alternate_difficulty") == "1")//Medium
+	{
+	concurrent_enemies = 7;
+	concurrent_enemies = int( max( concurrent_enemies, int(2 + ( level.round_number * 2) )));
+	}
+	else if(getdvar("alternate_difficulty") == "2")//Hard
+	{
+	concurrent_enemies = 9;
+	concurrent_enemies = int( max( concurrent_enemies, int(2 + ( level.round_number * 2) )));
+	}
+	else if(getdvar("alternate_difficulty") == "3")//Easy
 	{
 	concurrent_enemies = 7;
 	concurrent_enemies = int( max( concurrent_enemies, int(2 + ( level.round_number * 2) )));
@@ -3039,11 +3076,11 @@ round_think()
 
 		level.zombie_vars["zombie_spawn_delay"] = timer * 0.95; */
 
-		count_limit = getdvarint("round_rate");
+		count_limit = getdvarint("round_rate");//Default 0
 		if(count_limit < 1 || count_limit > 20)
 		{
-			count_limit = level.round_number;
-			if(getdvar("alternate_difficulty") == "3" && level.round_number > 4)
+			count_limit = level.round_number;//Default count
+			if(getdvar("alternate_difficulty") == "2" && level.round_number > 4)//Hard
 			{
 				count_limit += 1;
 			}
@@ -3070,13 +3107,17 @@ round_think()
 		{
 			level.zombie_move_speed = getdvarint("zombie_speed");
 		}
-		else if(getdvar("alternate_difficulty") == "1")
+		else if(getdvar("alternate_difficulty") == "1")//Medium
 		{
 			level.zombie_move_speed = int(4 + (level.round_number * 4));
 		}
-		else if(getdvar("alternate_difficulty") == "3" && level.round_number > 2)
+		else if(getdvar("alternate_difficulty") == "2" && level.round_number > 2)//Hard
 		{
 			level.zombie_move_speed += level.round_number * 2;
+		}
+		else if(getdvar("alternate_difficulty") == "3" && level.round_number > 3)//Easy
+		{
+			level.zombie_move_speed = int(5 + (level.round_number * 3));
 		}
 		level.round_number++;
 
@@ -3128,7 +3169,7 @@ ai_calculate_health()
 		level.zombie_health = Int( level.zombie_health + ( (level.round_number - 1) * health_scale ) ); 
 		return;
 	}
-	else if(getdvarint("alternate_difficulty") == 1)//Scale health slowly
+	else if(getdvarint("alternate_difficulty") > 0)//if(getdvarint("alternate_difficulty") == 1 || getdvarint("alternate_difficulty") == 2)//Scale health slowly
 	{
 		health_scale = 20; //early scale for first N rounds
 		exponential_round = getdvarint("zombie_exponential_health_round"); // default is 10
