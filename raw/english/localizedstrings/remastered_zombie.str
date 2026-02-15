@@ -19,6 +19,12 @@ LANG_ENGLISH        "Press & hold ^3&&1^7 to Clear Debris [Cost: &&2]"
 REFERENCE           BUTTON_BUY_OPEN_DOOR
 LANG_ENGLISH        "Press & hold ^3&&1^7 to Open Door [Cost: &&2]"
 
+REFERENCE           DISCOUNT_WEAPON
+LANG_ENGLISH        "Press & hold ^3&&1^7 for Discounted Weapon [Cost: 450]"
+
+REFERENCE           DISCOUNT_WEAPON_100
+LANG_ENGLISH        "Press & hold ^3&&1^7 for Discounted Weapon [Cost: 100]"
+
 REFERENCE           RANDOM_WEAPON
 LANG_ENGLISH        "Press & hold ^3&&1^7 for a Random Weapon [Cost: &&2]"
 
@@ -61,32 +67,35 @@ LANG_ENGLISH        "Press & hold ^3&&1^7 to buy M1918 BAR [Cost: 1800]"
 REFERENCE           WEAPONCOSTAMMO
 LANG_ENGLISH        "Press & hold ^3&&1^7 For Weapon [Cost: &&2], For Ammo [&&3]"
 
+REFERENCE           BAYONET_BUY_CUSTOM
+LANG_ENGLISH        "Press & hold ^3&&1^7 to buy Type 30 Bayonet [Cost: 200 - valid weapons only]"
+
 REFERENCE           WEAPON_GEWEHR43
 LANG_ENGLISH        "Press & hold ^3&&1^7 to buy Gewehr 43 [Cost: 900]"
 
 REFERENCE           WEAPON_M1CARBINE
-LANG_ENGLISH        "Press & hold ^3&&1^7 to buy M1 Carbine [Cost: 700]"
+LANG_ENGLISH        "Press & hold ^3&&1^7 to buy M1 Carbine [Cost: 300]"
 
 REFERENCE           WEAPON_M1GARAND
-LANG_ENGLISH        "Press & hold ^3&&1^7 to buy M1 Garand [Cost: 700]"
+LANG_ENGLISH        "Press & hold ^3&&1^7 to buy M1 Garand [Cost: 300]"
  //Auto weapons
 REFERENCE           WEAPON_MP40
-LANG_ENGLISH        "Press & hold ^3&&1^7 to buy MP40 [Cost: 2500]"
+LANG_ENGLISH        "Press & hold ^3&&1^7 to buy MP40 [Cost: 1950]"
 
 REFERENCE           WEAPON_STG44
-LANG_ENGLISH        "Press & hold ^3&&1^7 to buy StG-44 [Cost: 1900]"
+LANG_ENGLISH        "Press & hold ^3&&1^7 to buy StG-44 [Cost: 1700]"
 
 REFERENCE           WEAPON_THOMPSON
-LANG_ENGLISH        "Press & hold ^3&&1^7 to buy M1A1 Thompson [Cost: 2200]"
+LANG_ENGLISH        "Press & hold ^3&&1^7 to buy M1A1 Thompson [Cost: 2650]"
 
 REFERENCE           WEAPON_TYPE100
-LANG_ENGLISH        "Press & hold ^3&&1^7 to buy Type 100 [Cost: 2000]"
+LANG_ENGLISH        "Press & hold ^3&&1^7 to buy Type 100 [Cost: 1650]"
  //Shotgun
 REFERENCE           WEAPON_SHOTGUN
-LANG_ENGLISH        "Press & hold ^3&&1^7 to buy M1897 Trench Gun [Cost: 1800]"
+LANG_ENGLISH        "Press & hold ^3&&1^7 to buy M1897 Trench Gun [Cost: 1750]"
  //Heavy Machinegun
 REFERENCE           WEAPON_BAR
-LANG_ENGLISH        "Press & hold ^3&&1^7 to buy M1918 BAR [Cost: 2100]"
+LANG_ENGLISH        "Press & hold ^3&&1^7 to buy M1918 BAR [Cost: 1300]"
 //==Perks==
 REFERENCE           PERK_QUICKREVIVE
 LANG_ENGLISH        "Press & hold ^3&&1^7 to buy Quick Revive [Cost: &&2]"
