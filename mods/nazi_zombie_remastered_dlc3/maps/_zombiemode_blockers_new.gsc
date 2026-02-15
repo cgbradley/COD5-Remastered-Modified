@@ -99,14 +99,83 @@ door_init()
 	self.doors = targets;
 
 	//AssertEx( IsDefined( self.type ), "You must determine how this door opens. Specify script_angles, script_vector, or a script_noteworthy... Door at: " + self.origin ); 
-
-	cost = 1000;
-	if( IsDefined( self.zombie_cost ) )
+	//Start room
+	flag_wait("initialize_game");
+	/*
+	
+	//Vanilla costs
+	teleporter_door_cost = 1250;//useless
+	teleporterb_door_cost = 1000;
+	debris_cost = 1000;
+	second_door_cost = 750;
+	start_door_cost = 750;
+	
+		cost = 1000;
+		if( IsDefined( level.start_door_cost ) )
+		{
+			//iprintln("Door cost set from level!");
+			cost = level.start_door_cost;
+		}
+		else if( IsDefined( self.zombie_cost ) )
+		{
+			//iprintln("Door cost set default!");
+			cost = self.zombie_cost;
+		}
+	*/
+	cost = 1000;//Default
+		if(IsDefined(level.add_door_cost)) {cost += level.add_door_cost;}//If difficulty hard but cannot read specific values
+	if( IsDefined( self.zombie_cost ) ) //Get specific cost
 	{
-		cost = self.zombie_cost;
-	}
+		//iprintln("Door cost set default!");
+		cost = self.zombie_cost;//Vanilla cost
+		
+		//Now attempt to identify and set difficulty costs
+		if(IsDefined(level.door_cost_initialized) && level.door_cost_initialized == true)
+		{
+			//if(IsDefined(self.target))name = getstruct( self.target, "targetname" );
+			//cost = 0;
+			switch(self.target)
+			{
+				case "south_courtyard_door"://Teleporter C (far back QR door)
+					cost = level.teleporter_door_cost;
+				break;
+				case "warehouse_garage_door"://2nd door, garage
+					cost = level.second_door_cost;
+				break;
+				case "outside_west_door"://First door near double barrel
+					cost = level.start_door_cost;
+				break;
+				case "outside_east_door"://First door near carbine
+					cost = level.start_door_cost;
+				break;
+				case "wnuen_outside_door"://2nd door near carbine, into labs
+					cost = level.second_door_cost;
+				break;
+				case "tp_east_door"://Teleporter A, in labs mp40
+					cost = level.teleporter_door_cost;
+				break;
+				case "tp_west_door": //Teleporter B
+					cost = level.teleporterb_door_cost;
+				break;
+				//default:
+					//cost += level.add_door_cost;//Default add
+				//break;
+			}
+		
+			
+			/*switch(cost)
+			{
+				case 1250:
+					cost += level.teleporter_door_cost;
+				break;
 
-	self set_hint_string( self, "default_buy_door_" + cost );
+			}*/
+		}
+	}
+	self.zombie_cost = cost;//Make cost use value (read when purchasing)
+
+	//self set_hint_string( self, "default_buy_door_" + cost );
+	self SetHintString( &"REMASTERED_ZOMBIE_BUTTON_BUY_OPEN_DOOR", "&&1", cost );
 	self SetCursorHint( "HINT_NOICON" ); 	
 	self UseTriggerRequireLookAt();
 	self thread door_think(); 
@@ -350,13 +419,23 @@ set_door_unusable()
 
 debris_init()
 {
+	flag_wait("initialize_game");
 	cost = 1000;
-	if( IsDefined( self.zombie_cost ) )
+	if( IsDefined( level.debris_cost ) )
 	{
+		//iprintln("Debris cost set from level!");
+		//if(self.target == "warehouse_stair_door_01") //Stairway debris in garage
+		cost = level.debris_cost;
+		//"wnuen_inside_stair"://Stairway debris in lab
+	}
+	else if( IsDefined( self.zombie_cost ) )
+	{
+		//iprintln("Debris cost set default!");
 		cost = self.zombie_cost;
 	}
-
-	self set_hint_string( self, "default_buy_debris_" + cost );
+	self.zombie_cost = cost;//Make cost use value
+	//self set_hint_string( self, "default_buy_debris_" + cost );
+	self SetHintString( &"REMASTERED_ZOMBIE_BUTTON_BUY_CLEAR_DEBRIS", "&&1", cost );
 	self SetCursorHint( "HINT_NOICON" ); 
 
 	if( isdefined (self.script_flag)  && !IsDefined( level.flag[self.script_flag] ) )

@@ -26,7 +26,7 @@ main(init_zombie_spawner_name)
 	init_flags();
 
 	//Limit zombie to 24 max, must have for network purposes
-	SetAILimit( 32 );
+	SetAILimit( 24 );
 	// the initial spawners
 	if( !IsDefined( init_zombie_spawner_name) )
 	{
@@ -133,7 +133,12 @@ main(init_zombie_spawner_name)
 	flag_wait( "all_players_connected" ); 
 
 	players = get_players();
-	
+	if( players.size == 1 )
+	{
+		// un cap the AI count
+		ResetAILimit();//use or not?
+		SetAILimit( 31 );
+	}
 	if( players.size == 1 && getdvarint("classic_perks") == 0 ) // Make sure classic perks are disabled, thus the new remastered solo revives will be enabled
 	{
 		level.solo_quick_revive = true; //handles machine disappearing & lives
@@ -185,6 +190,9 @@ main(init_zombie_spawner_name)
 
 	level.startInvulnerableTime = GetDvarInt( "player_deathInvulnerableTime" );
 
+	level thread fog_monitor();
+	level thread sun_monitor();
+
 	// Do a SaveGame, so we can restart properly when we die
 	SaveGame( "zombie_start", &"AUTOSAVE_LEVELSTART", "", true );
 
@@ -193,6 +201,15 @@ main(init_zombie_spawner_name)
 	if(!IsDefined(level.eggs) )
 	{
 		level.eggs = 0;
+	}
+	if((getdvar("use_defaults") != "0" && getdvar("use_defaults") != "1"))//getdvar("use_defaults") == "" || 
+	{
+		setdvar("use_defaults", 1);
+	}
+	if (getdvar("zmode") == "" || getdvar("use_defaults") == "1")
+	{
+		setdvar("zmode", 1);//change this to whatever your desired default mode is
+		setdvar("zmode_gfx", 1);
 	}
 
 	if (getdvar("zmode") != "")
@@ -204,35 +221,56 @@ main(init_zombie_spawner_name)
 		if (mode_float_value > 0)
 		{
 			
-			if (main_mode == 1) //Alternate difficulty
+			if (main_mode == 1) //Medium difficulty
 			{
-				setdvar( "magic_box_difficulty", 2); //Harder
+				setdvar("magic_box_difficulty", 1); //Harder
 				setdvar("magic_box_expensive", 1);
-				setdvar( "magic_box_random_start", 1);
+				setdvar("magic_box_random_start", 1);
+				setdvar("perks_expensive", 1);
+				setdvar("doors_expensive", 1);
 				setdvar("zombie_easy_health", 0);
 				setdvar("zombie_easy_health_scale", 0);
-				setdvar( "zombie_exponential_health_round", 10 );
+				setdvar("zombie_exponential_health_round", 10 );
 				setdvar("round_rate", 0);
 				setdvar("zombie_max_concurrent", 0);
 				setdvar("zombie_speed", 0);
 				setdvar("alternate_difficulty", 1);
 
 			}
-			else if (main_mode == 2) //Simple mode
+			else if (main_mode == 2) //Hard Alternate difficulty
 			{
-				setdvar( "magic_box_difficulty", 1); //Easier
+				setdvar("magic_box_difficulty", 2); //Harder
 				setdvar("magic_box_expensive", 1);
-				setdvar( "magic_box_random_start", 1);
+				setdvar("magic_box_random_start", 1);
+				setdvar("perks_expensive", 1);
+				setdvar("doors_expensive", 1);
+				setdvar("zombie_easy_health", 0);
+				setdvar("zombie_easy_health_scale", 0);
+				setdvar("zombie_exponential_health_round", 9 );
+				setdvar("round_rate", 0);
+				setdvar("zombie_max_concurrent", 0);
+				setdvar("zombie_speed", 0);
+				setdvar("alternate_difficulty", 2);
+
+			}
+			else if (main_mode == 3) //Simple mode
+			{
+				setdvar("magic_box_difficulty", 1); //Easier
+				setdvar("magic_box_expensive", 1);
+				setdvar("magic_box_random_start", 1);
+				setdvar("perks_expensive", 0);
+				setdvar("doors_expensive", 1);
 				setdvar("zombie_easy_health", 1);
 				setdvar("zombie_easy_health_scale", 20);
-				setdvar( "zombie_exponential_health_round", 10 );
+				setdvar("zombie_exponential_health_round", 10 );
 				setdvar("round_rate", 2);
 				setdvar("zombie_max_concurrent", 0);
 				setdvar("zombie_speed", 0);
-				setdvar("alternate_difficulty", 0);
+				setdvar("alternate_difficulty", 3);
 			}
 			else //Empty passthrough
 			{
+				
 			}
 			if (sub_mode >= 0.5) //Empty passthrough
 			{
@@ -246,32 +284,91 @@ main(init_zombie_spawner_name)
 				}
 			
 			}
-			setdvar("fog_set", 6);//Reset fog to current dvars, pretty sure it clears on restart so this is necessary
+		
 		}
-		else if(mode_float_value == 0) //Reset all to default
+		
+		if(main_mode == 0) //Reset all to default
 		{
-			setdvar( "magic_box_difficulty", 0);
-			setdvar("magic_box_expensive", 0);
-			setdvar( "magic_box_random_start", 0);
-			setdvar("zombie_easy_health", 0);
-			setdvar("zombie_easy_health_scale", 0);
-			setdvar( "zombie_exponential_health_round", 10 );
-			setdvar("round_rate", 0);
-			setdvar("zombie_max_concurrent", 0);
-			setdvar("zombie_speed", 0);
-			setdvar("alternate_difficulty", 0);
+		iprintln("Vanilla zmode settings");
+		setdvar("magic_box_difficulty", 0);
+		setdvar("magic_box_expensive", 0);
+		setdvar("magic_box_random_start", 0);
+		setdvar("perks_expensive", 0);
+		setdvar("doors_expensive", 0);
+		setdvar("zombie_easy_health", 0);
+		setdvar("zombie_easy_health_scale", 0);
+		setdvar("zombie_exponential_health_round", 10 );
+		setdvar("round_rate", 0);
+		setdvar("zombie_max_concurrent", 0);
+		setdvar("zombie_speed", 0);
+		setdvar("alternate_difficulty", 0);
 		}
+
 	}
 	else
 	{
-		setdvar("zmode", 0);
-		iprintln("zmode: default 0!");
+		iprintln("zmode not defined!");
 	}
-	if (getdvarfloat("zmode") >= 0)
+	//ZMODE GFX
+		//iprintln("Reduce tweak sunlight!");//always remind
+	if (getdvar("zmode_gfx") == "")
 	{
-		iprintln("Reduce tweak sunlight!");//always remind
+		setdvar("zmode_gfx", 0);
 	}
-
+	setdvar("fog_set", -1);//set fog to whatever mode is
+	mode_float_value = getdvarfloat("zmode_gfx");
+	main_mode = Int(mode_float_value);
+	sub_mode = abs(mode_float_value - main_mode);
+	if(main_mode == 1) // Primary setting; recommended
+	{
+		if(getdvar("developer") == "1")
+			iprintln("zmode_gfx main 1");
+		setdvar("set_sun", 1); //Base sun
+		setdvar("fog_mode", 4);
+		SetDvar( "fog_brightness", 0.5 );
+	}
+	else if(main_mode == 2)
+	{
+		if(getdvar("developer") == "1")
+			iprintln("zmode_gfx main 2");
+		setdvar("set_sun", 1);
+		setdvar("fog_mode", 4);
+		SetDvar( "fog_brightness", 0.35 );
+	}
+	else if(main_mode == 3)
+	{
+		if(getdvar("developer") == "1")
+			iprintln("zmode_gfx main 3");
+		setdvar("set_sun", 1);
+		//SetSunLight(0.7, 0.7, 0.7);
+		setdvar("fog_mode", 8);
+		SetDvar( "fog_brightness", 0.5 );
+	}
+	else if(main_mode == 4)
+	{
+		if(getdvar("developer") == "1")
+			iprintln("zmode_gfx main 4");
+		setdvar("set_sun", 3);
+		//SetSunLight(0.7, 0.7, 0.7);
+		setdvar("fog_mode", 8);
+		SetDvar( "fog_brightness", 0.5 );
+	}
+	else //if ("0") // Vanilla settings
+	{
+		iprintln("Vanilla zmode gfx!");
+		//setdvar("zmode_gfx", 0);
+		setdvar("fog_mode", 1);//Vanilla settings
+		setdvar("fog_brightness", 1 );
+		setdvar("set_sun", -1);//Vanilla sun
+	}
+	if (sub_mode > 0) //Empty passthrough
+	{
+		//do not overwrite visual settings
+		//keep_visuals_zmode = true;
+	}
+	else
+	{
+	}
 	// -                     -
 	// =-- TWEAK MYSTERY BOX --=
 	// -                     -
@@ -327,6 +424,63 @@ main(init_zombie_spawner_name)
 	{
 		level.chests[i] notify( "cost_update" );
 	}
+
+	if (getdvar("perks_expensive") != "" && getdvarint("perks_expensive") == 1)
+	{
+		if(getdvar("developer") == "1")
+			iprintln("Perks expensive!");
+		level.zombie_juggernog_cost = 3000;
+		level.zombie_quickrevive_cost = 2000;
+		level.zombie_speedcola_cost = 4000;//8000;
+		level.zombie_doubletap_cost = 4500;
+	}
+	else
+	{
+		//restore default
+		if(getdvar("developer") == "1")
+			iprintln("Perks DEFAULT price!");
+		level.zombie_juggernog_cost = 2500;
+		level.zombie_quickrevive_cost = 1500;
+		level.zombie_speedcola_cost = 3000;
+		level.zombie_doubletap_cost = 2000;
+	}
+
+	//Vanilla costs
+	level.teleporter_door_cost = 1250;
+	level.teleporterb_door_cost = 750;
+	level.debris_cost = 1000;
+	level.second_door_cost = 750;
+	level.start_door_cost = 750;
+	level.door_cost_initialized = true;
+	if (getdvar("doors_expensive") != "" && getdvarint("doors_expensive") == 1)
+	{
+		if(getdvar("developer") == "1")
+			iprintln("Doors expensive!");
+		players = get_players().size;
+		level.add_door_cost = 250*players;
+		level.teleporter_door_cost += 250*players;
+		level.teleporterb_door_cost += 500*players;
+		level.debris_cost += 200*players;
+		level.second_door_cost += 50*players;
+		level.start_door_cost += 100*players;
+
+		/*level.debris_cost = 1250*players;
+		level.door_cost = 1250*players;//useless
+		level.start_door_cost = 900;// + (500*players);
+		*/
+	}
+	else
+	{
+		//restore default
+		if(getdvar("developer") == "1")
+			iprintln("Doors DEFAULT price!");
+		level.add_door_cost = 0;
+		
+	}
+
+	if(getdvar("developer") == "1")
+		iprintln("Finished setup");
+	flag_set("initialize_game");
 }
 
 zombiemode_melee_miss()
@@ -785,42 +939,52 @@ init_dvars()
 		SetDvar( "zombie_cheat", "0" );
 	}
 	
-	if(getdvar("magic_chest_movable") == "")
+	if(getdvar("magic_chest_movable") == "" || (getdvarfloat("magic_chest_movable") != 0 && getdvarfloat("magic_chest_movable") != 1))
 	{
 		SetDvar( "magic_chest_movable", "1" );
 	}
 
-	if(getdvar("magic_box_explore_only") == "")
+	if(getdvar("magic_box_explore_only") == "" || (getdvarfloat("magic_box_explore_only") != 0 && getdvarfloat("magic_box_explore_only") != 1))
 	{
 		SetDvar( "magic_box_explore_only", 1 );
 	}
 	
-	if(getdvar("magic_box_difficulty") == "")
+	if(getdvar("magic_box_difficulty") == "" || getdvarfloat("magic_box_difficulty") < 0)
 	{
 		SetDvar( "magic_box_difficulty", 0 );
 	}
 
-	if(getdvar("magic_box_expensive") == "")
+	if(getdvar("magic_box_expensive") == "" || getdvarfloat("magic_box_expensive") < 0)
 	{
 		SetDvar( "magic_box_expensive", 0 );
 	}
 
-	if(getdvar("magic_box_random_start") == "")
+	if(getdvar("magic_box_random_start") == "" || (getdvarfloat("magic_box_random_start") != 0 && getdvarfloat("magic_box_random_start") != 1))
 	{
 		SetDvar( "magic_box_random_start", 0 );
 	}
 
-	if ( GetDvar( "dogs_enabled" ) == "" || ( GetDvar( "dogs_enabled" ) != "1" && GetDvar( "dogs_enabled" ) == "0") )
+	if(getdvar("perks_expensive") == "" || (getdvarfloat("perks_expensive") != 0 && getdvarfloat("perks_expensive") != 1))
+	{
+		SetDvar( "perks_expensive", 0 );
+	}
+
+	if(getdvar("doors_expensive") == "" || (getdvarfloat("doors_expensive") != 0 && getdvarfloat("doors_expensive") != 1))
+	{
+		SetDvar( "doors_expensive", 0 );
+	}
+
+	if (GetDvar( "dogs_enabled" ) == "" || (GetDvar( "dogs_enabled" ) != "1" && GetDvar( "dogs_enabled" ) == "0"))
 	{
 		SetDvar( "dogs_enabled", "0" );
 	}
 
 	if(getdvar("alternate_difficulty") == "")
 	{
-		SetDvar( "alternate_difficulty", "0" );
+		SetDvar( "alternate_difficulty", "0" ); 
 	}
 
-	if(getdvar("zombie_easy_health") == "")//will only add a small amount of health per round and recalculate as if always doing that
+	if(getdvar("zombie_easy_health") == "" || (getdvarfloat("zombie_easy_health") != 0 && getdvarfloat("zombie_easy_health") != 1))//will only add a small amount of health per round and recalculate as if always doing that
 	{
 		SetDvar( "zombie_easy_health", "0" );
 	}
@@ -850,12 +1014,311 @@ init_dvars()
 		SetDvar( "round_rate", 0 );
 	}
 
-	if(getdvar("force_leaderboard") == "" || getdvarint("force_leaderboard") < 0 || getdvarint("force_leaderboard") > 1)//sets leaderboard to always record even if cheats enabled
+	if(getdvar("force_leaderboard") == "" || (getdvarfloat("force_leaderboard") != 0 && getdvarfloat("force_leaderboard") != 1))//sets leaderboard to always record even if cheats enabled
 	{
 		SetDvar( "force_leaderboard", 0 );
 	}
+		/*
+		if (getdvar("enable_weather") == "")
+		{
+			setdvar("enable_weather", 0);
+		}
+		
+		if(getdvar("zmode") == "" || getdvarint("zmode") < 0)
+		{
+			//SetDvar( "zmode", 0 ); // no mode selected
+			SetDvar( "zmode", 1.1 ); // no mode selected
+		}
 
+		if(getdvar("zmode_gfx") == "" || getdvarint("zmode_gfx") < 0)
+		{
+			//SetDvar( "zmode_gfx", 0 ); // no gfx selected
+			SetDvar( "zmode_gfx", 1 );
+		}
+		*/
+	if(getdvar("set_sun") == "")// || getdvarint("set_sun") > 1)
+	{
+		SetDvar( "set_sun", -1); //Factory setting reset sun (bad, 1 is normal and dark)
+	}
+	
+	if(dvar_notdefinedorboolean("fog_color")) //Custom fog color
+	{
+		Setdvar("fog_color", 0);
+	}
+
+	if(getdvar("fog_mode") == "" || getdvarint("fog_mode") == 0)//getdvarint("fog_mode") < 0 || getdvarint("fog_mode") > 1)
+	{
+		SetDvar( "fog_mode", 100 ); //Default vanilla passthrough
+	}
+	if(getdvar("fog_start_dist") == "" || getdvar("fog_halfway_dist") == "")
+	{
+		//Default vanilla fog:
+		SetDvar( "fog_start_dist", 404.39 );
+		SetDvar( "fog_halfway_dist", 1543.52 );
+		SetDvar( "fog_halfway_height", 460.33 );
+		SetDvar( "fog_base_height", -244.014 );
+		SetDvar( "fog_brightness", 1 );
+	}
 	SetDvar( "revive_trigger_radius", "60" ); 
+	if(getdvar("developer") == "1")
+		iprintln("init_dvars complete");
+}
+
+dvar_notdefinedorboolean(dvarname) // Return true if the dvar is undefined or not true/false
+{
+	return (getdvar(dvarname) == "" || (getdvarfloat(dvarname) != 0 && getdvarfloat(dvarname) != 1));
+	//abs(getdvarint(dvarname)-0.5) == 0.5 )
+	//dvarname = getdvar(dvarname);//return (dvarname == "" || (dvarname != "0" && dvarname != "1"))
+}
+
+// Pulls the fog in
+fog_monitor()
+{
+	self endon( "disconnect" ); 
+	level endon( "intermission" );
+	wait( 1 ); //Give time for dvars to initialize
+	if(getdvarint("developer") == 1)
+		iprintln("Fog monitor started");
+	while( 1 )
+	{
+		fog_val = getdvarint("fog_set");
+		if(fog_val != 0) {
+			SetDvar( "fog_set", 0 );
+			if(fog_val == -1)//Repeat the current fog level
+			{
+				//iprintln("f: "+ fog_val + " " + getdvarint("fog_mode"));
+				fog_val = getdvarint("fog_mode");
+				if(fog_val < 1)//Less than default
+					{
+					SetDvar( "fog_mode", 1 );
+					fog_val = 1;//vanilla fog
+					iprintln("Defaulting to vanilla fog");
+					}
+			}
+			//SetVolFog( 404.39, 1543.52, 460.33, -244.014, 0.65, 0.84, 0.79, 1 );
+			if(fog_val == 1) {//default vanilla fog
+				SetDvar( "fog_start_dist", 440 );
+				SetDvar( "fog_halfway_dist", 3200 );
+
+				SetDvar( "fog_halfway_height", 225 );
+				SetDvar( "fog_base_height", 64 );
+			} else if(fog_val == 3) {
+				SetDvar( "fog_start_dist", 404.39 );
+				SetDvar( "fog_halfway_dist", 900 );
+				SetDvar( "fog_halfway_height", 900 );
+				SetDvar( "fog_base_height", 200 );
+			}
+			else if(fog_val == 4) {// Recommended and good primary !!!
+				SetDvar( "fog_start_dist", 1200 );
+				SetDvar( "fog_halfway_dist", 500 );//shorter seems to help
+				SetDvar( "fog_halfway_height", 4000 );
+				SetDvar( "fog_base_height", 3000 );
+			}
+			else if(fog_val == 5) {//BEST primary, mostly covers sky only
+				SetDvar( "fog_start_dist", 304.39 );
+				SetDvar( "fog_halfway_dist", 700 );
+				SetDvar( "fog_halfway_height", 2400 );
+				SetDvar( "fog_base_height", 1500 );
+			}
+			else if(fog_val == 6) {
+				SetDvar( "fog_start_dist", 404.39 );
+				SetDvar( "fog_halfway_dist", 550 ); 
+				SetDvar( "fog_halfway_height", 2700 );
+				SetDvar( "fog_base_height", 2300 );
+			}
+			else if(fog_val == 7) {
+				SetDvar( "fog_start_dist", 304.39 );
+				SetDvar( "fog_halfway_dist", 500 );
+				SetDvar( "fog_halfway_height", 2400 );
+				SetDvar( "fog_base_height", 1500 );
+			}
+			else if(fog_val == 8) {
+				SetDvar( "fog_start_dist", 204.39 );
+				SetDvar( "fog_halfway_dist", 400 );
+				//1100 500 or 900 200 
+				SetDvar( "fog_halfway_height", 2400 );
+				SetDvar( "fog_base_height", 1500 );
+			}
+			else if(fog_val == 9) {
+				SetDvar( "fog_start_dist", 404.39 );
+				SetDvar( "fog_halfway_dist", 700 );
+				SetDvar( "fog_halfway_height", 1500 );
+				SetDvar( "fog_base_height", 1300 );
+			}
+			else if(fog_val == 10) {
+				SetDvar( "fog_start_dist", 304.39 );
+				SetDvar( "fog_halfway_dist", 700 );
+				SetDvar( "fog_halfway_height", 1400 );
+				SetDvar( "fog_base_height", 700 );
+			}
+			else if(fog_val == 11) {
+				SetDvar( "fog_start_dist", 304.39 );
+				SetDvar( "fog_halfway_dist", 700 );
+				SetDvar( "fog_halfway_height", 900 );
+				SetDvar( "fog_base_height", 200 );
+			}
+			else if(fog_val == 12) {
+				SetDvar( "fog_start_dist", 304.39 );
+				SetDvar( "fog_halfway_dist", 700 );
+				SetDvar( "fog_halfway_height", 2400 );
+				SetDvar( "fog_base_height", 900 );
+			}
+			else if(fog_val == 98) {//Crappy expfog test(doesnt affect skybox so useless)
+			}
+			else if(fog_val == 99) {
+			}
+			else
+			{
+				//if(getdvarint("developer") == 1)
+				iprintln("No fog match");
+				break;//no match, leave early
+			}
+			SetDvar( "fog_mode", fog_val ); //store mode
+			if(getdvarint("developer") == 1)
+				iprintln("fog mode is now " + getdvar("fog_mode"));
+
+			brightn = GetDvarFloat("fog_brightness");
+			if(isDefined(level.rainLevel) && level.rainLevel > 0)
+			{
+				iprintln("rain is on -- fog branch NEVER RUNS");
+				/*SetVolFog( getdvarint("fog_start_dist")-100, getdvarint("fog_halfway_dist"), getdvarint("fog_halfway_height"), getdvarint("fog_base_height"), 
+				0.44, 0.52, 0.44, 1 );*/
+			}
+			else if(getdvar("fog_color") == "1")
+			{
+				if(getdvarint("developer") == 1)
+					iprintln("custom fog color");
+				if(getdvar("fogr") == "")
+				{
+					setdvar("fogr", 0.533);
+					setdvar("fogg", 0.717);
+					setdvar("fogb", 1);
+				}
+				SetVolFog( getdvarint("fog_start_dist"), getdvarint("fog_halfway_dist"), getdvarint("fog_halfway_height"), getdvarint("fog_base_height"), 
+					getdvarfloat("fogr")*brightn, getdvarfloat("fogg")*brightn, getdvarfloat("fogb")*brightn, 1 );
+			}
+			else if(brightn < 0.01 || brightn > 0.99)
+			{
+				SetVolFog( getdvarint("fog_start_dist"), getdvarint("fog_halfway_dist"), getdvarint("fog_halfway_height"), getdvarint("fog_base_height"), 
+				0.533, 0.717, 1, 1 );
+			}
+			else if(fog_val == 98) { //Crappy
+				SetexpFog( getdvarint("fog_start_dist"), getdvarint("fog_halfway_dist"),
+					0.533*brightn, 0.717*brightn, 1*brightn, 1 );
+			}
+			else
+			{
+				SetVolFog( getdvarint("fog_start_dist"), getdvarint("fog_halfway_dist"), getdvarint("fog_halfway_height"), getdvarint("fog_base_height"), 
+					0.533*brightn, 0.717*brightn, 1*brightn, 1 );
+			}
+		}
+		wait( 5 );
+	}
+}
+
+// Adjusts the sun
+sun_monitor()
+{
+	self endon( "disconnect" ); 
+	level endon( "intermission" );
+	wait( 1 ); //Give time for dvars to initialize
+	SetSavedDvar( "r_diffuseColorScale", 0.25);
+	//Changes made using ResetSunDirection will not reflect in dvars like lighttweaksunlight
+	while( 1 )
+	{
+		if(getdvarfloat("set_sun") > 0) {
+			
+			if(getdvarint("set_sun") == 1) //default, preferred
+			{
+				if(getdvar("developer") == "1")
+					iprintln("sun activated as 1");
+				ResetSunDirection();
+				ResetSunLight();
+				//SetSunLight(1, 1, 1);
+				//SetSunDirection( ( 180, 180, 0 ) );
+			}
+			else if(getdvarint("set_sun") == 2)
+			{
+				ResetSunDirection();
+				println("Sun off + reset direction");
+			}
+			else if(getdvarint("set_sun") == 3) //DECENT
+			{
+				ResetSunDirection();
+				//SetSunLight(0.909, 0.909, 0.909);
+				SetSunLight(0.588235*(0.7-0.1), 0.788235*(0.7-0.1), 1*(0.7-0.1));
+			}
+			else if(getdvarint("set_sun") == 4)
+			{
+				ResetSunDirection();
+				//SetSunLight(, 0.909, 0.909);
+				SetSunLight(0.588235*(0.7-0.2), 0.788235*(0.7-0.2), 1*(0.7-0.2));
+			}
+			else if(getdvarint("set_sun") == 5) {
+				ResetSunDirection();
+				SetSunLight(0.588235*0.7, 0.788235*0.7, 1*0.7);//Default
+			}
+			else if(getdvarint("set_sun") == 6) {
+				SetSunDirection( ( -180, -180, 0 ) );
+			}
+			else if(getdvarint("set_sun") == 7) {
+				SetSunDirection( ( -180, -180, -180 ) );
+			}
+			//FLOAT PART HANDLING
+			//Can make a custom sun level
+			//If last sun change was not sun_reset, then the console var will be unable to change it, hence this part
+			sunfloat = GetDvarFloat("set_sun")- getdvarint("set_sun");
+			if(sunfloat > 0)
+			{
+				SetSunLight(0.588235*(0.7-sunfloat), 0.788235*(0.7-sunfloat), 1*(0.7-sunfloat));
+				//SetSunLight(sunfloat, sunfloat, sunfloat);
+				if(getdvarint("developer") == 1)
+					iprintln("Custom sun light " + sunfloat);
+			}
+			/* Can change this to do something specific later
+				if(sunfloat > 0 && sunfloat < 0.25)//Change these branches to use the float in the set function
+				{
+					SetSunLight(0, 0, 0); // Sunlight off
+					if(getdvarint("developer") == 1)
+						iprintln("Lowest sun light");
+				}
+				else if(sunfloat == 0.25)
+				{
+					SetSunLight(0.25, 0.25, 0.25);
+					if(getdvarint("developer") == 1)
+						iprintln("0.25 sun light");
+				}
+				else if(sunfloat == 0.5)
+				{
+					SetSunLight(0.5, 0.5, 0.5);
+					if(getdvarint("developer") == 1)
+						iprintln("0.5 sun light");
+				}
+				else*/ 
+
+		} //If the state is negative choose what to reset:
+		else if(getdvarint("set_sun") < 0) //(<0 bad, 1 is normal and dark, reset sun is brighter than vanilla map sun)
+		{
+			if(getdvarint("set_sun") == -1)
+			{
+				ResetSunLight();
+				ResetSunDirection();
+				iprintln("Reset sun light + direction");
+			} 
+			else if(getdvarint("set_sun") == -2)
+			{
+				ResetSunLight();
+				iprintln("Reset sun light only");
+			}
+			else if(getdvarint("set_sun") == -3)
+			{
+				ResetSunDirection();
+				iprintln("Reset sun direction only");
+			}
+		}
+		SetDvar( "set_sun", 0 ); //Reset state to none
+		wait( 10 );
+	}
 }
 
 initZombieLeaderboardData()
@@ -911,11 +1374,13 @@ initZombieLeaderboardData()
 
 init_flags()
 {
-	iprintln("~~~Initializing flags~~~!");
+	if(getdvarint("developer") == 1)
+		iprintln("~~~Initializing flags~~~!");
 	flag_init("spawn_point_override");
 	flag_init("electricity_on");
 	flag_init("crawler_round");
 	flag_init("customize");
+	flag_init("initialize_game");//once dvar init and initial code block is done (our setup mostly)
 }
 
 
@@ -1988,6 +2453,11 @@ round_spawning()
 		max += int( ( ( player_num - 1 ) * level.zombie_vars["zombie_ai_per_player"] ) * multiplier ); 
 	}
 	
+	if(getdvar("alternate_difficulty") == "2")//Hard
+	{
+		max += player_num * level.round_number;
+	}
+
 	if ( level.first_round )
 	{
 		max = int( max * 0.2 );	
@@ -2011,12 +2481,22 @@ round_spawning()
 	{
 		concurrent_enemies = GetDVarInt("zombie_max_concurrent");//override amount that can be in play at once
 	}
-	else if(getdvar("alternate_difficulty") == "1")
+	else if(getdvar("alternate_difficulty") == "1")//Medium
 	{
 	concurrent_enemies = 7;
-	concurrent_enemies = int( max( concurrent_enemies, int(2 + ( (level.round_number - 3) * 2) )));
+	concurrent_enemies = int( max( concurrent_enemies, int(2 + ( (level.round_number) * 2) )));
 	}
-	concurrent_enemies = min(concurrent_enemies, max_concurrent);//Clamp amount within max
+	else if(getdvar("alternate_difficulty") == "2")//Hard
+	{
+	concurrent_enemies = 9;
+	concurrent_enemies = int( max( concurrent_enemies, int(2 + ( level.round_number * 2) )));
+	}
+	else if(getdvar("alternate_difficulty") == "3")//Easy
+	{
+	concurrent_enemies = 7;
+	concurrent_enemies = int( max( concurrent_enemies, int(2 + ( level.round_number * 2) )));
+	}
+	concurrent_enemies = min(concurrent_enemies, max_concurrent);//Clamp amount within max (not in snn code)
 
 	level.zombie_total = max;//set how many spawn per round here
 	mixed_spawns = 0;	// Number of mixed spawns this round.  Currently means number of dogs in a mixed round
@@ -2678,6 +3158,16 @@ round_think()
 			count_limit = level.round_number;
 		}
 		
+		count_limit = getdvarint("round_rate");//Default 0
+		if(count_limit < 1 || count_limit > 20)
+		{
+			count_limit = level.round_number;//Default count
+			if(getdvar("alternate_difficulty") == "2" && level.round_number > 4)//Hard
+			{
+				count_limit += 1;
+			}
+		}
+
 		timer = 0;
 		count_current = 0;
 		while(count_current < count_limit)
@@ -2699,11 +3189,18 @@ round_think()
 		{
 			level.zombie_move_speed = getdvarint("zombie_speed");
 		}
-		else if(getdvar("alternate_difficulty") == "1")
+		else if(getdvar("alternate_difficulty") == "1")//Medium
 		{
 			level.zombie_move_speed = int(4 + (level.round_number * 4));
 		}
-
+		else if(getdvar("alternate_difficulty") == "2" && level.round_number > 2)//Hard
+		{
+			level.zombie_move_speed += level.round_number * 2;
+		}
+		else if(getdvar("alternate_difficulty") == "3" && level.round_number > 3)//Easy
+		{
+			level.zombie_move_speed = int(5 + (level.round_number * 3));
+		}
 		level.round_number++;
 
 		level notify( "between_round_over" );
@@ -2754,7 +3251,7 @@ ai_calculate_health()
 		level.zombie_health = Int( level.zombie_health + ( (level.round_number - 1) * health_scale ) ); 
 		return;
 	}
-	else if(getdvarint("alternate_difficulty") == 1)//Scale health slowly
+	else if(getdvarint("alternate_difficulty") > 0)//getdvarint("alternate_difficulty") == 1 || getdvarint("alternate_difficulty") == 2)//Scale health slowly
 	{
 		health_scale = 20; //early scale for first N rounds
 		exponential_round = getdvarint("zombie_exponential_health_round"); // default is 10

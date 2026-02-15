@@ -63,6 +63,11 @@ init()
 	level.solo_quick_revive = false;
 	level.revive_gone = false;
 
+	//Made them into remastered version for variable cost
+	PrecacheString( &"REMASTERED_ZOMBIE_PERK_JUGGERNAUT" );
+	PrecacheString( &"REMASTERED_ZOMBIE_PERK_QUICKREVIVE" );
+	PrecacheString( &"REMASTERED_ZOMBIE_PERK_FASTRELOAD" );
+	PrecacheString( &"REMASTERED_ZOMBIE_PERK_DOUBLETAP" );
 	PrecacheString( &"ZOMBIE_PERK_JUGGERNAUT" );
 	PrecacheString( &"ZOMBIE_PERK_QUICKREVIVE" );
 	PrecacheString( &"ZOMBIE_PERK_FASTRELOAD" );
@@ -724,19 +729,19 @@ vending_trigger_think()
 		switch( perk )
 		{
 		case "specialty_armorvest":
-			cost = 2500;
+			cost = level.zombie_juggernog_cost;
 			break;
 
 		case "specialty_quickrevive":
-			cost = 1500;
+			cost = level.zombie_quickrevive_cost;
 			break;
 
 		case "specialty_fastreload":
-			cost = 3000;
+			cost = level.zombie_speedcola_cost;
 			break;
 
 		case "specialty_rof":
-			cost = 2000;
+			cost = level.zombie_doubletap_cost;
 			break;
 
 		}
@@ -986,19 +991,19 @@ vending_set_hintstring( perk )
 	{
 
 	case "specialty_armorvest":
-		self SetHintString( &"ZOMBIE_PERK_JUGGERNAUT" );
+		self SetHintString( &"REMASTERED_ZOMBIE_PERK_JUGGERNAUT", "&&1", level.zombie_juggernog_cost);
 		break;
 
 	case "specialty_quickrevive":
-		self SetHintString( &"REMASTERED_ZOMBIE_PERK_QUICKREVIVE" );
+		self SetHintString( &"REMASTERED_ZOMBIE_PERK_QUICKREVIVE", "&&1", level.zombie_quickrevive_cost);
 		break;
 
 	case "specialty_fastreload":
-		self SetHintString( &"ZOMBIE_PERK_FASTRELOAD" );
+		self SetHintString( &"REMASTERED_ZOMBIE_PERK_FASTRELOAD", "&&1", level.zombie_speedcola_cost);
 		break;
 
 	case "specialty_rof":
-		self SetHintString( &"ZOMBIE_PERK_DOUBLETAP" );
+		self SetHintString( &"REMASTERED_ZOMBIE_PERK_DOUBLETAP", "&&1", level.zombie_doubletap_cost);
 		break;
 
 	default:
