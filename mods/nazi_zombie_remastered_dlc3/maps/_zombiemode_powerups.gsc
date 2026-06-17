@@ -863,14 +863,14 @@ start_carpenter( origin )
 		{
 			players[i].score += 200;
 			players[i].score_total += 200;
-			players[i].score_alt += 200;
+			//players[i].score_alt += 200;
 			players[i] maps\_zombiemode_score::set_player_score_hud(); 
 		}
 		else if(level.zombie_vars["zombie_point_scalar"] == 2)
 		{
 			players[i].score += 400;
 			players[i].score_total += 400;
-			players[i].score_alt += 400;
+			//players[i].score_alt += 400;
 			players[i] maps\_zombiemode_score::set_player_score_hud(); 
 		}
 		//rare case of stacked x2 points
@@ -878,7 +878,7 @@ start_carpenter( origin )
 		{
 			players[i].score += 800;
 			players[i].score_total += 800;
-			players[i].score_alt += 800;
+			//players[i].score_alt += 800;
 			players[i] maps\_zombiemode_score::set_player_score_hud(); 
 		}
 	}
@@ -1140,14 +1140,14 @@ nuke_powerup( drop_item )
 		{
 			players[i].score += 400;
 			players[i].score_total += 400;
-			players[i].score_alt += 400;
+			//players[i].score_alt += 400;
 			players[i] maps\_zombiemode_score::set_player_score_hud(); 
 		}
 		else if(level.zombie_vars["zombie_point_scalar"] == 2)
 		{
 			players[i].score += 800;
 			players[i].score_total += 800;
-			players[i].score_alt += 800;
+			//players[i].score_alt += 800;
 			players[i] maps\_zombiemode_score::set_player_score_hud(); 
 		}
 		//rare case of stacked x2 points
@@ -1155,7 +1155,7 @@ nuke_powerup( drop_item )
 		{
 			players[i].score += 1600;
 			players[i].score_total += 1600;
-			players[i].score_alt += 1600;
+			//players[i].score_alt += 1600;
 			players[i] maps\_zombiemode_score::set_player_score_hud(); 
 		}
 	}

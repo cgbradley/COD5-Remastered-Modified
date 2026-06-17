@@ -192,6 +192,7 @@ main(init_zombie_spawner_name)
 
 	level thread fog_monitor();
 	level thread sun_monitor();
+	level thread color_monitor();
 
 	// Do a SaveGame, so we can restart properly when we die
 	SaveGame( "zombie_start", &"AUTOSAVE_LEVELSTART", "", true );
@@ -212,109 +213,113 @@ main(init_zombie_spawner_name)
 		setdvar("zmode_gfx", 1);
 	}
 
-	if (getdvar("zmode") != "")
+	//if (getdvar("zmode") != "")
+
+	mode_float_value = getdvarfloat("zmode");
+	main_mode = Int(mode_float_value);
+	sub_mode = abs(mode_float_value - main_mode);
+	iprintln("zmode: "+ string(mode_float_value));
+	if (sub_mode >= 0.5) //Empty passthrough
 	{
-		mode_float_value = getdvarfloat("zmode");
-		main_mode = Int(mode_float_value);
-		sub_mode = abs(mode_float_value - main_mode);
-		iprintln("zmode: "+ string(mode_float_value));
-		if (mode_float_value > 0)
-		{
-			
-			if (main_mode == 1) //Medium difficulty
-			{
-				setdvar("magic_box_difficulty", 1); //Harder
-				setdvar("magic_box_expensive", 1);
-				setdvar("magic_box_random_start", 1);
-				setdvar("perks_expensive", 1);
-				setdvar("doors_expensive", 1);
-				setdvar("zombie_easy_health", 0);
-				setdvar("zombie_easy_health_scale", 0);
-				setdvar("zombie_exponential_health_round", 10 );
-				setdvar("round_rate", 0);
-				setdvar("zombie_max_concurrent", 0);
-				setdvar("zombie_speed", 0);
-				setdvar("alternate_difficulty", 1);
-
-			}
-			else if (main_mode == 2) //Hard Alternate difficulty
-			{
-				setdvar("magic_box_difficulty", 2); //Harder
-				setdvar("magic_box_expensive", 1);
-				setdvar("magic_box_random_start", 1);
-				setdvar("perks_expensive", 1);
-				setdvar("doors_expensive", 1);
-				setdvar("zombie_easy_health", 0);
-				setdvar("zombie_easy_health_scale", 0);
-				setdvar("zombie_exponential_health_round", 9 );
-				setdvar("round_rate", 0);
-				setdvar("zombie_max_concurrent", 0);
-				setdvar("zombie_speed", 0);
-				setdvar("alternate_difficulty", 2);
-
-			}
-			else if (main_mode == 3) //Simple mode
-			{
-				setdvar("magic_box_difficulty", 1); //Easier
-				setdvar("magic_box_expensive", 1);
-				setdvar("magic_box_random_start", 1);
-				setdvar("perks_expensive", 0);
-				setdvar("doors_expensive", 1);
-				setdvar("zombie_easy_health", 1);
-				setdvar("zombie_easy_health_scale", 20);
-				setdvar("zombie_exponential_health_round", 10 );
-				setdvar("round_rate", 2);
-				setdvar("zombie_max_concurrent", 0);
-				setdvar("zombie_speed", 0);
-				setdvar("alternate_difficulty", 3);
-			}
-			else //Empty passthrough
-			{
-				
-			}
-			if (sub_mode >= 0.5) //Empty passthrough
-			{
-				//do not overwrite visual settings
-			}
-			else
-			{
-				if (getdvarfloat("fog_brightness") > 0.9 || getdvarfloat("fog_brightness") < 0.6)
-				{
-					SetDvar( "fog_brightness", 0.9 );
-				}
-			
-			}
-		
-		}
-		
-		if(main_mode == 0) //Reset all to default
-		{
-		iprintln("Vanilla zmode settings");
-		setdvar("magic_box_difficulty", 0);
-		setdvar("magic_box_expensive", 0);
-		setdvar("magic_box_random_start", 0);
-		setdvar("perks_expensive", 0);
-		setdvar("doors_expensive", 0);
-		setdvar("zombie_easy_health", 0);
-		setdvar("zombie_easy_health_scale", 0);
-		setdvar("zombie_exponential_health_round", 10 );
-		setdvar("round_rate", 0);
-		setdvar("zombie_max_concurrent", 0);
-		setdvar("zombie_speed", 0);
-		setdvar("alternate_difficulty", 0);
-		}
-
 	}
-	else
+	else if (main_mode != 0)
+	{
+		
+		if (main_mode == 1) //Medium difficulty
+		{
+			setdvar("magic_box_difficulty", 1); //Harder
+			setdvar("magic_box_expensive", 1);
+			setdvar("magic_box_random_start", 1);
+			setdvar("perks_expensive", 1);
+			setdvar("doors_expensive", 1);
+			setdvar("zombie_easy_health", 0);
+			setdvar("zombie_easy_health_scale", 0);
+			setdvar("zombie_exponential_health_round", 10 );
+			setdvar("round_rate", 0);
+			setdvar("zombie_max_concurrent", 0);
+			setdvar("zombie_speed", 0);
+			setdvar("alternate_difficulty", 1);
+
+		}
+		else if (main_mode == 2) //Hard Alternate difficulty
+		{
+			setdvar("magic_box_difficulty", 2); //Harder
+			setdvar("magic_box_expensive", 1);
+			setdvar("magic_box_random_start", 1);
+			setdvar("perks_expensive", 1);
+			setdvar("doors_expensive", 1);
+			setdvar("zombie_easy_health", 0);
+			setdvar("zombie_easy_health_scale", 0);
+			setdvar("zombie_exponential_health_round", 9 );
+			setdvar("round_rate", 0);
+			setdvar("zombie_max_concurrent", 0);
+			setdvar("zombie_speed", 0);
+			setdvar("alternate_difficulty", 2);
+
+		}
+		else if (main_mode == 3) //Simple mode
+		{
+			setdvar("magic_box_difficulty", 1); //Easier
+			setdvar("magic_box_expensive", 1);
+			setdvar("magic_box_random_start", 1);
+			setdvar("perks_expensive", 0);
+			setdvar("doors_expensive", 1);
+			setdvar("zombie_easy_health", 1);
+			setdvar("zombie_easy_health_scale", 20);
+			setdvar("zombie_exponential_health_round", 10 );
+			setdvar("round_rate", 2);
+			setdvar("zombie_max_concurrent", 0);
+			setdvar("zombie_speed", 0);
+			setdvar("alternate_difficulty", 3);
+		}
+		else //Empty passthrough
+		{
+			
+		}
+		if (sub_mode >= 0.5) //Empty passthrough
+		{
+			//do not overwrite visual settings
+		}
+		else
+		{
+			if (getdvarfloat("fog_brightness") > 0.9 || getdvarfloat("fog_brightness") < 0.6)
+			{
+				SetDvar( "fog_brightness", 0.9 );
+			}
+		
+		}
+	}
+	else if(main_mode == 0) //Reset all to default
+	{
+	iprintln("Vanilla zmode settings");
+	setdvar("magic_box_difficulty", 0);
+	setdvar("magic_box_expensive", 0);
+	setdvar("magic_box_random_start", 0);
+	setdvar("perks_expensive", 0);
+	setdvar("doors_expensive", 0);
+	setdvar("zombie_easy_health", 0);
+	setdvar("zombie_easy_health_scale", 0);
+	setdvar("zombie_exponential_health_round", 10 );
+	setdvar("round_rate", 0);
+	setdvar("zombie_max_concurrent", 0);
+	setdvar("zombie_speed", 0);
+	setdvar("alternate_difficulty", 0);
+	}
+
+	/*else
 	{
 		iprintln("zmode not defined!");
-	}
+	}*/
+
 	//ZMODE GFX
 		//iprintln("Reduce tweak sunlight!");//always remind
 	if (getdvar("zmode_gfx") == "")
 	{
 		setdvar("zmode_gfx", 0);
 	}
+	//Change crappy filmtweaks to be default(allows editing via tweaks by making them == vanilla color)
+	color_default_tweaks();
+	//color_apply("default");//Set color filter tweaks to default
 	setdvar("fog_set", -1);//set fog to whatever mode is
 	mode_float_value = getdvarfloat("zmode_gfx");
 	main_mode = Int(mode_float_value);
@@ -325,7 +330,7 @@ main(init_zombie_spawner_name)
 			iprintln("zmode_gfx main 1");
 		setdvar("set_sun", 1); //Base sun
 		setdvar("fog_mode", 4);
-		SetDvar( "fog_brightness", 0.5 );
+		SetDvar( "fog_brightness", 0.2 );
 	}
 	else if(main_mode == 2)
 	{
@@ -333,7 +338,8 @@ main(init_zombie_spawner_name)
 			iprintln("zmode_gfx main 2");
 		setdvar("set_sun", 1);
 		setdvar("fog_mode", 4);
-		SetDvar( "fog_brightness", 0.35 );
+		SetDvar( "fog_brightness", 0.2 );
+		color_apply(3);
 	}
 	else if(main_mode == 3)
 	{
@@ -369,6 +375,7 @@ main(init_zombie_spawner_name)
 	else
 	{
 	}
+
 	// -                     -
 	// =-- TWEAK MYSTERY BOX --=
 	// -                     -
@@ -376,7 +383,7 @@ main(init_zombie_spawner_name)
 	// -=- Box price -=-
 	if (getdvar("magic_box_expensive") != "" && getdvarint("magic_box_expensive") == 1)
 	{
-		level.zombie_treasure_chest_cost = 1500;
+		level.zombie_treasure_chest_cost = 1300;
 	}
 	else
 	{
@@ -477,7 +484,6 @@ main(init_zombie_spawner_name)
 		level.add_door_cost = 0;
 		
 	}
-
 	if(getdvar("developer") == "1")
 		iprintln("Finished setup");
 	flag_set("initialize_game");
@@ -1045,7 +1051,6 @@ init_dvars()
 	{
 		SetDvar( "set_sun", -1); //Factory setting reset sun (bad, 1 is normal and dark)
 	}
-	
 	if(dvar_notdefinedorboolean("fog_color")) //Custom fog color
 	{
 		Setdvar("fog_color", 0);
@@ -1074,6 +1079,108 @@ dvar_notdefinedorboolean(dvarname) // Return true if the dvar is undefined or no
 	return (getdvar(dvarname) == "" || (getdvarfloat(dvarname) != 0 && getdvarfloat(dvarname) != 1));
 	//abs(getdvarint(dvarname)-0.5) == 0.5 )
 	//dvarname = getdvar(dvarname);//return (dvarname == "" || (dvarname != "0" && dvarname != "1"))
+}
+
+color_default_tweaks()
+{
+	//Change crappy filmtweaks to be default, and match natural look so you can test and modify
+	//(These only work if you have usefilmtweaks_enable on and also the r_filmUseTweaks_settings)
+	SetSavedDvar( "r_filmTweakLightTint", "0.930 0.920 0.900");
+	SetSavedDvar( "r_filmTweakDarkTint", "0.310 0.299 0.275");
+	SetSavedDvar( "r_filmTweakContrast", "1.6");
+	SetSavedDvar( "r_filmTweakBrightness", "0.34");
+	SetSavedDvar( "r_filmTweakDesaturation", "0.1");
+}
+
+color_apply(color_value)
+{
+	color = 0;
+	//color = getdvarint("colo r_mode");
+	if (color_value == "reset")//Turn off any visionsets IF used, restore color tweaks to vanilla
+	{
+		color_default_tweaks();
+		//No filter (i think we use pel1b, matches vanilla color. what about zombie and factory though)
+		//level thread maps\_utility::set_all_players_visionset( "pel1b", 0.1 );
+		//level thread maps\_utility::set_all_players_visionset( "zombie_factory", 0.1 );//might be cinematic
+		setdvar("color_mode", 0);
+		return;
+	}
+	else if (color_value == "default")//Turn off any visionsets IF used, restore color tweaks to vanilla, set preferred color
+	{
+		color = 1;//whatever the preferred color is, fallthrough
+		color_default_tweaks();
+		setdvar("color_mode", color);
+	}
+	else
+	{
+		//dcolor = float(color_value);
+		color = int(color_value);
+		setdvar("color_mode", color);
+	}
+	/*icolorm = Int(color);
+	dcolorm = color - icolorm;
+	
+	icolorm = Int(colorm);
+	dcolorm = colorm - icolorm;
+	if (icolorm != -1 )//otherwise setting same color again
+	{
+		setdvar("color_mode", icolorm);
+	}*/
+
+	//setdvar("color_mode", color);
+	if(color == 1)
+	{
+		//Put here whatever is standard, probably
+		SetSavedDvar( "r_filmTweakLightTint", "0.930 0.920 0.900");
+		SetSavedDvar( "r_filmTweakDarkTint", "0.310 0.299 0.275");
+	}
+	else if(color == 2)
+	{
+		//
+		SetSavedDvar( "r_filmTweakLightTint", "0.930 0.970 1.04");
+		SetSavedDvar( "r_filmTweakDarkTint", "0.310 0.299 0.275");
+	}
+	else if(color == 3)
+	{
+		//
+		//SetSavedDvar( "r_filmTweakLightTint", "0.940 1 1.08");
+		SetSavedDvar( "r_filmTweakLightTint", "0.930 0.96 1.07");
+		SetSavedDvar( "r_filmTweakDarkTint", "0.310 0.299 0.275");
+	}
+	else
+	{
+		iprintln("No color match");
+		setdvar("color_mode", 0);
+	}
+}
+
+
+// Updates color filters set by user
+color_monitor()
+{
+	self endon( "disconnect" ); 
+	level endon( "intermission" );
+	wait( 1 ); //Give time for dvars to initialize
+	if (getdvar("color_set") == "" )//temp setter var for dev
+	{
+		setdvar("color_set", 0);
+	}
+	if (getdvar("color_mode") == "" )
+	{
+		setdvar("color_mode", 0);
+	}
+
+	while( 1 )
+	{
+		//Detect color filter change
+		colorm = getdvar("color_set");//getdvarfloat("color_set");
+		if (colorm != "0" )
+		{
+			color_apply(colorm);
+			setdvar("color_set", 0);
+		}
+		wait( 5 );
+	}
 }
 
 // Pulls the fog in
@@ -1227,7 +1334,7 @@ sun_monitor()
 	self endon( "disconnect" ); 
 	level endon( "intermission" );
 	wait( 1 ); //Give time for dvars to initialize
-	SetSavedDvar( "r_diffuseColorScale", 0.25);
+	SetSavedDvar( "r_diffuseColorScale", 0.5);
 	//Changes made using ResetSunDirection will not reflect in dvars like lighttweaksunlight
 	while( 1 )
 	{
@@ -1257,7 +1364,7 @@ sun_monitor()
 			{
 				ResetSunDirection();
 				//SetSunLight(, 0.909, 0.909);
-				SetSunLight(0.588235*(0.7-0.2), 0.788235*(0.7-0.2), 1*(0.7-0.2));
+				SetSunLight(0.8,	0.8,	0.8);
 			}
 			else if(getdvarint("set_sun") == 5) {
 				ResetSunDirection();
