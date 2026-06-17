@@ -973,13 +973,18 @@ init_dvars()
 	{
 		SetDvar( "doors_expensive", 0 );
 	}
+	
+	if(getdvar("secure_courtyard") == "" || (getdvarfloat("secure_courtyard") != 0 && getdvarfloat("secure_courtyard") != 1))
+	{
+		SetDvar( "secure_courtyard", 0 );//teleporter C disable barriers (see nazi_zombie_factory.gsc)
+	}
 
 	if (GetDvar( "dogs_enabled" ) == "" || (GetDvar( "dogs_enabled" ) != "1" && GetDvar( "dogs_enabled" ) == "0"))
 	{
 		SetDvar( "dogs_enabled", "0" );
 	}
 
-	if(getdvar("alternate_difficulty") == "")
+	if(getdvar("alternate_difficulty") == "" || getdvarint("alternate_difficulty") < 0 || getdvarint("alternate_difficulty") > 3)
 	{
 		SetDvar( "alternate_difficulty", "0" ); 
 	}

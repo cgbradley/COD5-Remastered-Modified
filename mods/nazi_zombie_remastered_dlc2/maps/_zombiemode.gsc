@@ -1020,7 +1020,7 @@ init_dvars()
 		SetDvar( "force_leaderboard", 0 );
 	}
 	
-	if(getdvarint("alternate_difficulty") == -1)//difficulty_preset instead?
+	if(getdvar("alternate_difficulty") == "" || getdvarint("alternate_difficulty") < 0)//difficulty_preset instead?
 	{
 		SetDvar( "alternate_difficulty", 0 );//optional
 		SetDvar( "zombie_easy_health", "1" );
@@ -1028,11 +1028,10 @@ init_dvars()
 		SetDvar( "zombie_speed", 4 );
 		SetDvar( "round_rate", 3 );
 	}
-	else if(getdvarint("alternate_difficulty") != 1)
+	else if(getdvarint("alternate_difficulty") > 3) //!= 1)
 	{
 		SetDvar( "alternate_difficulty", 0 );
 	}
-	//if(getdvar("alternate_difficulty") == "" || (abs(getdvarint("alternate_difficulty")) != 1) )
 
 	if (getdvar("enable_weather") == "")
 	{
@@ -1167,6 +1166,10 @@ color_apply(secondary)
 		{
 			level thread maps\_utility::set_all_players_visionset( "default", 0.1 );
 		}
+		else
+		{
+			iprintln("No color match");
+		}
 	}
 	if(secondary < 0.5)
 	{
@@ -1200,15 +1203,13 @@ color_monitor()
 			dcolorm = colorm - icolorm;
 			if (icolorm != -1 )//otherwise setting same color again
 			{
-			setdvar("color_mode", icolorm);
+				setdvar("color_mode", icolorm);
 			}
-			else
-			{
+
 			setdvar("color_set", 0);
-			}
 			color_apply(dcolorm);
 		}
-		wait( 1 );
+		wait( 3 );
 	}
 }
 

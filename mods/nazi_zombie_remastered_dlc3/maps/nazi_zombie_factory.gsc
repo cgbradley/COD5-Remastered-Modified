@@ -13,7 +13,7 @@ main()
 
 	// This has to be first for CreateFX -- Dale
 	maps\nazi_zombie_factory_fx::main();
-
+	flag_init("bridge_open");
 
 /*	maps\_zombiemode::main();
 	players = GetPlayers();
@@ -131,6 +131,7 @@ main()
 
 	level.zone_manager_init_func = ::factory_zone_init;
 	level thread maps\_zombiemode_zone_manager::manage_zones( "receiver_zone" );
+	level thread south_courtyard_watcher();
 
 	teleporter_init();
 	
@@ -176,7 +177,6 @@ main()
 	level thread play_level_easteregg_vox( "vox_maxis" );
 	level thread play_level_easteregg_vox( "vox_illumi_1" );
 	level thread play_level_easteregg_vox( "vox_illumi_2" );
-
 	// Special level specific settings
 	set_zombie_var( "zombie_powerup_drop_max_per_round", 3 );	// lower this to make drop happen more often
 
@@ -216,6 +216,103 @@ main()
 
 	//level thread teleport_out_checker();
 
+}
+
+south_courtyard_watcher()
+{
+	self endon( "disconnect" ); 
+	level endon( "intermission" );
+
+	flag_wait("bridge_open");//initialize_game");
+	wait(1);
+	if(getdvar("secure_courtyard") == "1")
+	{
+		if(getdvar("developer") == "1")
+			iprintln("SECURE COURTYARD!");
+		remove_south_courtyard_spawn_barriers();
+		remove_south_courtyard_spawn_points();
+	}
+	else
+	{
+		if(getdvar("developer") == "1")
+			iprintln("NO SECURE COURTYARD!");
+	}
+}
+
+remove_south_courtyard_spawn_barriers()
+{
+	disabled_origins = [];
+	disabled_origins[0] = ( -495, -2190, 225);//quick revive barrier
+	disabled_origins[1] = ( -167, -2510, 100 );//rocky tunnel barrier
+	disabled_origins[2] = ( 602, -2225, 360 );//top ledge barrier
+
+	radius = 256;
+	filtered = [];
+	for ( i = 0; i < level.exterior_goals.size; i++ )
+	{
+		goal = level.exterior_goals[i];
+		skip = false;
+		for ( j = 0; j < disabled_origins.size; j++ )
+		{
+			if ( Distance( goal.origin, disabled_origins[j] ) <= radius )
+			{
+				skip = true;
+				break;
+			}
+		}
+		if ( !skip )
+		{
+			filtered[filtered.size] = goal;
+		}
+	}
+	level.exterior_goals = filtered;
+}
+
+remove_south_courtyard_spawn_points()
+{
+	disabled_origins = [];
+	disabled_origins[0] = ( -611, -2530, 209 );//quick revive barrier
+	disabled_origins[1] = ( -928, -2264, -133 );//rocky tunnel barrier
+	disabled_origins[2] = ( 1215, -2305, 331 );//top ledge barrier
+
+	radius = 256;
+
+	zone_names = [];
+	zone_names[0] = "outside_south_zone";
+	zone_names[1] = "tp_south_zone";
+	for ( z = 0; z < zone_names.size; z++ )
+	{
+		zone_name = zone_names[z];
+		if ( !IsDefined( level.zones[ zone_name ] ) )
+		{
+			continue;
+		}
+
+		level.zones[ zone_name ].spawners       = remove_ents_near( level.zones[ zone_name ].spawners, disabled_origins, radius );
+		level.zones[ zone_name ].rise_locations = remove_ents_near( level.zones[ zone_name ].rise_locations, disabled_origins, radius );
+	}
+}
+
+remove_ents_near( ents, origins, radius )
+{
+	filtered = [];
+	for ( i = 0; i < ents.size; i++ )
+	{
+		skip = false;
+		for ( j = 0; j < origins.size; j++ )
+		{
+			if ( Distance( ents[i].origin, origins[j] ) <= radius )
+			{
+				skip = true;
+				break;
+			}
+		}
+		if ( !skip )
+		{
+			filtered[filtered.size] = ents[i];
+		}
+	}
+	return filtered;
 }
 
 init_achievement()
@@ -483,7 +580,7 @@ jump_from_bridge()
 {
 	trig = GetEnt( "trig_outside_south_zone", "targetname" );
 	trig waittill( "trigger" );
-
+	flag_set("bridge_open");//added 2026 for more distinct power area trigger
 	maps\_zombiemode_zone_manager::connect_zones( "outside_south_zone", "bridge_zone", true );
 	maps\_zombiemode_zone_manager::connect_zones( "outside_south_zone", "wnuen_bridge_zone", true );
 }
