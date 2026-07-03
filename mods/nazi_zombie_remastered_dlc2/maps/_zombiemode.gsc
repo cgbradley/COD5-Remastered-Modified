@@ -158,7 +158,7 @@ main()
 	level thread fog_monitor();
 	level thread sun_monitor();
 	level thread color_monitor();
-
+	//level thread path_monitor();
 	// Do a SaveGame, so we can restart properly when we die
 	SaveGame( "zombie_start", &"AUTOSAVE_LEVELSTART", "", true );
 
@@ -178,10 +178,7 @@ main()
 	//SetSavedDvar( "r_lightTweakSunlight", 0.5);//0.4 min, default 1
 	//SetDvar( "r_lightTweakSunlight", 0.5);//0.4 min, default 1
 	//SetSavedDvar( "r_lightTweakSunlight", 0.5);//0.4 min, default 1
-	if (getdvar("zmode") == "" || getdvar("use_defaults") == "1")
-	{
-		setdvar("zmode", 1);
-	}
+	
 	mode_float_value = getdvarfloat("zmode");
 	main_mode = Int(mode_float_value);
 	sub_mode = abs(mode_float_value - main_mode);
@@ -265,90 +262,86 @@ main()
 	{			
 	}*/
 
+	// === ZMODE GFX ===
 	//keep_visuals_zmode = false;//zmode has 0.5 at end, so skip over visual changes
-	setdvar("fog_set", -1);//set fog to whatever mode is
+	//setdvar("fog_set", -1);//set fog to whatever mode is
+	//setdvar("fog_mode", "");//Vanilla settings
+	setdvar("color_mode", "default");
 	if (getdvar("zmode_gfx") != "")// && getdvarfloat("zmode_gfx") != 0)
 	{
+		//setdvar("fog_set", -1);//set fog to whatever mode is
 		mode_float_value = getdvarfloat("zmode_gfx");
 		main_mode = Int(mode_float_value);
 		sub_mode = abs(mode_float_value - main_mode);
 		if(main_mode == 1) // Primary setting; recommended
 		{
+			if(getdvar("developer") == "1")
+				iprintln("zmode_gfx main 1");
 			//SetDvar( "fog_brightness", 0.9 );//0.80 - 0.85 looks good, depending on vibe
 			SetDvar( "fog_brightness", 0.75 );
 			setdvar("set_sun", 1); // Sun off completely
-			setdvar("fog_mode", 4);
+			setdvar("fog_set", "default");
 		}
 		else if(main_mode == 2) // Brighter default
 		{
+			if(getdvar("developer") == "1")
+				iprintln("zmode_gfx main 2");
 			SetDvar( "fog_brightness", 0.9 );//0.80 - 0.85 looks good, depending on vibe
 			setdvar("set_sun", 1); // Sun off completely
-			setdvar("fog_mode", 4);
+			setdvar("fog_set", "default");
 		}
 		else if(main_mode == 3)
 		{
+			if(getdvar("developer") == "1")
+				iprintln("zmode_gfx main 3");
 			SetDvar( "fog_brightness", 0.9 );//0.80 - 0.85 looks good, depending on vibe
 			setdvar("set_sun", 2.25); // Sun at 0.25
-			setdvar("fog_mode", 4);
+			setdvar("fog_set", "default");
 		}
 		else if(main_mode == 4)
 		{
+			if(getdvar("developer") == "1")
+				iprintln("zmode_gfx main 4");
 			SetDvar( "fog_brightness", 0.9 );//0.80 - 0.85 looks good, depending on vibe
 			setdvar("set_sun", 2.5); // Sun at 0.5
-			setdvar("fog_mode", 4);
+			setdvar("fog_set", "default");
 		}
-		else //Empty passthrough
+		else // Vanilla settings / Empty passthrough
 		{
+			iprintln("Vanilla zmode gfx!");
 			setdvar("fog_mode", 1);//Vanilla settings
+			setdvar("fog_brightness", 1 );
+			setdvar("fog_set", "vanilla");//Reset fog to current dvars, pretty sure it clears on restart so this is necessary
 			setdvar("set_sun", -1);//Vanilla sun
-			setdvar("fog_mode", 6);//Reset fog to current dvars, pretty sure it clears on restart so this is necessary
+			setdvar("color_mode", "vanilla");
 		}
 		if (sub_mode > 0) //Empty passthrough
 		{
 			//do not overwrite visual settings
 			//keep_visuals_zmode = true;
+			if(getdvarint("developer") == 1)
+				iprintLn("zmode_gfx sub pass through");
 		}
 		else
 		{
-			setdvar("color_mode", 1);
+			//setdvar("color_mode", 1);
 			/*if (getdvar("color_mode") == "")
 			{
 				setdvar("color_mode", 1);
 			}*/
-			// Probably default tweaks
-			SetSavedDvar( "r_filmTweakBrightness", "0.09");
-			SetSavedDvar( "r_filmTweakContrast", "1.25");
 			SetSavedDvar( "r_diffuseColorScale", 0.3);
-				//Base no cinematic mode change tint
-				//SetSavedDvar( "r_filmTweakDarkTint", "0.73 0.74 0.71");
-				//SetSavedDvar( "r_filmTweakLightTint", "0.80 0.71 0.70");
-
-			SetSavedDvar( "r_filmTweakDesaturation", "0.25");
-			SetSavedDvar( "r_filmTweakInvert", "0");
+			// Probably default tweaks
+			color_default_tweaks();
 			SetSavedDvar( "r_filmTweakEnable", 1);//use my overrides if tweaks and tweakssettings enabled
+			
+			color_apply(getdvar("color_mode"));//Set color filter tweaks
 		}
-		color_apply();//Set color filter tweaks
 	}
 	else 
 	{
 		setdvar("zmode_gfx", 0);
 	}
-	if ( getdvarint("zmode_gfx") == 0 ) // Vanilla settings
-	{
-		iprintln("Default zmode gfx!");
-		
-		// Probably default tweaks
-		SetSavedDvar( "r_filmTweakBrightness", "0.09");
-		SetSavedDvar( "r_filmTweakContrast", "1.25");
-		SetSavedDvar( "r_filmTweakDarkTint", "0.73 0.74 0.71");
-		SetSavedDvar( "r_filmTweakDesaturation", "0.25");
-		SetSavedDvar( "r_filmTweakInvert", "0");
-		SetSavedDvar( "r_filmTweakLightTint", "0.80 0.71 0.70");
 
-		setdvar("fog_mode", 1);//Default vanilla fog
-		setdvar("fog_brightness", 1 );
-		setdvar("set_sun", -1);
-	}
 	/*if ( keep_visuals_zmode == false)
 	{
 		if(getdvarfloat("fog_brightness") == 1)
@@ -930,9 +923,15 @@ init_dvars()
 	setSavedDvar( "fire_world_damage_rate", "0" );	
 	setSavedDvar( "fire_world_damage_duration", "0" );	*/
 
-	if( GetDvar( "use_defaults" ) != "1" && GetDvar( "use_defaults" ) != "0" )
+	// DEFAULT DVAR STATE
+	if((getdvar("use_defaults") != "0" && getdvar("use_defaults") != "1"))
 	{
 		setdvar("use_defaults", 1);
+	}
+	if (getdvar("zmode") == "" || getdvar("use_defaults") == "1")
+	{
+		setdvar("zmode", 1);//change this to whatever your desired default mode is
+		setdvar("zmode_gfx", 1);
 	}
 
 	if( GetDvar( "zombie_debug" ) == "" )
@@ -1061,9 +1060,15 @@ init_dvars()
 	{
 		SetDvar( "set_sun", -1); //Factory setting reset sun (bad, 1 is normal and dark)
 	}
-	if(getdvar("fog_mode") == "" || getdvarint("fog_mode") == 0)//getdvarint("fog_mode") < 0 || getdvarint("fog_mode") > 1)
+	if(dvar_notdefinedorboolean("fog_color")) //Custom fog color
 	{
-		SetDvar( "fog_mode", 100 ); //Default vanilla passthrough
+		Setdvar("fog_color", 0);
+	}
+
+	//if(getdvar("fog_mode") == "" || getdvarint("fog_mode") == 0)//getdvarint("fog_mode") < 0 || getdvarint("fog_mode") > 1)
+	if( !isDefined(getDvar("fog_mode")) )
+	{
+		SetDvar( "fog_mode", "vanilla" ); //Default vanilla passthrough (originally 100)
 	}
 	if(getdvar("fog_start_dist") == "" || getdvar("fog_halfway_dist") == "")
 	{
@@ -1074,19 +1079,89 @@ init_dvars()
 		SetDvar( "fog_base_height", -244.014 );
 		SetDvar( "fog_brightness", 1 );
 	}
+
+	if(getdvar("developer") == "1")
+		iprintln("init_dvars complete");
 }
 
-color_apply(secondary)
+dvar_notdefinedorboolean(dvarname) // Return true if the dvar is undefined or not true/false
+{
+	return (getdvar(dvarname) == "" || (getdvarfloat(dvarname) != 0 && getdvarfloat(dvarname) != 1));
+	//abs(getdvarint(dvarname)-0.5) == 0.5 )
+	//dvarname = getdvar(dvarname);//return (dvarname == "" || (dvarname != "0" && dvarname != "1"))
+}
+
+color_default_tweaks()
+{
+	iprintln("Default color tweaks");
+	//Change crappy filmtweaks to be default, and match natural look so you can test and modify
+	//(These only work if you have usefilmtweaks_enable on and also the r_filmUseTweaks_settings)
+	// Probably default tweaks
+	SetSavedDvar( "r_filmTweakBrightness", "0.09");
+	SetSavedDvar( "r_filmTweakContrast", "1.25");
+	SetSavedDvar( "r_filmTweakDarkTint", "0.73 0.74 0.71");
+	SetSavedDvar( "r_filmTweakDesaturation", "0.25");
+	SetSavedDvar( "r_filmTweakInvert", "0");
+	SetSavedDvar( "r_filmTweakLightTint", "0.80 0.71 0.70");
+}
+
+color_apply(color_value)
 {
 	//Set diffusecolorscale when in game
+
+	iprintln("color_apply: " + color_value);
+	color = 0;
 	brightness = 0.09;
 	contrast = 1.25;
-	if(!isdefined(secondary))
+	//if(!isdefined(secondary))
 		secondary = 0; //if 0, accept whatever brightness or contrast settings
 	//if secondary is above 0.5, skip the brightness and contrast setting
 
-	color = getdvarint("color_mode");
-	if(color == 0 || color == -2)
+	//color = getdvarint("color_mode");
+
+	if (color_value == "reset" || color_value == "vanilla")//Turn off any visionsets IF used, restore color tweaks to vanilla
+	{
+		color_default_tweaks();
+		//No filter 
+		//(if you leave this commented and NEVER apply a visionset, the visionset will be 'default')
+		level thread maps\_utility::set_all_players_visionset( "zombie_sumpf", 0.1 );
+		//The default vision set for this map is zombie_sumpf. We created the patch version though
+		setdvar("color_mode", 0);
+		return;
+	}
+	else if (color_value == "default")//Turn off any visionsets IF used, restore color tweaks to vanilla, set preferred color
+	{
+		color = 1;//whatever the preferred color is, fallthrough
+		color_default_tweaks();
+		setdvar("color_mode", color);
+	}
+	else
+	{
+		//dcolor = color_value; //float() is not a function
+		color = int(color_value);
+		setdvar("color_mode", color);
+		if(color_value.size > 2)
+		{
+			if (isSubStr(color_value[1], ".")){
+				secondary = 0.1*int(color_value[2]);
+			}
+			else if(color_value.size > 3 && isSubStr(color_value[2], "."))
+			{
+				secondary = 0.1*int(color_value[3]);
+			}
+		}
+	}
+	/*icolorm = Int(color);
+	dcolorm = color - icolorm;
+	
+	icolorm = Int(colorm);
+	dcolorm = colorm - icolorm;
+	if (icolorm != -1 )//otherwise setting same color again
+	{
+		setdvar("color_mode", icolorm);
+	}*/
+
+	if(color == -2)
 	{
 		//Base no cinematic mode change tint
 		SetSavedDvar( "r_filmTweakDarkTint", "0.73 0.74 0.71");
@@ -1151,19 +1226,26 @@ color_apply(secondary)
 		secondary = 0.5;
 		if(color == 1)//same as 10 as of 2025, which is used depends on cinematic mode on
 		{
-			//iprintln("HERE");
+			if(getdvarint("developer") == 1)
+				iprintln("visionset nazi_zombie_sumpf_patch");//Our custom visionset
 			level thread maps\_utility::set_all_players_visionset( "nazi_zombie_sumpf_patch", 0.1 );
 		}
-		else if(color == 4) //No filter
+		else if(color == 4) //No filter (DEFAULT)
 		{
+			if(getdvarint("developer") == 1)
+				iprintln("visionset zombie_sumpf");
 			level thread maps\_utility::set_all_players_visionset( "zombie_sumpf", 0.1 );
 		}
 		else if(color == 5)
 		{
+			if(getdvarint("developer") == 1)
+				iprintln("visionset zombie");
 			level thread maps\_utility::set_all_players_visionset( "zombie", 0.1 );
 		}
 		else if(color == 6)
 		{
+			if(getdvarint("developer") == 1)
+				iprintln("visionset default");
 			level thread maps\_utility::set_all_players_visionset( "default", 0.1 );
 		}
 		else
@@ -1196,18 +1278,18 @@ color_monitor()
 	while( 1 )
 	{
 		//Detect color filter change
-		colorm = getdvarfloat("color_set");
-		if (colorm != 0 )
+		colorm = getdvar("color_set");
+		if (colorm != "0" )
 		{
-			icolorm = Int(colorm);
+			/*icolorm = Int(colorm);
 			dcolorm = colorm - icolorm;
 			if (icolorm != -1 )//otherwise setting same color again
 			{
 				setdvar("color_mode", icolorm);
-			}
+			}*/
 
 			setdvar("color_set", 0);
-			color_apply(dcolorm);
+			color_apply(colorm);
 		}
 		wait( 3 );
 	}
@@ -1219,66 +1301,200 @@ fog_monitor()
 	self endon( "disconnect" ); 
 	level endon( "intermission" );
 	wait( 1 ); //Give time for dvars to initialize
-
+	if(getdvarint("developer") == 1)
+		iprintln("Fog monitor started");
+	
 	while( 1 )
 	{
-		fog_val = getdvarint("fog_set");
-		if(fog_val != 0) {
-			SetDvar( "fog_set", 0 );
-			if(fog_val == -1)
+		fog_val = getdvar("fog_set");
+		if(fog_val != "") { //User wants to change fog value
+			if(getdvarint("developer") == 1)
+				iprintln("fog: " + fog_val + " | " + getdvarint("fog_set") + " | " + getdvarint("fog_mode"));
+			if(fog_val == "0" || fog_val == "reset" || fog_val == "vanilla")
 			{
-				fog_val = getdvarint("fog_mode");
+				fog_val = 0;
 			}
+			else if(fog_val == "default")
+			{
+				fog_val = 1;
+			}
+			else
+			{
+				fog_val = getdvarint("fog_set");
+				if(fog_val == -1)//Reapply the current fog mode
+				{
+					//iprintln("fogval -1");
+					fog_val = getdvarint("fog_mode");
+					if(fog_val < 1)//Less than default
+						{
+						SetDvar( "fog_mode", 1 );
+						fog_val = 0;//vanilla fog
+						iprintln("Defaulting to vanilla fog");
+						}
+				}
+			}
+			SetDvar( "fog_set", "" ); //clear fog set
+			
 			//SetVolFog( 404.39, 1543.52, 460.33, -244.014, 0.65, 0.84, 0.79, 1 );
-			if(fog_val == 1) {//default vanilla fog
+			if(fog_val == 0) {//default vanilla fog
 				SetDvar( "fog_start_dist", 404.39 );
 				SetDvar( "fog_halfway_dist", 1543.52 );
 
 				SetDvar( "fog_halfway_height", 460.33 );
 				SetDvar( "fog_base_height", -244.014 );
-			} else if(fog_val == 3) {
+			}
+			else if(fog_val == 1) {// Recommended primary
+				SetDvar( "fog_start_dist", 304.39 );
+				SetDvar( "fog_halfway_dist", 700 ); //or 900, important to check
+				//1100 500 or 900 200 
+				SetDvar( "fog_halfway_height", 1100 );
+				SetDvar( "fog_base_height", 500 );
+				
+			}
+			else if(fog_val == 2) {//User custom fog
+				
+			} //Alternate fog modes below
+			else if(fog_val == 3) { 
+				SetDvar( "fog_start_dist", 404.39 );
+				SetDvar( "fog_halfway_dist", 900 );
+
+				SetDvar( "fog_halfway_height", 300 );
+				SetDvar( "fog_base_height", 200 );
+			}
+			else if(fog_val == 4) {
 				SetDvar( "fog_start_dist", 404.39 );
 				SetDvar( "fog_halfway_dist", 900 );
 
 				SetDvar( "fog_halfway_height", 900 );
 				SetDvar( "fog_base_height", 200 );
 			}
-			else if(fog_val == 4) {// Recommended primary
-				SetDvar( "fog_start_dist", 304.39 );
-				SetDvar( "fog_halfway_dist", 700 ); //or 900, important to check
-				//1100 500 or 900 200 
-				SetDvar( "fog_halfway_height", 1100 );
-				SetDvar( "fog_base_height", 500 );
-			}
 			else
 			{
-				println("No fog match");
+				iprintln("No fog match");
 				return;//no match, leave early
 			}
 			SetDvar( "fog_mode", fog_val ); //store mode
 			//make sure to use film tweaks and set sunlight to 0.5!
-			brightn = GetDvarFloat("fog_brightness");
+			fog_brightness = GetDvarFloat("fog_brightness");
 			if(isDefined(level.rainLevel) && level.rainLevel > 0)
 			{
 				/*iprintln("rain is on -- fog mon NEVER RUNS");
 				SetVolFog( getdvarint("fog_start_dist")-100, getdvarint("fog_halfway_dist"), getdvarint("fog_halfway_height"), getdvarint("fog_base_height"), 
 				0.44, 0.52, 0.44, 1 );*/
 			}
-			else if(brightn < 0.01 || brightn > 0.99)
+			else // === APPLY FOG === (+color if dvar toggled)
 			{
-				SetVolFog( getdvarint("fog_start_dist"), getdvarint("fog_halfway_dist"), getdvarint("fog_halfway_height"), getdvarint("fog_base_height"), 
-				0.65, 0.84, 0.79, 1 );
-			}
-			else
-			{
-				SetVolFog( getdvarint("fog_start_dist"), getdvarint("fog_halfway_dist"), getdvarint("fog_halfway_height"), getdvarint("fog_base_height"), 
-					0.65*brightn, 0.84*brightn, 0.79*brightn, 1 );
+				fog_col = getdvar("fog_color");
+				//Set DEFAULT FOG COLORS
+				fog_red = 0.65;
+				fog_green = 0.84;
+				fog_blue = 0.79;
+
+				if(fog_col != "0") {
+					if(getdvarint("developer") == 1)
+						iprintln("custom fog color");
+					
+					//Determine if customizing fog color
+					switch(fog_col) {
+						case "2": //ENABLED (without using fog brightness)
+						case "test":
+							fog_brightness = 1;//Cancel fog brightness
+						case "1": //ENABLED; Control fog color using dvars
+							//Check each color before setting:
+							volatile_color = getdvar("fogr");
+							if(volatile_color == "")
+							{
+								setdvar("fogr", fog_red);
+							}
+							else
+							{
+								fog_red = volatile_color;
+							}
+
+							volatile_color = getdvar("fogg");
+							if(volatile_color == "")
+							{
+								setdvar("fogg", fog_green);
+							}
+							else
+							{
+								fog_green = volatile_color;
+							}
+
+							volatile_color = getdvar("fogb");
+							if(volatile_color == "")
+							{
+								setdvar("fogb", fog_blue);
+							}
+							else
+							{
+								fog_blue = volatile_color;
+							}
+							break;
+
+						case "default":
+						case "vanilla":
+							//Set default fog colors
+							setdvar("fogr", 0.65);
+							setdvar("fogg", 0.84);
+							setdvar("fogb", 0.79);
+							//Set dvar to enabled (resting state)
+							setdvar("fog_color", 1);
+							break;
+						case "0": // DISABLED
+						default:
+							iprintLn("Fog custom color disabled");
+							//Set dvar to disabled 
+							setdvar("fog_color", 0);
+							break;
+					}
+				}
+				
+				// Clamp out of bound fog brightness
+				if(fog_brightness < 0.01 || fog_brightness > 1)
+				{
+					fog_brightness = 1;//Clamp
+				}
+				
+				// === APPLY FOG === 
+				if(fog_val != 98) { // FOG ALWAYS SET HERE
+					SetVolFog( 
+						getdvarint("fog_start_dist"), 
+						getdvarint("fog_halfway_dist"), 
+						getdvarint("fog_halfway_height"), 
+						getdvarint("fog_base_height"), 
+						fog_red*fog_brightness, fog_green*fog_brightness, fog_blue*fog_brightness, 1 );
+				}
+				else { //Crappy looking
+					SetexpFog(
+						getdvarint("fog_start_dist"), 
+						getdvarint("fog_halfway_dist"),
+						fog_red*fog_brightness, fog_green*fog_brightness, fog_blue*fog_brightness, 1 );
+					//0.65*fog_brightness, 0.84*fog_brightness, 0.79*fog_brightness, 1 );
+				}
 			}
 		}
 		wait( 5 );
 	}
 }
 
+path_monitor()
+{
+	self endon( "disconnect" ); 
+	level endon( "intermission" );
+	wait(1);
+	while(1){
+	players = get_players();
+	level.debug_brushmodels = getentarray( "script_brushmodel", "classname" );
+	for ( i = 0; i < level.debug_brushmodels.size; i++ )
+	{
+		ent = level.debug_brushmodels[i];
+		if ( distance( ent.origin, players[0].origin ) < 400 )
+			iprintlnbold( ent.targetname + " @ " + ent.origin );
+	}
+	wait(5);
+	}
+}
 // Adjusts the sun
 sun_monitor()
 {
