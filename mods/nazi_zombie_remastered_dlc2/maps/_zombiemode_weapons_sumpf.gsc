@@ -15,7 +15,7 @@ init()
 	//level thread update_gun_prices();
 }
 
-add_zombie_weapon( weapon_name, hint, cost, weaponVO, variation_count, ammo_cost  )
+add_zombie_weapon( weapon_name, hint, cost, weaponVO, variation_count, ammo_cost, hint_type  )
 {
 	if( IsDefined( level.zombie_include_weapons ) && !IsDefined( level.zombie_include_weapons[weapon_name] ) )
 	{
@@ -36,6 +36,7 @@ add_zombie_weapon( weapon_name, hint, cost, weaponVO, variation_count, ammo_cost
 		//cost = round_up_to_ten( int( table_cost ) );
 		if(randomint(12) == 1)
 		{
+			hint_type = 0;
 			if(cost > 450)
 			{
 				cost = 450;
@@ -77,6 +78,12 @@ add_zombie_weapon( weapon_name, hint, cost, weaponVO, variation_count, ammo_cost
 	struct.weapon_name = weapon_name;
 	struct.weapon_classname = "weapon_" + weapon_name;
 	struct.hint = hint;
+	if(isdefined(hint_type)){
+		struct.hint_type = hint_type;
+	}
+	else{
+		struct.hint_type = 0;
+	}
 	struct.cost = cost;
 	//struct.cost = default_cost;
 	//struct.custom_cost = cost;
@@ -137,6 +144,8 @@ init_weapons()
 	//add_zombie_weapon( "springfield", 							&"ZOMBIE_WEAPON_SPRINGFIELD_200", 			200,	"", 0 );
 	//add_zombie_weapon( "springfield_bayonet", 					&"ZOMBIE_WEAPON_SPRINGFIELD_B_200", 		200,	"", 0 );
 	add_zombie_weapon( "zombie_type99_rifle", 					&"REMASTERED_ZOMBIE_WEAPON_TYPE99_200", 				200,	"vox_crappy", 8 );
+		//add_zombie_weapon( "zombie_type99_rifle", 					&"REMASTERED_ZOMBIE_WEAPON_TYPE99_200", 200,	"vox_crappy", 8, undefined, 1);
+		//Commented because price doesnt change
 	add_zombie_weapon( "zombie_type99_rifle_bayonet", 					&"ZOMBIE_WEAPON_TYPE99_B_200", 				200,	"", 0 );
 
 	// Semi Auto                                        		
@@ -144,11 +153,11 @@ init_weapons()
 	add_zombie_weapon( "zombie_gewehr43", 								&"ZOMBIE_WEAPON_GEWEHR43_600", 				600,	"" , 0 );
 	add_zombie_weapon( "zombie_m1carbine", 							&"ZOMBIE_WEAPON_M1CARBINE_600",				600,	"" , 0 );
 	*/
-		add_zombie_weapon( "zombie_gewehr43", 								&"REMASTERED_ZOMBIE_WEAPON_GEWEHR43", 				900,	"" , 0 );
-		add_zombie_weapon( "zombie_m1carbine", 							&"REMASTERED_ZOMBIE_WEAPON_M1CARBINE",				300,	"" , 0 );
+		add_zombie_weapon( "zombie_gewehr43", 								&"REMASTERED_ZOMBIE_WEAPON_GEWEHR43", 900,	"" , 0, undefined, 1);
+		add_zombie_weapon( "zombie_m1carbine", 							&"REMASTERED_ZOMBIE_WEAPON_M1CARBINE", 300,	"" , 0, undefined, 1);
 	//add_zombie_weapon( "m1carbine_bayonet", 					&"ZOMBIE_WEAPON_M1CARBINE_B_600", 			600,	"" , 0 );
 	//add_zombie_weapon( "zombie_m1garand", 								&"ZOMBIE_WEAPON_M1GARAND_600", 				600,	"" , 0 );
-		add_zombie_weapon( "zombie_m1garand", 								&"REMASTERED_ZOMBIE_WEAPON_M1GARAND", 				300,	"" , 0 );
+		add_zombie_weapon( "zombie_m1garand", 								&"REMASTERED_ZOMBIE_WEAPON_M1GARAND", 300,	"" , 0, undefined, 1);
 	//add_zombie_weapon( "m1garand_bayonet", 						&"ZOMBIE_WEAPON_M1GARAND_B_600", 			600,	"" , 0 );
 	add_zombie_weapon( "zombie_svt40", 								&"ZOMBIE_WEAPON_SVT40_600", 				600,	"" ,			0 );
 
@@ -167,26 +176,26 @@ init_weapons()
 
 	// Full Auto                                                                                	
 	//add_zombie_weapon( "zombie_mp40", 								&"ZOMBIE_WEAPON_MP40_1000", 				1000,	"vox_mp40", 7 ); 
-		add_zombie_weapon( "zombie_mp40", 								&"REMASTERED_ZOMBIE_WEAPON_MP40", 				1950,	"vox_mp40", 7 ); 
+		add_zombie_weapon( "zombie_mp40", 								&"REMASTERED_ZOMBIE_WEAPON_MP40", 1950,	"vox_mp40", 7, undefined, 1); 
 	add_zombie_weapon( "zombie_ppsh", 								&"ZOMBIE_WEAPON_PPSH_2000", 				2000,	"vox_ppsh", 6 );
 	/*
 	add_zombie_weapon( "zombie_stg44", 							&"REMASTERED_ZOMBIE_WEAPON_STG44_1200", 				1200,	"",		0 );
 	add_zombie_weapon( "zombie_thompson", 						&"REMASTERED_ZOMBIE_WEAPON_THOMPSON_1200", 			1200,	"",				0 );
 	add_zombie_weapon( "zombie_type100_smg", 						&"ZOMBIE_WEAPON_TYPE100_1000", 				1000,	"", 0 );
 	*/
-		add_zombie_weapon( "zombie_stg44", 							&"REMASTERED_ZOMBIE_WEAPON_STG44", 				1700,	"",		0 );
-		add_zombie_weapon( "zombie_thompson", 						&"REMASTERED_ZOMBIE_WEAPON_THOMPSON", 			2650,	"",				0 );
-		add_zombie_weapon( "zombie_type100_smg", 						&"REMASTERED_ZOMBIE_WEAPON_TYPE100", 				1650,	"", 0 );
+		add_zombie_weapon( "zombie_stg44", 							&"REMASTERED_ZOMBIE_WEAPON_STG44", 1700,	"",		0, undefined, 1);
+		add_zombie_weapon( "zombie_thompson", 						&"REMASTERED_ZOMBIE_WEAPON_THOMPSON", 2650,	"",				0, undefined, 1);
+		add_zombie_weapon( "zombie_type100_smg", 						&"REMASTERED_ZOMBIE_WEAPON_TYPE100", 1650,	"", 0, undefined, 1);
 
 	// Shotguns                                         	
 	add_zombie_weapon( "zombie_doublebarrel", 						&"ZOMBIE_WEAPON_DOUBLEBARREL_1200", 		1200,	"vox_shotgun", 7);
 	add_zombie_weapon( "zombie_doublebarrel_sawed", 			&"ZOMBIE_WEAPON_DOUBLEBARREL_SAWED_1200", 	1200,	"vox_shotgun", 7);
 	//add_zombie_weapon( "zombie_shotgun", 							&"ZOMBIE_WEAPON_SHOTGUN_1500", 				1500,	"vox_shotgun", 7);
-		add_zombie_weapon( "zombie_shotgun", 							&"REMASTERED_ZOMBIE_WEAPON_SHOTGUN", 				1750,	"vox_shotgun", 7);
+		add_zombie_weapon( "zombie_shotgun", 							&"REMASTERED_ZOMBIE_WEAPON_SHOTGUN", 1750,	"vox_shotgun", 7, undefined, 1);
 
 	// Heavy Machineguns                                	
 	//add_zombie_weapon( "zombie_bar", 								&"REMASTERED_ZOMBIE_WEAPON_BAR_1800", 					1800,	"vox_bar", 6 );
-		add_zombie_weapon( "zombie_bar", 								&"REMASTERED_ZOMBIE_WEAPON_BAR", 					1300,	"vox_bar", 6 );
+		add_zombie_weapon( "zombie_bar", 								&"REMASTERED_ZOMBIE_WEAPON_BAR", 1300,	"vox_bar", 6, undefined, 1);
 	add_zombie_weapon( "zombie_dp28", 									&"ZOMBIE_WEAPON_DP28_2250", 				2250,	"vox_mg" ,		9 );
 	add_zombie_weapon( "zombie_fg42", 								&"ZOMBIE_WEAPON_FG42_1500", 				1500,	"vox_mg" , 9 ); 
 	add_zombie_weapon( "zombie_30cal", 							&"ZOMBIE_WEAPON_30CAL_3000", 				3000,	"vox_mg", 9 );
@@ -239,8 +248,16 @@ init_weapon_upgrade()
 	for( i = 0; i < weapon_spawns.size; i++ )
 	{
 		hint_string = get_weapon_hint( weapon_spawns[i].zombie_weapon_upgrade ); 
-		//cost_string = get_weapon_cost( weapon_spawns[i].zombie_weapon_upgrade ); 
+		cost_string = get_weapon_cost( weapon_spawns[i].zombie_weapon_upgrade ); 
+		hint_type = get_weapon_hint_type( weapon_spawns[i].zombie_weapon_upgrade ); 
+		if (hint_type == 1)
+		{
+			// matched
+			weapon_spawns[i] SetHintString( hint_string, "&&1", cost_string );
+		}
+		else{
 		weapon_spawns[i] SetHintString( hint_string ); //, "&&1", cost_string); 
+		}
 		weapon_spawns[i] setCursorHint( "HINT_NOICON" ); 
 		weapon_spawns[i] UseTriggerRequireLookAt();
 
@@ -265,6 +282,13 @@ init_weapon_cabinet()
 	}
 
 	array_thread( weapon_cabs, ::weapon_cabinet_think ); 
+}
+// returns the trigger hint type for the given weapon
+get_weapon_hint_type( weapon_name )
+{
+	AssertEx( IsDefined( level.zombie_weapons[weapon_name] ), weapon_name + " was not included or is not part of the zombie weapon list." );
+
+	return level.zombie_weapons[weapon_name].hint_type;
 }
 
 // returns the trigger hint string for the given weapon
