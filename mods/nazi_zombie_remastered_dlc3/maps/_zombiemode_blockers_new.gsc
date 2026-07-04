@@ -99,10 +99,11 @@ door_init()
 	self.doors = targets;
 
 	//AssertEx( IsDefined( self.type ), "You must determine how this door opens. Specify script_angles, script_vector, or a script_noteworthy... Door at: " + self.origin ); 
+	
 	//Start room
 	flag_wait("initialize_game");
 	/*
-	
+	--REMOVED--
 	//Vanilla costs
 	teleporter_door_cost = 1250;//useless
 	teleporterb_door_cost = 1000;
@@ -122,7 +123,7 @@ door_init()
 			cost = self.zombie_cost;
 		}
 	*/
-	cost = 1000;//Default
+	cost = 1000;//Default failsafe cost
 		if(IsDefined(level.add_door_cost)) {cost += level.add_door_cost;}//If difficulty hard but cannot read specific values
 	if( IsDefined( self.zombie_cost ) ) //Get specific cost
 	{

@@ -412,6 +412,7 @@ main()
 		level.chests[i] notify( "cost_update" );
 	}
 
+	// -=- ADJUST PERK COSTS -=-
 	if (getdvar("perks_expensive") != "" && getdvarint("perks_expensive") == 1)
 	{
 		if(getdvar("developer") == "1")
@@ -432,6 +433,7 @@ main()
 		level.zombie_doubletap_cost = 2000;
 	}
 
+	// -=- ADJUST DOOR/BLOCKER COSTS -=-
 	if (getdvar("doors_expensive") != "" && getdvarint("doors_expensive") == 1)
 	{
 		if(getdvar("developer") == "1")
@@ -1014,6 +1016,16 @@ init_dvars()
 		SetDvar( "round_rate", 0 );
 	}
 	
+	if(getdvar("zombie_number") == "" || getdvarint("zombie_number") < 1)//sets spawn amount to this number
+	{
+		SetDvar( "zombie_number", 0 );
+	}
+
+	if(getdvar("round_number") == "" || getdvarint("round_number") < 1)
+	{
+		SetDvar( "round_number", 0 );
+	}
+	
 	if(getdvar("force_leaderboard") == "" || getdvarint("force_leaderboard") < 0 || getdvarint("force_leaderboard") > 1)//sets leaderboard to always record even if cheats enabled
 	{
 		SetDvar( "force_leaderboard", 0 );
@@ -1318,6 +1330,10 @@ fog_monitor()
 			{
 				fog_val = 1;
 			}
+			else if(fog_val == "custom")
+			{
+				fog_val = 2;
+			}
 			else
 			{
 				fog_val = getdvarint("fog_set");
@@ -1368,10 +1384,13 @@ fog_monitor()
 				SetDvar( "fog_halfway_height", 900 );
 				SetDvar( "fog_base_height", 200 );
 			}
+			else if(fog_val == 98) {//Crappy expfog test(doesnt affect skybox so useless)
+			}
 			else
 			{
 				iprintln("No fog match");
-				return;//no match, leave early
+				//break;//this kills the thread!
+				//return;//no match, leave early//this kills the thread!
 			}
 			SetDvar( "fog_mode", fog_val ); //store mode
 			//make sure to use film tweaks and set sunlight to 0.5!
@@ -1388,7 +1407,7 @@ fog_monitor()
 				//Set DEFAULT FOG COLORS
 				fog_red = 0.65;
 				fog_green = 0.84;
-				fog_blue = 0.79;
+				fog_blue = 0.75;//try 0.74//original 0.79!
 
 				if(fog_col != "0") {
 					if(getdvarint("developer") == 1)
@@ -1401,8 +1420,8 @@ fog_monitor()
 							fog_brightness = 1;//Cancel fog brightness
 						case "1": //ENABLED; Control fog color using dvars
 							//Check each color before setting:
-							volatile_color = getdvar("fogr");
-							if(volatile_color == "")
+							volatile_color = getdvarfloat("fogr");
+							if(volatile_color == 0)
 							{
 								setdvar("fogr", fog_red);
 							}
@@ -1411,8 +1430,8 @@ fog_monitor()
 								fog_red = volatile_color;
 							}
 
-							volatile_color = getdvar("fogg");
-							if(volatile_color == "")
+							volatile_color = getdvarfloat("fogg");
+							if(volatile_color == 0)
 							{
 								setdvar("fogg", fog_green);
 							}
@@ -1421,8 +1440,8 @@ fog_monitor()
 								fog_green = volatile_color;
 							}
 
-							volatile_color = getdvar("fogb");
-							if(volatile_color == "")
+							volatile_color = getdvarfloat("fogb");
+							if(volatile_color == 0)
 							{
 								setdvar("fogb", fog_blue);
 							}
@@ -1435,9 +1454,9 @@ fog_monitor()
 						case "default":
 						case "vanilla":
 							//Set default fog colors
-							setdvar("fogr", 0.65);
-							setdvar("fogg", 0.84);
-							setdvar("fogb", 0.79);
+							setdvar("fogr", fog_red);
+							setdvar("fogg", fog_green);
+							setdvar("fogb", fog_blue);
 							//Set dvar to enabled (resting state)
 							setdvar("fog_color", 1);
 							break;
@@ -2775,6 +2794,11 @@ round_spawning()
 	{
 		max = int( max * 0.8 );
 	}
+//CHEAT AI COUNT (sets ai spawned in a round to this number)
+	if (GetDvarInt("zombie_number") > 0)
+	{
+		max = GetDvarInt("zombie_number");
+	}
 
 	concurrent_enemies = 31;//default concurrent enemies
 	if(getdvarint("zombie_max_concurrent") > 1)
@@ -2930,6 +2954,12 @@ round_start()
 	level.zombie_health = level.zombie_vars["zombie_health_start"]; 
 	level.round_number = 1; 
 	level.first_round = true;
+	//CHEAT ROUND NUMBER (sets round number to this number)
+	if (GetDvarInt("round_number") > 0)
+	{
+		iprintLn("Starting round number at " + GetDvarInt("round_number"));
+		level.round_number = GetDvarInt("round_number");
+	}
 
 	// so players get init'ed with grenades
 	players = get_players();
@@ -3337,6 +3367,12 @@ round_think()
 			level.zombie_move_speed = int(5 + (level.round_number * 3));
 		}
 		level.round_number++;
+		//CHEAT ROUND NUMBER (sets round number to this number)
+		if (GetDvarInt("round_number") > 0)
+		{
+			iprintLn("Setting round number to " + GetDvarInt("round_number"));
+			level.round_number = GetDvarInt("round_number");
+		}
 
 		level notify( "between_round_over" );
 	}

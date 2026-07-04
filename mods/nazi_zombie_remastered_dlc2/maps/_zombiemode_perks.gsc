@@ -1290,7 +1290,7 @@ perks_a_cola_jingle()
 			level notify ("jingle_playing");
 			//playfx (level._effect["electric_short_oneshot"], self.origin);
 			playsoundatposition ("electrical_surge", self.origin);
-			
+			if(getDvar("snd_perk") == "1"){
 			if(self.script_sound == "mx_speed_jingle" && level.speed_jingle == 0) 
 			{
 				level.speed_jingle = 1;
@@ -1335,7 +1335,7 @@ perks_a_cola_jingle()
 				level.jugger_jingle = 0;
 				temp_org_jugger delete();
 			}
-
+			}
 			self thread play_random_broken_sounds();
 		}		
 	}	
@@ -1351,7 +1351,7 @@ play_random_broken_sounds()
 	{
 		while(1)
 		{
-			wait(randomfloatrange(7, 18));
+			wait(randomfloatrange(7, 38));
 			if(level.revive_gone == true)
 			{
 				break;
