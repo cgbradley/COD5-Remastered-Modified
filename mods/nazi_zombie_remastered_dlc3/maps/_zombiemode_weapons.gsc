@@ -106,7 +106,8 @@ default_tesla_weighting_func()
 		// player has dropped the tesla for another weapon, so we set all future polls to 10%
 		if( isDefined(level.player_drops_tesla_gun) && level.player_drops_tesla_gun == true )
 		{						
-			num_to_add += int(.1 * level.zombie_include_weapons.size);		
+	//		num_to_add += int(.1 * level.zombie_include_weapons.size);		
+			num_to_add += 4; // 5 total
 		}
 		
 		// player has not seen tesla gun in late rounds
@@ -115,13 +116,15 @@ default_tesla_weighting_func()
 			// after round 15 the Tesla gun percentage increases to 10%
 			if( level.round_number > 15 )
 			{
-				num_to_add += int(.1 * level.zombie_include_weapons.size);
+//				num_to_add += int(.1 * level.zombie_include_weapons.size);
+				num_to_add += 4; // 5 total
 			}		
 			// after round 10 the Tesla gun percentage increases to 5%
 			else if( level.round_number > 10 )
 			{
 				// calculate the number of times we have to add it to the array to get the desired percent
-				num_to_add += int(.05 * level.zombie_include_weapons.size);
+				//num_to_add += int(.05 * level.zombie_include_weapons.size);
+				num_to_add += 2; // 3 total
 			}						
 		}
 	}
@@ -139,12 +142,14 @@ default_ray_gun_weighting_func()
 			// after 12 pulls the ray gun percentage increases to 10%
 			if( level.pulls_since_last_ray_gun > 11 )
 			{
-				num_to_add += int(level.zombie_include_weapons.size*0.1);			
+//				num_to_add += int(level.zombie_include_weapons.size*0.1);			
+				num_to_add += 2; // 3 total
 			}			
 			// after 8 pulls the Ray Gun percentage increases to 5%
 			else if( level.pulls_since_last_ray_gun > 7 )
 			{
-				num_to_add += int(.05 * level.zombie_include_weapons.size);
+//				num_to_add += int(.05 * level.zombie_include_weapons.size);
+				num_to_add += 1; // 2 total
 			}		
 		}
 		return num_to_add;	
@@ -357,7 +362,7 @@ init_weapons()
 	add_zombie_weapon( "m2_flamethrower_zombie_upgraded", 		&"ZOMBIE_WEAPON_M2_FLAMETHROWER_3000", 		3000,	"vox_flame",	7);	
 
 	// Special                                          	
-	add_zombie_weapon( "mine_bouncing_betty",					&"ZOMBIE_WEAPON_SATCHEL_2000",				2000,	"" );
+	add_zombie_weapon( "mine_bouncing_betty",					&"REMASTERED_ZOMBIE_BETTY_PURCHASE",				2000,	"" );
 	add_zombie_weapon( "mortar_round", 							&"ZOMBIE_WEAPON_MORTARROUND_2000", 			2000,	"" );
 	add_zombie_weapon( "satchel_charge", 						&"ZOMBIE_WEAPON_SATCHEL_2000", 				2000,	"vox_monkey",	8 );
 	add_zombie_weapon( "zombie_cymbal_monkey",					&"ZOMBIE_WEAPON_SATCHEL_2000", 				2000,	"vox_monkey",	8 );
@@ -994,7 +999,7 @@ treasure_chest_think()
 		//Chris_P
 		//magic box dissapears and moves to a new spot after a predetermined number of uses
 
-		wait 2;
+		wait(1.75);
 		self enable_trigger();
 		self setvisibletoall();
 	}
@@ -1408,7 +1413,7 @@ treasure_chest_ChooseRandomWeapon( player )
 	return filtered[RandomInt( filtered.size )];
 }
 
-treasure_chest_ChooseWeightedRandomWeapon( player )
+treasure_chest_ChooseWeightedRandomWeapon( player, wep_order )
 {
 
 	keys = GetArrayKeys( level.zombie_weapons );
@@ -1472,6 +1477,32 @@ treasure_chest_ChooseWeightedRandomWeapon( player )
 			}
 		}
 	}
+
+
+	// filter out spam-weapons on last roll 
+	if(wep_order == 39 ) 
+	{
+		if( is_in_array(filtered, "zombie_kar98k") && is_in_array(filtered, "zombie_gewehr43") )
+		{
+			if( RandomInt(2) == 0 ){
+				//iprintln("Both kar/gew are in, removing KAR");
+				filtered = array_remove( filtered, "zombie_kar98k" );
+			}
+			else{
+				//iprintln("Both kar/gew are in, removing GEW");
+				filtered = array_remove( filtered, "zombie_gewehr43" );
+			}
+		}
+	}
+
+/*	if(wep_order == 39 )
+	{
+		for( i = 0; i < filtered.size; i++ )
+		{
+			iprintlnbold(i + ": " + filtered[i]);
+		}	
+	}
+	iprintln(level.zombie_include_weapons.size);*/
 	
 	return filtered[RandomInt( filtered.size )];
 }
@@ -1520,7 +1551,7 @@ treasure_chest_weapon_spawn( chest, player )
 		}
 		else
 		{
-			rand = treasure_chest_ChooseWeightedRandomWeapon( player );
+			rand = treasure_chest_ChooseWeightedRandomWeapon( player, i );
 		}
 
 		/#
@@ -1545,9 +1576,10 @@ treasure_chest_weapon_spawn( chest, player )
 	// random change of getting the joker that moves the box
 	random = Randomint(100);
 
+	// first 5 hits free
 	if( !isdefined( level.chest_min_move_usage ) )
 	{
-		level.chest_min_move_usage = 4;
+		level.chest_min_move_usage = 5;
 	}
 
 	//increase the chance of joker appearing from 0-100 based on amount of the time chest has been opened.
@@ -1565,15 +1597,15 @@ treasure_chest_weapon_spawn( chest, player )
 		{
 			chance_of_joker = level.chest_accessed + 20;
 			
-			// make sure teddy bear appears on the 8th pull if it hasn't moved from the initial spot
-			if( (!isDefined(level.magic_box_first_move) || level.magic_box_first_move == false ) && level.chest_accessed >= 8)
+			// make sure teddy bear appears on the 10th pull if it hasn't moved from the initial spot
+			if( (!isDefined(level.magic_box_first_move) || level.magic_box_first_move == false ) && level.chest_accessed >= 9)
 			{
 				chance_of_joker = 100;
 			}
 			
-			// pulls 4 thru 8, there is a 15% chance of getting the teddy bear
+			// pulls 6 thru 9, there is a 15% chance of getting the teddy bear
 			// NOTE:  this happens in all cases
-			if( level.chest_accessed >= 4 && level.chest_accessed < 8 )
+			if( level.chest_accessed >= level.chest_min_move_usage && level.chest_accessed < 9 )
 			{
 				if( random < 15 )
 				{
@@ -1588,8 +1620,8 @@ treasure_chest_weapon_spawn( chest, player )
 			// after the first magic box move the teddy bear percentages changes
 			if( isDefined(level.magic_box_first_move) && level.magic_box_first_move == true )
 			{
-				// between pulls 8 thru 12, the teddy bear percent is 30%
-				if( level.chest_accessed >= 8 && level.chest_accessed < 13 )
+				// between pulls 10 thru 12, the teddy bear percent is 30%
+				if( level.chest_accessed >= 9 && level.chest_accessed < 13 )
 				{
 					if( random < 30 )
 					{
@@ -1601,7 +1633,7 @@ treasure_chest_weapon_spawn( chest, player )
 					}
 				}
 				
-				// after 12th pull, the teddy bear percent is 50%
+				// 13th pull onwards, the teddy bear percent is 50%
 				if( level.chest_accessed >= 13 )
 				{
 					if( random < 50 )
@@ -1655,6 +1687,7 @@ treasure_chest_weapon_spawn( chest, player )
 
 			//allow power weapon to be accessed.
 			level.box_moved = true;
+			level.magic_box_first_move = true;
 		}
 	}
 
@@ -2369,6 +2402,17 @@ weapon_give( weapon, is_upgrade )
 		{
 			if( !( weapon == "fraggrenade" || weapon == "stielhandgranate" || weapon == "molotov" || weapon == "zombie_cymbal_monkey" ) )
 			{
+				// PI_CHANGE_BEGIN
+				// JMA - player dropped the tesla gun
+				if( isDefined(level.script) && (level.script == "nazi_zombie_sumpf" || level.script == "nazi_zombie_factory") )
+				{
+					if( current_weapon == "tesla_gun" )
+					{
+						level.player_drops_tesla_gun = true;
+					}
+				}
+				// PI_CHANGE_END
+
 				self TakeWeapon( current_weapon ); 
 			}
 		} 
@@ -2908,7 +2952,8 @@ add_weapon_to_sound_array(vo,num)
 
 flamethrower_swap()
 {
-	self endon( "death" ); // if we die we end, because we perma lose the flamethrower
+	self endon( "death" );
+	self endon( "bleedout" ); // if we die we end, because we perma lose the flamethrower
 	self endon( "disconnect" ); 
 	
 	while( 1 ) // once we get flamer, we need to do a loop so that we can easily remove it if we lose the weapon or remove/then re-add it if we are downed/revived

@@ -176,7 +176,7 @@ init_weapons()
 	add_zombie_weapon( "m2_flamethrower_zombie", 			&"ZOMBIE_WEAPON_M2_FLAMETHROWER_3000", 		3000,	"nvox_flame", 5);	
 
 	// Special       
-	add_zombie_weapon( "mine_bouncing_betty",					&"ZOMBIE_WEAPON_SATCHEL_2000",				2000,	"" );
+	add_zombie_weapon( "mine_bouncing_betty",					&"REMASTERED_ZOMBIE_BETTY_PURCHASE",				2000,	"" );
 	add_zombie_weapon( "mortar_round", 						&"ZOMBIE_WEAPON_MORTARROUND_2000", 			2000,	"" );
 	add_zombie_weapon( "satchel_charge", 					&"ZOMBIE_WEAPON_SATCHEL_2000", 				2000,	"" );
 	add_zombie_weapon( "ray_gun", 							&"ZOMBIE_WEAPON_RAYGUN_10000", 				10000,	"nvox_raygun", 5 );
@@ -542,7 +542,7 @@ treasure_chest_think()
 		//Chris_P
 		//magic box dissapears and moves to a new spot after a predetermined number of uses
 
-		wait 2;
+		wait(1.75);
 		self enable_trigger();
 		self setvisibletoall();
 	}
@@ -862,7 +862,7 @@ treasure_chest_lid_close( timedOut )
 	}	
 }
 
-treasure_chest_ChooseRandomWeapon( player )
+treasure_chest_ChooseRandomWeapon( player, wep_order )
 {
 	keys = GetArrayKeys( level.zombie_weapons );
 
@@ -923,6 +923,54 @@ treasure_chest_ChooseRandomWeapon( player )
 		}
 	}
 
+
+	// filter out spam-weapons on last roll 
+	if(wep_order == 39 ) 
+	{
+		if( is_in_array(filtered, "kar98k") && is_in_array(filtered, "gewehr43") ) // only pick one or the other
+		{
+			if( RandomInt(2) == 0 ){
+				//iprintln("Both kar/gew are in, removing KAR");
+				filtered = array_remove( filtered, "kar98k" );
+			}
+			else{
+				//iprintln("Both kar/gew are in, removing GEW");
+				filtered = array_remove( filtered, "gewehr43" );
+			}
+		}
+		if( is_in_array(filtered, "m1garand") && is_in_array(filtered, "springfield") ) // only pick one or the other
+		{
+			if( RandomInt(2) == 0 ){
+				//iprintln("Both m1/spring are in, removing M1");
+				filtered = array_remove( filtered, "m1garand" );
+			}
+			else{
+				//iprintln("Both m1/spring are in, removing SPRING");
+				filtered = array_remove( filtered, "springfield" );
+			}
+		}
+
+/*		if( is_in_array(filtered, "doublebarrel") && is_in_array(filtered, "doublebarrel_sawed_grip") )
+		{
+			if( RandomInt(2) == 0 ){
+				//iprintln("Both doubles are in, removing DOUBLE");
+				filtered = array_remove( filtered, "doublebarrel" );
+			}
+			else{
+				//iprintln("Both doubles are in, removing SAWED");
+				filtered = array_remove( filtered, "doublebarrel_sawed_grip" );
+			}
+		}*/
+	}
+
+/*	if(wep_order == 39 )
+	{
+		for( i = 0; i < filtered.size; i++ )
+		{
+			iprintlnbold(i + ": " + filtered[i]);
+		}	
+	}*/
+
 	return filtered[RandomInt( filtered.size )];
 }
 
@@ -963,7 +1011,7 @@ treasure_chest_weapon_spawn( chest, player )
 			wait( 0.3 ); 
 		}
 
-		rand = treasure_chest_ChooseRandomWeapon( player );
+		rand = treasure_chest_ChooseRandomWeapon( player, i );
 		modelname = GetWeaponModel( rand );
 		model setmodel( modelname ); 
 
@@ -979,9 +1027,13 @@ treasure_chest_weapon_spawn( chest, player )
 	if(level.script != "nazi_zombie_prototype" && getdvar("magic_chest_movable") == "1")
 	{
 
-		if(level.chest_accessed < 5)
-		{		
+		if(level.chest_accessed < 1) // first hit can troll
+		{
 			chance_of_joker = 0; //0 out of 99 chance that we still get a teddy within first 5 hits, super rare technically a  "glitch" but I like the randomness and harshness for verruckt
+		}
+		else if(level.chest_accessed < 5) // the next 4 hits good odds
+		{
+			chance_of_joker = -1;	
 		}
 		else
 		{
@@ -1877,7 +1929,8 @@ play_VO_forweapon(weapon)
 
 flamethrower_swap()
 {
-	self endon( "death" ); // if we die we end, because we perma lose the flamethrower
+	self endon( "death" );
+	self endon( "bleedout" ); // if we die we end, because we perma lose the flamethrower
 	self endon( "disconnect" ); 
 	
 	while( 1 ) // once we get flamer, we need to do a loop so that we can easily remove it if we lose the weapon or remove/then re-add it if we are downed/revived

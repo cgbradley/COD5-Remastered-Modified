@@ -213,7 +213,7 @@ init_weapons()
 	add_zombie_weapon( "m2_flamethrower_zombie", 			&"ZOMBIE_WEAPON_M2_FLAMETHROWER_3000", 		3000,	"vox_flame", 7);	
 
 	// Special
-	add_zombie_weapon( "mine_bouncing_betty",					&"ZOMBIE_WEAPON_SATCHEL_2000",				2000,	"" );
+	add_zombie_weapon( "mine_bouncing_betty",					&"REMASTERED_ZOMBIE_BETTY_PURCHASE",				2000,	"" );
 	//add_zombie_weapon( "mortar_round", 						&"ZOMBIE_WEAPON_MORTARROUND_2000", 			2000,	"" );
 	//add_zombie_weapon( "satchel_charge", 					&"ZOMBIE_WEAPON_SATCHEL_2000", 				2000,	"" );
 	add_zombie_weapon( "ray_gun", 							&"ZOMBIE_WEAPON_RAYGUN_10000", 				10000,	"vox_raygun", 6 );
@@ -747,7 +747,7 @@ treasure_chest_think()
 		//Chris_P
 		//magic box dissapears and moves to a new spot after a predetermined number of uses
 
-		wait 2;
+		wait(1.75);
 		self enable_trigger();
 		self setvisibletoall();
 	}
@@ -1129,7 +1129,119 @@ treasure_chest_lid_close( timedOut )
 	}	
 }
 
+
 treasure_chest_ChooseRandomWeapon( player )
+{
+
+	keys = GetArrayKeys( level.zombie_weapons );
+
+	// Filter out any weapons the player already has
+	filtered = [];
+	for( i = 0; i < keys.size; i++ )
+	{
+		if( !get_is_in_box( keys[i] ) )
+		{
+			continue;
+		}
+
+		if( player HasWeapon( keys[i] ) )
+		{
+			continue;
+		}
+			
+		if( !IsDefined( keys[i] ) )
+		{
+			continue;
+		}
+
+		//chrisP - make sure the chest doesn't give the player a bouncing betty
+		if(keys[i] == "mine_bouncing_betty" || (isSubStr(keys[i], "zombie_item")) || keys[i] == "zombie_colt" || keys[i] == "zombie_walther" || keys[i] == "zombie_tokarev" || keys[i] == "zombie_nambu" || keys[i] == "stielhandgranate")
+		{
+			continue;
+		}
+
+		// if we have bayonet weapons, remove the non bayonet version from box as we are treating them as the "same" weapon
+		if( player HasWeapon( "type99_rifle_scoped_zombie_bayonet" ) && keys[i] == "type99_rifle_scoped_zombie" )
+		{
+			continue;
+		}
+
+		if( player HasWeapon( "zombie_type99_rifle_bayonet" ) && keys[i] == "zombie_type99_rifle" )
+		{
+			continue;
+		}
+
+		if( player HasWeapon( "zombie_type99_lmg_bayonet" ) && keys[i] == "zombie_type99_lmg" )
+		{
+			continue;
+		}
+		// PI_CHANGE_BEGIN
+/*		if( isDefined(level.script) && level.script == "nazi_zombie_sumpf")
+		{
+			//make sure box moves once before allowing ray gun to be accessed.
+			if( level.box_moved == false )
+			{
+				if( keys[i] == "ray_gun" )
+				{
+					continue;
+				}
+			}
+		}*/
+		// PI_CHANGE_END
+
+		filtered[filtered.size] = keys[i];
+	}
+		
+
+	// Filter out the limited weapons
+	if( IsDefined( level.limited_weapons ) )
+	{
+		keys2 = GetArrayKeys( level.limited_weapons );
+		players = get_players();
+		for( q = 0; q < keys2.size; q++ )
+		{
+			count = 0;
+			for( i = 0; i < players.size; i++ )
+			{
+				if( players[i] HasWeapon( keys2[q] ) )
+				{
+					count++;
+				}
+
+				// check for last stand weapons that might not be on the player at the time
+				if (players[i] maps\_laststand::player_is_in_laststand())
+				{
+					for( m = 0; m < players[i].weaponInventory.size; m++ )
+					{
+						if (players[i].weaponInventory[m] == keys2[q])
+						{
+							count++;
+						}
+					}
+				}
+			}
+
+			if( count == level.limited_weapons[keys2[q]] )
+			{
+				filtered = array_remove( filtered, keys2[q] );
+			}
+		}
+	}
+
+/*	if(wep_order == 39 )
+	{
+		for( i = 0; i < filtered.size; i++ )
+		{
+			iprintlnbold(i + ": " + filtered[i]);
+		}	
+	}
+
+	iprintln(level.zombie_include_weapons.size);*/
+
+	return filtered[RandomInt( filtered.size )];
+}
+
+treasure_chest_ChooseWeightedRandomWeapon( player, wep_order )
 {
 
 	keys = GetArrayKeys( level.zombie_weapons );
@@ -1206,7 +1318,8 @@ treasure_chest_ChooseRandomWeapon( player )
 					if( level.pulls_since_last_ray_gun > 11 )
 					{
 						// calculate the number of times we have to add it to the array to get the desired percent
-						number_to_add = .1 * filtered.size;
+						//number_to_add = .1 * filtered.size;
+						number_to_add = 3; // 3 total
 						for(i=1; i<number_to_add; i++)
 						{
 							filtered[filtered.size] = "ray_gun";
@@ -1216,7 +1329,8 @@ treasure_chest_ChooseRandomWeapon( player )
 					else if( level.pulls_since_last_ray_gun > 7 )
 					{
 						// calculate the number of times we have to add it to the array to get the desired percent
-						number_to_add = .05 * filtered.size;
+						//number_to_add = .05 * filtered.size;
+						number_to_add = 2; // 2 total
 						for(i=1; i<number_to_add; i++)
 						{
 							filtered[filtered.size] = "ray_gun";
@@ -1235,7 +1349,8 @@ treasure_chest_ChooseRandomWeapon( player )
 				// calculate the number of times we have to add it to the array to get the desired percent
 				player.groups_killed = 0; // reset counter
 
-				number_to_add = .1 * filtered.size;
+				//number_to_add = .1 * filtered.size;
+				number_to_add = 5; // 5 total
 				for(i=1; i<number_to_add; i++)
 				{
 					filtered[filtered.size] = "tesla_gun";
@@ -1250,7 +1365,8 @@ treasure_chest_ChooseRandomWeapon( player )
 				if( level.round_number > 15 )
 				{
 					// calculate the number of times we have to add it to the array to get the desired percent
-					number_to_add = .1 * filtered.size;
+					//number_to_add = .1 * filtered.size;
+					number_to_add = 5; // 5 total
 					for(i=1; i<number_to_add; i++)
 					{
 						filtered[filtered.size] = "tesla_gun";
@@ -1260,7 +1376,8 @@ treasure_chest_ChooseRandomWeapon( player )
 				else if( level.round_number > 10 )
 				{
 					// calculate the number of times we have to add it to the array to get the desired percent
-					number_to_add = .05 * filtered.size;
+					//number_to_add = .05 * filtered.size;
+					number_to_add = 3; // 3 total
 					for(i=1; i<number_to_add; i++)
 					{
 						filtered[filtered.size] = "tesla_gun";
@@ -1306,6 +1423,32 @@ treasure_chest_ChooseRandomWeapon( player )
 		}
 	}
 
+	// filter out spam-weapons on last roll 
+	if(wep_order == 39 ) 
+	{
+		if( is_in_array(filtered, "zombie_type99_rifle") && is_in_array(filtered, "zombie_gewehr43") )
+		{
+			if( RandomInt(2) == 0 ){
+				//iprintln("Both ari/gew are in, removing ARI");
+				filtered = array_remove( filtered, "zombie_type99_rifle" );
+			}
+			else{
+				//iprintln("Both ari/gew are in, removing GEW");
+				filtered = array_remove( filtered, "zombie_gewehr43" );
+			}
+		}
+	}
+/*
+	if(wep_order == 39 )
+	{
+		for( i = 0; i < filtered.size; i++ )
+		{
+			iprintlnbold(i + ": " + filtered[i]);
+		}	
+	}*/
+
+//	iprintln(level.zombie_include_weapons.size);
+
 	return filtered[RandomInt( filtered.size )];
 }
 
@@ -1326,7 +1469,8 @@ treasure_chest_weapon_spawn( chest, player )
 	// make with the mario kart
 	modelname = undefined; 
 	rand = undefined; 
-	for( i = 0; i < 40; i++ )
+	number_cycles = 40;
+	for( i = 0; i < number_cycles; i++ )
 	{
 
 		if( i < 20 )
@@ -1346,8 +1490,17 @@ treasure_chest_weapon_spawn( chest, player )
 			wait( 0.3 ); 
 		}
 
-		rand = treasure_chest_ChooseRandomWeapon( player );
-		
+		//rand = treasure_chest_ChooseRandomWeapon( player, i );
+		if( i+1 < number_cycles )
+		{
+			rand = treasure_chest_ChooseRandomWeapon( player );
+		}
+		else
+		{
+			rand = treasure_chest_ChooseWeightedRandomWeapon( player, i );
+		}
+
+
 		/#
 			if( maps\_zombiemode_tesla::tesla_gun_exists() )	
 			{
@@ -1375,7 +1528,7 @@ treasure_chest_weapon_spawn( chest, player )
 	if(level.script != "nazi_zombie_prototype" && getdvar("magic_chest_movable") == "1")
 	{
 
-		if(level.chest_accessed < 4)
+		if(level.chest_accessed < 5) // first 5 hits free
 		{		
 			// PI_CHANGE_BEGIN - JMA - RandomInt(100) can return a number between 0-99.  If it's zero and chance_of_joker is zero
 			//									we can possibly have a teddy bear one after another.
@@ -1389,15 +1542,15 @@ treasure_chest_weapon_spawn( chest, player )
 			// PI_CHANGE_BEGIN - JMA 
 			if( isDefined(level.script) && level.script == "nazi_zombie_sumpf" )
 			{
-				// make sure teddy bear appears on the 8th pull if it hasn't moved from the attic
-				if( (!isDefined(level.magic_box_first_move) || level.magic_box_first_move == false ) && level.chest_accessed >= 8)
+				// make sure teddy bear appears on the 10th pull if it hasn't moved from the attic
+				if( (!isDefined(level.magic_box_first_move) || level.magic_box_first_move == false ) && level.chest_accessed >= 9)
 				{
 					chance_of_joker = 100;
 				}
 				
-				// pulls 4 thru 8, there is a 15% chance of getting the teddy bear
+				// pulls 6 thru 9, there is a 15% chance of getting the teddy bear
 				// NOTE:  this happens in all cases
-				if( level.chest_accessed >= 4 && level.chest_accessed < 8 )
+				if( level.chest_accessed >= 5 && level.chest_accessed < 9 )
 				{
 					if( random < 15 )
 					{
@@ -1412,8 +1565,8 @@ treasure_chest_weapon_spawn( chest, player )
 				// after the first magic box move the teddy bear percentages changes
 				if( isDefined(level.magic_box_first_move) && level.magic_box_first_move == true )
 				{
-					// between pulls 8 thru 12, the teddy bear percent is 30%
-					if( level.chest_accessed >= 8 && level.chest_accessed < 13 )
+					// between pulls 10 thru 12, the teddy bear percent is 30%
+					if( level.chest_accessed >= 9 && level.chest_accessed < 13 )
 					{
 						if( random < 30 )
 						{
@@ -1425,7 +1578,7 @@ treasure_chest_weapon_spawn( chest, player )
 						}
 					}
 					
-					// after 12th pull, the teddy bear percent is 50%
+					// 13th pull onwards, the teddy bear percent is 50%
 					if( level.chest_accessed >= 13 )
 					{
 						if( random < 50 )
@@ -2027,6 +2180,17 @@ weapon_give( weapon )
 		{
 			if( !( weapon == "fraggrenade" || weapon == "stielhandgranate" || weapon == "molotov" || weapon == "st_grenade" ) )
 			{
+				// PI_CHANGE_BEGIN
+				// JMA - player dropped the tesla gun
+				if( isDefined(level.script) && level.script == "nazi_zombie_sumpf" )
+				{
+					if( current_weapon == "tesla_gun" )
+					{
+						level.player_drops_tesla_gun = true;
+					}
+				}
+				// PI_CHANGE_END
+			
 				self TakeWeapon( current_weapon ); 
 			}
 		} 
@@ -2043,6 +2207,17 @@ weapon_give( weapon )
 
 			if( weapon != "fraggrenade" && weapon != "stielhandgranate" && weapon != "molotov" && weapon != "st_grenade" )
 			{
+				// PI_CHANGE_BEGIN
+				// JMA - player dropped the tesla gun
+				if( isDefined(level.script) && level.script == "nazi_zombie_sumpf" )
+				{
+					if( primaryWeapons[i] == "tesla_gun" )
+					{
+						level.player_drops_tesla_gun = true;
+					}
+				}
+				// PI_CHANGE_END
+			
 				self TakeWeapon( primaryWeapons[i] ); 
 			}
 		}
@@ -2541,7 +2716,8 @@ play_no_money_box_dialog()
 
 flamethrower_swap()
 {
-	self endon( "death" ); // if we die we end, because we perma lose the flamethrower
+	self endon( "death" );
+	self endon( "bleedout" ); // if we die we end, because we perma lose the flamethrower
 	self endon( "disconnect" ); 
 	
 	while( 1 ) // once we get flamer, we need to do a loop so that we can easily remove it if we lose the weapon or remove/then re-add it if we are downed/revived

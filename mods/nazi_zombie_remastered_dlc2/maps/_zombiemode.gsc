@@ -1962,7 +1962,8 @@ zombie_intro_screen( string1, string2, string3, string4, string5 )
 		"aim_autobayonet_range", "100",
 		"cg_hudDamageIconTime", "2500", // fixed damage marks from disappearing too quick
 		"cg_firstPersonTracerchance", "0.5", // can see bullet tracers as you shoot in 1st person now
-		"player_aimblend_back_low", "0 0.3 0.5", // 3rd person look up/down
+//		"player_aimblend_back_low", "0 0.3 0.5", // 3rd person look up/down
+		"player_aimblend_back_mid", "0.1 0.3 0.5", // 3rd person look up/down
 		"playerSpectating", "0"
 		 ); 	
 	}
@@ -1993,7 +1994,8 @@ players_playing()
 		"aim_autobayonet_range", "100",
 		"cg_hudDamageIconTime", "2500", // fixed damage marks from disappearing too quick
 		"cg_firstPersonTracerchance", "0.5", // can see bullet tracers as you shoot in 1st person now
-		"player_aimblend_back_low", "0 0.3 0.5", // 3rd person look up/down
+//		"player_aimblend_back_low", "0 0.3 0.5", // 3rd person look up/down
+		"player_aimblend_back_mid", "0.1 0.3 0.5", // 3rd person look up/down
 		"playerSpectating", "0"
 		); 
 
@@ -2103,7 +2105,8 @@ onPlayerConnect_clientDvars()
 		"player_sprintStrafeSpeedScale", "0.8", // buffed strafe
 		"playerSpectating", "0", // spectating hud
 		"cg_firstPersonTracerchance", "0.5", // can see bullet tracers as you shoot in 1st person now
-		"player_aimblend_back_low", "0 0.3 0.5", // 3rd person look up/down
+//		"player_aimblend_back_low", "0 0.3 0.5", // 3rd person look up/down
+		"player_aimblend_back_mid", "0.1 0.3 0.5", // 3rd person look up/down
 		"cg_hudDamageIconTime", "2500" ); // fixed damage marks from disappearing too quick
 
 /*	self SetClientDvars(
@@ -2173,7 +2176,8 @@ onPlayerSpawned()
         "player_meleechargefriction", "2500",
 		"aim_autobayonet_range", "100",
 		"cg_firstPersonTracerchance", "0.5", // can see bullet tracers as you shoot in 1st person now
-		"player_aimblend_back_low", "0 0.3 0.5", // 3rd person look up/down
+//		"player_aimblend_back_low", "0 0.3 0.5", // 3rd person look up/down
+		"player_aimblend_back_mid", "0.1 0.3 0.5", // 3rd person look up/down
 		"cg_hudDamageIconTime", "2500" );
      
      	self setClientDvar( "bg_fallDamageMinHeight", "150" );
@@ -2420,7 +2424,20 @@ reset_spec_hud()
 spectators_respawn()
 {
 	level endon( "between_round_over" );
+	level endon( "end_game" );
 
+	wait(0.05); // delay incase of end game
+
+	if( !IsDefined( level.zombie_vars["spectators_respawn"] ) || !level.zombie_vars["spectators_respawn"] )
+	{
+		return;
+	}
+
+	if((isDefined(level.intermission) && level.intermission == true) || (isDefined(level.falling_down) && level.falling_down == true) )
+	{
+		return;
+	}
+	
 	if( !IsDefined( level.zombie_vars["spectators_respawn"] ) || !level.zombie_vars["spectators_respawn"] )
 	{
 		return;

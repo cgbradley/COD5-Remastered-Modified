@@ -398,6 +398,8 @@ laststand_bleedout( delay )
 	}
 	
 	setClientSysState("lsm", "3", self);	// Notify client last stand ended.
+
+	self notify("bleedout");
 	
 	if (isdefined(level.is_zombie_level ) && level.is_zombie_level)
 	{
@@ -628,7 +630,7 @@ revive_do_revive( playerBeingRevived, reviverGun )
 	playerBeingRevived startrevive( self );
 
 	if( !isdefined(self.reviveProgressBar) )
-		self.reviveProgressBar = self createPrimaryProgressBar();
+		self.reviveProgressBar = self createPrimaryProgressBar(true);
 
 	if( !isdefined(self.reviveTextHud) )
 		self.reviveTextHud = newclientHudElem( self );	

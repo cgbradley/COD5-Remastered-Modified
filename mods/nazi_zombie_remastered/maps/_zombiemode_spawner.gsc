@@ -216,9 +216,9 @@ set_zombie_run_cycle()
 		self.run_combatanim = level.scr_anim[self.animname]["run" + var];
 		break;
 	case "sprint":                 
-		var = randomintrange(1, 16); // For rest of the game
+		var = randomintrange(1, 19); // For rest of the game, 18 anims so range stops at 19
 
-		if(level.round_number < 11 ) // For early game to prevent random super sprinters
+		if(level.round_number < 15 ) // For early game to prevent random super sprinters
 		{
 			var = randomintrange(1, 3);	
 		}
@@ -1084,6 +1084,11 @@ cap_zombie_head_gibs()
 
 zombie_head_gib( attacker )
 {
+	if ( !is_mature() )
+	{
+		return;
+	}
+
 	if( IsDefined( self.head_gibbed ) && self.head_gibbed )
 	{
 		return;
@@ -1223,10 +1228,15 @@ damage_over_time( dmg, delay, attacker )
 // SRS 9/2/2008: reordered checks, added ability to gib heads with airburst grenades
 head_should_gib( attacker, type, point )
 {
-	if ( is_german_build() )
+	if ( !is_mature() )
 	{
 		return false;
 	}
+
+/*	if ( is_german_build() )
+	{
+		return false;
+	}*/
 
 	if( self.head_gibbed )
 	{
@@ -1566,6 +1576,11 @@ zombie_gib_on_damage()
 
 zombie_should_gib( amount, attacker, type )
 {
+	if ( !is_mature() )
+	{
+		return false;
+	}
+
 	if( !IsDefined( type ) )
 	{
 		return false; 
@@ -1917,7 +1932,7 @@ zombie_damage( mod, hit_location, hit_origin, player, amount )
 	self thread maps\_zombiemode_powerups::check_for_instakill( player );
 }
 
-zombie_damage_ads( mod, hit_location, hit_origin, player )
+zombie_damage_ads( mod, hit_location, hit_origin, player, amount )
 {
 	player.use_weapon_type = mod;
 	if( !IsDefined( player ) )
