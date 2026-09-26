@@ -1172,7 +1172,9 @@ color_apply(color_value)
 	{
 		setdvar("color_mode", icolorm);
 	}*/
-
+	// To use the non visionset ones like setsaveddvar 1 1 1 below, you need cinematic mode on and filmtweakenable on
+	//And you can use the in game r_filmTweakDarkTint, etc alongside the preset ones below, they both work and just overwrite values
+	//Cinematic mode is off if using vision set I think
 	if(color == -2)
 	{
 		//Base no cinematic mode change tint
@@ -1215,7 +1217,7 @@ color_apply(color_value)
 		}
 
 	}
-	else if(Int(color) == 10)//original best (modified 1)
+	else if(Int(color) == 10)//original best (modified version of 1 which is default)
 	{
 		//uses filmtweaks which doesnt transfer to players
 		//new, based on 1.5
@@ -1226,11 +1228,15 @@ color_apply(color_value)
 			brightness = 0.14;
 			contrast = 1.4;
 		}
-		else if(secondary == 0.1)
+		else if(secondary == 0.2)
 		{
 			brightness = -0.1;
 			contrast = 1;
 			//maybe try filmdesat at 0 and then turn colorscale for lights to 0 so no 
+		}
+		else if(secondary == 0.3)
+		{
+			SetSavedDvar( "r_filmTweakDarkTint", "0.71 0.8 0.61");//10.3 This is a good tweak to try 9/26/2026
 		}
 	}
 	else
@@ -1407,18 +1413,19 @@ fog_monitor()
 				//Set DEFAULT FOG COLORS
 				fog_red = 0.65;
 				fog_green = 0.84;
-				fog_blue = 0.75;//try 0.74//original 0.79!
+				fog_blue = 0.71;//try 0.74//original 0.79! we ran 0.75 a long time
 
 				if(fog_col != "0") {
 					if(getdvarint("developer") == 1)
 						iprintln("custom fog color");
-					
+
+					//NOTE you will need to run fog_set each change to show color changes
 					//Determine if customizing fog color
 					switch(fog_col) {
-						case "2": //ENABLED (without using fog brightness)
-						case "test":
-							fog_brightness = 1;//Cancel fog brightness
-						case "1": //ENABLED; Control fog color using dvars
+						// -- Other cases are below (don't add new ones here) --
+						case "test": //CUSTOM COLOR ENABLED (without using fog brightness in fog color at all)
+							fog_brightness = 1;//Cancel out fog brightness
+						case "1": //CUSTOM COLOR ENABLED; Control fog color using dvars
 							//Check each color before setting:
 							volatile_color = getdvarfloat("fogr");
 							if(volatile_color == 0)
@@ -1453,13 +1460,18 @@ fog_monitor()
 
 						case "default":
 						case "vanilla":
-							//Set default fog colors
+							//Set default fog colors and return to customizing
 							setdvar("fogr", fog_red);
 							setdvar("fogg", fog_green);
 							setdvar("fogb", fog_blue);
-							//Set dvar to enabled (resting state)
+							//Set dvar back to custom enabled (resting state)
 							setdvar("fog_color", 1);
 							break;
+						case "2":
+							fog_red = 0.65;
+							fog_green = 0.84;
+							fog_blue = 0.75;
+						break;
 						case "0": // DISABLED
 						default:
 							iprintLn("Fog custom color disabled");

@@ -1161,7 +1161,9 @@ color_apply(color_value)
 		setdvar("color_mode", icolorm);
 	}*/
 
-	//setdvar("color_mode", color);
+	// To use the non visionset ones like setsaveddvar 1 1 1 below, you need cinematic mode on and filmtweakenable on
+	//And you can use the in game r_filmTweakDarkTint, etc alongside the preset ones below, they both work and just overwrite values
+	//Cinematic mode is off if using vision set I think
 	if(color == 1)
 	{
 		//Put here whatever is standard, probably
@@ -1392,13 +1394,14 @@ fog_monitor()
 				if(fog_col != "0") {
 					if(getdvarint("developer") == 1)
 						iprintln("custom fog color");
-					
+
+					//NOTE you will need to run fog_set each change to show color changes
 					//Determine if customizing fog color
 					switch(fog_col) {
-						case "2": //ENABLED (without using fog brightness)
-						case "test":
-							fog_brightness = 1;//Cancel fog brightness
-						case "1": //ENABLED; Control fog color using dvars
+						// -- Other cases are below (don't add new ones here) --
+						case "test": //CUSTOM COLOR ENABLED (without using fog brightness in fog color at all)
+							fog_brightness = 1;//Cancel out fog brightness
+						case "1": //CUSTOM COLOR ENABLED; Control fog color using dvars
 							//Check each color before setting:
 							volatile_color = getdvarfloat("fogr");
 							if(volatile_color == 0)
@@ -1433,13 +1436,18 @@ fog_monitor()
 
 						case "default":
 						case "vanilla":
-							//Set default fog colors
+							//Set default fog colors and return to customizing
 							setdvar("fogr", fog_red);
 							setdvar("fogg", fog_green);
 							setdvar("fogb", fog_blue);
-							//Set dvar to enabled (resting state)
+							//Set dvar to custom enabled (resting state)
 							setdvar("fog_color", 1);
 							break;
+						case "2": // put custom here
+							fog_red = 0.;
+							fog_green = 0.;
+							fog_blue = 0.;
+						break;
 						case "0": // DISABLED
 						default:
 							iprintLn("Fog custom color disabled");
