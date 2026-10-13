@@ -196,7 +196,7 @@ main(init_zombie_spawner_name)
 
 	// Do a SaveGame, so we can restart properly when we die
 	SaveGame( "zombie_start", &"AUTOSAVE_LEVELSTART", "", true );
-
+	//After this point, if the player dies and lets it autorestart, the code will not rerun
 
 
 	if(!IsDefined(level.eggs) )
@@ -491,9 +491,19 @@ main(init_zombie_spawner_name)
 		level.add_door_cost = 0;
 		
 	}
-	if(getdvar("developer") == "1")
-		iprintln("Finished setup");
+	//if(getdvarint("developer") > 0)
+		//iprintln("Finished setup");
+
 	flag_set("initialize_game");
+	if(getdvarint("developer") > 0)//if(getdvarint("developer") > 0)
+	{
+		iprintln("Finished setup");
+		wait(1);
+		if(getdvar("force_leaderboard") != "1")
+		{
+			iprintln("Leaderboard will not save! (set developer 0 or use force_leaderboard 1)");
+		}
+	}
 }
 
 zombiemode_melee_miss()
@@ -974,7 +984,9 @@ init_dvars()
 	{
 		SetDvar( "magic_box_explore_only", 1 );
 	}
-	
+
+	SetDvar( "revive_trigger_radius", "60" );
+
 	if(getdvar("magic_box_difficulty") == "" || getdvarfloat("magic_box_difficulty") < 0)
 	{
 		SetDvar( "magic_box_difficulty", 0 );
@@ -1099,9 +1111,8 @@ init_dvars()
 		SetDvar( "fog_base_height", -244.014 );
 		SetDvar( "fog_brightness", 1 );
 	}
-	SetDvar( "revive_trigger_radius", "60" ); 
 
-	if(getdvar("developer") == "1")
+	if(getdvarint("developer") > 0)
 		iprintln("init_dvars complete");
 }
 
@@ -1444,9 +1455,9 @@ fog_monitor()
 							setdvar("fog_color", 1);
 							break;
 						case "2": // put custom here
-							fog_red = 0.;
-							fog_green = 0.;
-							fog_blue = 0.;
+							fog_red = 0.7;
+							fog_green = 0.7;
+							fog_blue = 0.7;
 						break;
 						case "0": // DISABLED
 						default:
@@ -4244,9 +4255,15 @@ end_game()
 	iprintln("--Final Total--:" + string(players[0].score_total));//Notify total score
 	SetDvar( "score_final", players[0].score_total );
 
-	if( getDvarInt( "sv_cheats") != 1 || getDvarInt( "force_leaderboard") == 1)
+	//if( getDvarInt( "sv_cheats") != 1 || getDvarInt( "force_leaderboard") > 0
+	//if( getDvarInt( "developer") < 1 || getDvarInt( "force_leaderboard") > 0)
+	if((getDvarInt("developer") < 1 || getDvarInt("force_leaderboard") > 0) && getDvarInt( "zombie_cheat" ) != 1)
 	{
 		update_leaderboards();
+	}
+	else
+	{
+		iprintlnbold("Leaderboard NOT updated!");
 	}
 	
 	players = get_players();
@@ -4679,7 +4696,7 @@ nazizombies_upload_highscore()
 {
 	if( getDvarInt( "classic_zombies") == 1 || getDvarInt( "zombiemode_dev") == 1 || (isDefined(level.cheats_defined) && level.cheats_defined == true) ) // if playing with 24 limit or with super sprinters disabled, these are considered cheats because they make the game easier. classic perks or grabby zombies is OK, these make the game harder
 	{
-		//iPrintLn("Highscores not saved, current Game Options configuration not allowed");
+		iPrintLn("Highscores not saved, current Game Options configuration not allowed");
 		return;
 	}
 	

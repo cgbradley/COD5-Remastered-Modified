@@ -136,6 +136,9 @@ main()
 //	wait( 3 );
 //	level thread intermission();
 //	thread testing_spawner_bug();
+
+	if(getdvarint("developer") > 0)
+		iprintln("Finished setup");
 }
 
 testing_spawner_bug()
@@ -374,6 +377,15 @@ init_dvars()
 	}
 
 	SetDvar( "revive_trigger_radius", "60" );
+
+	
+	if(getdvar("force_leaderboard") == "" || getdvarint("force_leaderboard") < 0 || getdvarint("force_leaderboard") > 1)//sets leaderboard to always record even if cheats enabled
+	{
+		SetDvar( "force_leaderboard", 0 );
+	}
+
+	if(getdvarint("developer") > 0)
+		iprintln("init_dvars complete");
 
 }
 
@@ -2341,9 +2353,14 @@ end_game()
 
 	level.intermission = true;
 
-	if( getDvarInt( "sv_cheats") != 1 )
+	//if( getDvarInt( "sv_cheats") != 1)
+	if((getDvarInt("developer") < 1 || getDvarInt("force_leaderboard") > 0) && getDvarInt( "zombie_cheat" ) != 1)
 	{
 		update_leaderboards();
+	}
+	else
+	{
+		iprintlnbold("Leaderboard NOT updated!");
 	}
 
 	players = get_players();
@@ -2736,7 +2753,7 @@ nazizombies_upload_highscore()
 {
 	if( getDvarInt( "classic_zombies") == 1 || getDvarInt( "super_sprinters") == 1 || getDvarInt( "zombiemode_dev") == 1 || (isDefined(level.cheats_defined) && level.cheats_defined == true) ) // if playing with 24 limit or with super sprinters disabled, these are considered cheats because they make the game easier. classic perks or grabby zombies is OK, these make the game harder
 	{
-		//iPrintLn("Highscores not saved, current Game Options configuration not allowed");
+		iPrintLn("Highscores not saved, current Game Options configuration not allowed");
 		return;
 	}
 	

@@ -460,8 +460,6 @@ main()
 		level.start_door_cost = 1000;
 	}
 
-	if(getdvar("developer") == "1")
-		iprintln("Finished setup");
 	/*players = get_players();
 	for( i = 0; i < players.size; i++ )
 		{
@@ -473,7 +471,10 @@ main()
 		}*/
 	//SetSavedDvar("r_gamma", 1.25);
 	//level thread maps\_utility::set_all_players_visionset("nazi_zombie_sumpf_patch", 0.1);
+
 	flag_set("initialize_game");
+	if(getdvarint("developer") > 0)
+		iprintln("Finished setup");
 }
 
 /*revive_retreat_point()
@@ -1092,7 +1093,7 @@ init_dvars()
 		SetDvar( "fog_brightness", 1 );
 	}
 
-	if(getdvar("developer") == "1")
+	if(getdvarint("developer") > 0)
 		iprintln("init_dvars complete");
 }
 
@@ -1413,7 +1414,7 @@ fog_monitor()
 				//Set DEFAULT FOG COLORS
 				fog_red = 0.65;
 				fog_green = 0.84;
-				fog_blue = 0.71;//try 0.74//original 0.79! we ran 0.75 a long time
+				fog_blue = 0.73;//try 0.74//original 0.79! we ran 0.75 a long time
 
 				if(fog_col != "0") {
 					if(getdvarint("developer") == 1)
@@ -4086,11 +4087,14 @@ end_game()
 
 	level.intermission = true;
 
-	
-	if( getDvarInt( "sv_cheats") != 1 || getDvarInt( "force_leaderboard") > 0)
+	//if( getDvarInt( "sv_cheats") != 1 || getDvarInt( "force_leaderboard") > 0
+	if((getDvarInt("developer") < 1 || getDvarInt("force_leaderboard") > 0) && getDvarInt( "zombie_cheat" ) != 1)
 	{
-		if(getDvarInt( "zombie_cheat" ) != 1)
-			update_leaderboards();
+		update_leaderboards();
+	}
+	else
+	{
+		iprintlnbold("Leaderboard NOT updated!");
 	}
 
 	players = get_players();
@@ -4518,7 +4522,7 @@ nazizombies_upload_highscore()
 {
 	if( getDvarInt( "classic_zombies") == 1 || getDvarInt( "zombiemode_dev") == 1 || (isDefined(level.cheats_defined) && level.cheats_defined == true) ) // if playing with 24 limit or with super sprinters disabled, these are considered cheats because they make the game easier. classic perks or grabby zombies is OK, these make the game harder
 	{
-		//iPrintLn("Highscores not saved, current Game Options configuration not allowed");
+		iPrintLn("Highscores not saved, current Game Options configuration not allowed");
 		return;
 	}
 	
